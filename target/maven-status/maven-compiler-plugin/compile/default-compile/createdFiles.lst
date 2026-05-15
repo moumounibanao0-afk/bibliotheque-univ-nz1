@@ -5,12 +5,14 @@ com/bibliotheque/strategy/PenaliteStandard.class
 com/bibliotheque/config/DatabaseConfig.class
 com/bibliotheque/repository/UtilisateurRepository.class
 com/bibliotheque/BibliothequeApplication.class
+com/bibliotheque/service/OuvrageService.class
 com/bibliotheque/repository/OuvrageRepository.class
 com/bibliotheque/App.class
 com/bibliotheque/model/Role.class
 com/bibliotheque/model/Ouvrage.class
 com/bibliotheque/model/Categorie.class
 com/bibliotheque/observer/Observateur.class
+com/bibliotheque/service/EmpruntService.class
 com/bibliotheque/strategy/PenaliteBoursier.class
 com/bibliotheque/observer/OuvrageDisponible.class
 com/bibliotheque/factory/UtilisateurFactory.class
