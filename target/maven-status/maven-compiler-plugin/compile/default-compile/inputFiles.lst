@@ -3,10 +3,14 @@
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/model/Role.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/strategy/PenaliteStandard.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/model/StatutEmprunt.java
+/home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/repository/UtilisateurRepository.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/model/Etudiant.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/config/DatabaseConfig.java
+/home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/repository/OuvrageRepository.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/BibliothequeApplication.java
+/home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/repository/CategorieRepository.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/model/Emprunt.java
+/home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/repository/EmpruntRepository.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/model/Utilisateur.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/model/Categorie.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/strategy/CalculPenalite.java
