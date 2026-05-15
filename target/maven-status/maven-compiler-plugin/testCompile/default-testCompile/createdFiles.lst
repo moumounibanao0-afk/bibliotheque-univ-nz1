@@ -1,1 +1,3 @@
 com/bibliotheque/AppTest.class
+com/bibliotheque/service/EmpruntServiceTest.class
+com/bibliotheque/service/OuvrageServiceTest.class
