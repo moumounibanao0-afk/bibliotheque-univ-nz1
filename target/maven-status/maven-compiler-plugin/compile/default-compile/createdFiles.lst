@@ -8,6 +8,7 @@ com/bibliotheque/observer/Observateur.class
 com/bibliotheque/strategy/PenaliteBoursier.class
 com/bibliotheque/factory/UtilisateurFactory.class
 com/bibliotheque/model/Emprunt.class
+com/bibliotheque/config/SecurityConfig.class
 com/bibliotheque/repository/CategorieRepository.class
 com/bibliotheque/strategy/CalculPenalite.class
 com/bibliotheque/model/StatutEmprunt.class

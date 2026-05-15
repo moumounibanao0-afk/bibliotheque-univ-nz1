@@ -2,19 +2,12 @@ package com.bibliotheque.config;
 
 import org.springframework.context.annotation.Configuration;
 
-// PATTERN SINGLETON
-// Une seule instance de configuration de base de données
+// PATTERN SINGLETON adapté pour Spring Boot
 @Configuration
 public class DatabaseConfig {
 
-    private static DatabaseConfig instance;
+    // Spring Boot gère lui-même le Singleton
+    // via le conteneur IoC — c'est le pattern Singleton de Spring
+    public DatabaseConfig() {}
 
-    private DatabaseConfig() {}
-
-    public static DatabaseConfig getInstance() {
-        if (instance == null) {
-            instance = new DatabaseConfig();
-        }
-        return instance;
-    }
 }
