@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: bibliotheque-univ-nz
+    runtime: java
+    buildCommand: mvn clean install -DskipTests
+    startCommand: java -jar target/bibliotheque-univ-1.0-SNAPSHOT.jar
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:mysql://localhost:3306/bibliotheque_db
+      - key: SPRING_DATASOURCE_USERNAME
+        value: biblio_user
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: biblio2024
