@@ -95,7 +95,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
-	<plugin>
+<plugin>
     <groupId>org.jacoco</groupId>
     <artifactId>jacoco-maven-plugin</artifactId>
     <version>0.8.11</version>
@@ -113,7 +113,17 @@
             </goals>
         </execution>
     </executions>
-</plugin>
+    <configuration>
+	<excludes>
+	    <exclude>com/bibliotheque/controller/**</exclude>
+	    <exclude>com/bibliotheque/config/**</exclude>
+	    <exclude>com/bibliotheque/App.class</exclude>
+	    <exclude>com/bibliotheque/BibliothequeApplication.class</exclude>
+	    <exclude>com/bibliotheque/model/**</exclude>
+	    <exclude>com/bibliotheque/observer/**</exclude>
+		</excludes>
+	    </configuration>
+	</plugin>
     </plugins>
   </build>
 

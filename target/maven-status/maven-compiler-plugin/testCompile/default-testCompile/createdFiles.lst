@@ -1,3 +1,6 @@
 com/bibliotheque/AppTest.class
+com/bibliotheque/service/ModelTest.class
 com/bibliotheque/service/EmpruntServiceTest.class
 com/bibliotheque/service/OuvrageServiceTest.class
+com/bibliotheque/service/PenaliteTest.class
+com/bibliotheque/service/FactoryTest.class
