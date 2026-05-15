@@ -2,7 +2,6 @@
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/model/Role.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/strategy/PenaliteStandard.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/model/StatutEmprunt.java
-/home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/config/SecurityConfig.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/model/Etudiant.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/BibliothequeApplication.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/repository/CategorieRepository.java
