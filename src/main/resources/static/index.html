@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibliothèque Universitaire - UNZ</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+
+        /* NAVBAR */
+        nav {
+            background: #1a237e;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        nav h1 { font-size: 20px; }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 14px;
+        }
+        nav a:hover { text-decoration: underline; }
+
+        /* HERO */
+        .hero {
+            background: linear-gradient(135deg, #1a237e, #283593);
+            color: white;
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .hero h2 { font-size: 32px; margin-bottom: 10px; }
+        .hero p { font-size: 16px; opacity: 0.9; }
+
+        /* STATS */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 30px;
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px 30px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            min-width: 150px;
+        }
+        .stat-card h3 { font-size: 36px; color: #1a237e; }
+        .stat-card p { color: #666; font-size: 14px; }
+
+        /* SEARCH */
+        .search-section {
+            background: white;
+            padding: 30px;
+            margin: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .search-section h3 { margin-bottom: 15px; color: #1a237e; }
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .search-bar input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .btn {
+            padding: 10px 20px;
+            background: #1a237e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn:hover { background: #283593; }
+        .btn-danger { background: #c62828; }
+        .btn-success { background: #2e7d32; }
+
+        /* TABLE */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th {
+            background: #1a237e;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+        td { padding: 10px; border-bottom: 1px solid #eee; }
+        tr:hover { background: #f5f5f5; }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 400px;
+            max-width: 90%;
+        }
+        .modal-content h3 { margin-bottom: 20px; color: #1a237e; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 14px; }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
+
+        /* ALERT */
+        .alert {
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 10px 20px;
+            display: none;
+        }
+        .alert.success { background: #e8f5e9; color: #2e7d32; display: block; }
+        .alert.error { background: #ffebee; color: #c62828; display: block; }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #1a237e;
+            color: white;
+            margin-top: 40px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+    <h1>📚 Bibliothèque UNZ</h1>
+    <div>
+        <a href="#ouvrages">Catalogue</a>
+        <a href="#emprunts">Emprunts</a>
+        <a href="#reservations">Réservations</a>
+        <a href="#statistiques">Statistiques</a>
+    </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+    <h2>Bienvenue à la Bibliothèque</h2>
+    <p>Université Norbert Zongo — Système de Gestion Documentaire</p>
+</div>
+
+<!-- ALERT -->
+<div id="alert" class="alert"></div>
+
+<!-- STATISTIQUES -->
+<div id="statistiques" class="stats">
+    <div class="stat-card">
+        <h3 id="stat-ouvrages">0</h3>
+        <p>Ouvrages</p>
+    </div>
+    <div class="stat-card">
+        <h3 id="stat-emprunts">0</h3>
+        <p>Emprunts</p>
+    </div>
+    <div class="stat-card">
+        <h3 id="stat-reservations">0</h3>
+        <p>Réservations</p>
+    </div>
+    <div class="stat-card">
+        <h3 id="stat-utilisateurs">0</h3>
+        <p>Utilisateurs</p>
+    </div>
+</div>
+
+<!-- CATALOGUE -->
+<div id="ouvrages" class="search-section">
+    <h3>📖 Catalogue des Ouvrages</h3>
+    <div class="search-bar">
+        <input type="text" id="search-input" placeholder="Rechercher par titre...">
+        <button class="btn" onclick="rechercherOuvrage()">Rechercher</button>
+        <button class="btn btn-success" onclick="ouvrirModal()">+ Ajouter</button>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Titre</th>
+                <th>Auteur</th>
+                <th>ISBN</th>
+                <th>Disponibles</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="ouvrages-table">
+            <tr><td colspan="6" style="text-align:center">Chargement...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- EMPRUNTS -->
+<div id="emprunts" class="search-section">
+    <h3>📋 Historique des Emprunts</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Ouvrage</th>
+                <th>Date Emprunt</th>
+                <th>Date Retour Prévue</th>
+                <th>Statut</th>
+            </tr>
+        </thead>
+        <tbody id="emprunts-table">
+            <tr><td colspan="5" style="text-align:center">Chargement...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- RESERVATIONS -->
+<div id="reservations" class="search-section">
+    <h3>🔖 Réservations</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Ouvrage</th>
+                <th>Date Réservation</th>
+                <th>Date Expiration</th>
+                <th>Statut</th>
+            </tr>
+        </thead>
+        <tbody id="reservations-table">
+            <tr><td colspan="5" style="text-align:center">Chargement...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- MODAL AJOUT OUVRAGE -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <h3>Ajouter un Ouvrage</h3>
+        <div class="form-group">
+            <label>Titre</label>
+            <input type="text" id="titre" placeholder="Titre de l'ouvrage">
+        </div>
+        <div class="form-group">
+            <label>Auteur</label>
+            <input type="text" id="auteur" placeholder="Nom de l'auteur">
+        </div>
+        <div class="form-group">
+            <label>ISBN</label>
+            <input type="text" id="isbn" placeholder="ISBN">
+        </div>
+        <div class="form-group">
+            <label>Nombre d'exemplaires</label>
+            <input type="number" id="exemplaires" placeholder="5" value="1">
+        </div>
+        <div class="modal-buttons">
+            <button class="btn btn-success" onclick="ajouterOuvrage()">Ajouter</button>
+            <button class="btn btn-danger" onclick="fermerModal()">Annuler</button>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>© 2026 Bibliothèque Universitaire Norbert Zongo — Développé avec Spring Boot</p>
+</footer>
+
+<script>
+    const API = 'http://localhost:8081';
+
+    // Charger les statistiques
+    async function chargerStats() {
+        try {
+            const res = await fetch(`${API}/api/statistiques`);
+            const data = await res.json();
+            document.getElementById('stat-ouvrages').textContent = data.totalOuvrages || 0;
+            document.getElementById('stat-emprunts').textContent = data.totalEmprunts || 0;
+            document.getElementById('stat-reservations').textContent = data.totalReservations || 0;
+            document.getElementById('stat-utilisateurs').textContent = data.totalUtilisateurs || 0;
+        } catch(e) { console.error('Erreur stats:', e); }
+    }
+
+    // Charger les ouvrages
+    async function chargerOuvrages() {
+        try {
+            const res = await fetch(`${API}/api/ouvrages`);
+            const ouvrages = await res.json();
+            const tbody = document.getElementById('ouvrages-table');
+            if (ouvrages.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Aucun ouvrage</td></tr>';
+                return;
+            }
+            tbody.innerHTML = ouvrages.map(o => `
+                <tr>
+                    <td>${o.id}</td>
+                    <td>${o.titre}</td>
+                    <td>${o.auteur}</td>
+                    <td>${o.isbn || '-'}</td>
+                    <td>${o.exemplairesDisponibles}/${o.nombreExemplaires}</td>
+                    <td>
+                        <button class="btn btn-danger"
+                            onclick="supprimerOuvrage(${o.id})"
+                            style="padding:5px 10px;font-size:12px">
+                            Supprimer
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        } catch(e) { console.error('Erreur ouvrages:', e); }
+    }
+
+    // Charger les emprunts
+    async function chargerEmprunts() {
+        try {
+            const res = await fetch(`${API}/api/emprunts/etudiant/1`);
+            const emprunts = await res.json();
+            const tbody = document.getElementById('emprunts-table');
+            if (emprunts.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center">Aucun emprunt</td></tr>';
+                return;
+            }
+            tbody.innerHTML = emprunts.map(e => `
+                <tr>
+                    <td>${e.id}</td>
+                    <td>${e.ouvrage ? e.ouvrage.titre : '-'}</td>
+                    <td>${e.dateEmprunt || '-'}</td>
+                    <td>${e.dateRetourPrevue || '-'}</td>
+                    <td>${e.statut}</td>
+                </tr>
+            `).join('');
+        } catch(e) { console.error('Erreur emprunts:', e); }
+    }
+
+    // Charger les réservations
+    async function chargerReservations() {
+        try {
+            const res = await fetch(`${API}/api/reservations`);
+            const reservations = await res.json();
+            const tbody = document.getElementById('reservations-table');
+            if (reservations.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center">Aucune réservation</td></tr>';
+                return;
+            }
+            tbody.innerHTML = reservations.map(r => `
+                <tr>
+                    <td>${r.id}</td>
+                    <td>${r.ouvrage ? r.ouvrage.titre : '-'}</td>
+                    <td>${r.dateReservation || '-'}</td>
+                    <td>${r.dateExpiration || '-'}</td>
+                    <td>${r.statut}</td>
+                </tr>
+            `).join('');
+        } catch(e) { console.error('Erreur réservations:', e); }
+    }
+
+    // Rechercher un ouvrage
+    async function rechercherOuvrage() {
+        const titre = document.getElementById('search-input').value;
+        if (!titre) { chargerOuvrages(); return; }
+        try {
+            const res = await fetch(`${API}/api/ouvrages/recherche/titre?titre=${titre}`);
+            const ouvrages = await res.json();
+            const tbody = document.getElementById('ouvrages-table');
+            tbody.innerHTML = ouvrages.map(o => `
+                <tr>
+                    <td>${o.id}</td>
+                    <td>${o.titre}</td>
+                    <td>${o.auteur}</td>
+                    <td>${o.isbn || '-'}</td>
+                    <td>${o.exemplairesDisponibles}/${o.nombreExemplaires}</td>
+                    <td></td>
+                </tr>
+            `).join('');
+        } catch(e) { console.error('Erreur recherche:', e); }
+    }
+
+    // Ajouter un ouvrage
+    async function ajouterOuvrage() {
+        const ouvrage = {
+            titre: document.getElementById('titre').value,
+            auteur: document.getElementById('auteur').value,
+            isbn: document.getElementById('isbn').value,
+            nombreExemplaires: parseInt(document.getElementById('exemplaires').value)
+        };
+        try {
+            const res = await fetch(`${API}/api/ouvrages`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(ouvrage)
+            });
+            if (res.ok) {
+                afficherAlert('Ouvrage ajouté avec succès !', 'success');
+                fermerModal();
+                chargerOuvrages();
+                chargerStats();
+            }
+        } catch(e) { afficherAlert('Erreur lors de l\'ajout', 'error'); }
+    }
+
+    // Supprimer un ouvrage
+    async function supprimerOuvrage(id) {
+        if (!confirm('Confirmer la suppression ?')) return;
+        try {
+            await fetch(`${API}/api/ouvrages/${id}`, { method: 'DELETE' });
+            afficherAlert('Ouvrage supprimé !', 'success');
+            chargerOuvrages();
+            chargerStats();
+        } catch(e) { afficherAlert('Erreur suppression', 'error'); }
+    }
+
+    // Modal
+    function ouvrirModal() { document.getElementById('modal').classList.add('active'); }
+    function fermerModal() { document.getElementById('modal').classList.remove('active'); }
+
+    // Alert
+    function afficherAlert(msg, type) {
+        const alert = document.getElementById('alert');
+        alert.textContent = msg;
+        alert.className = `alert ${type}`;
+        setTimeout(() => { alert.className = 'alert'; }, 3000);
+    }
+
+    // Charger tout au démarrage
+    window.onload = () => {
+        chargerStats();
+        chargerOuvrages();
+        chargerEmprunts();
+        chargerReservations();
+    };
+</script>
+
+</body>
+</html>

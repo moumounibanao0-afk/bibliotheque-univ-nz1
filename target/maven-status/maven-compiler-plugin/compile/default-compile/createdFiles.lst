@@ -1,6 +1,7 @@
 com/bibliotheque/observer/Observable.class
 com/bibliotheque/model/Etudiant.class
 com/bibliotheque/strategy/PenaliteStandard.class
+com/bibliotheque/controller/HomeController.class
 com/bibliotheque/repository/OuvrageRepository.class
 com/bibliotheque/App.class
 com/bibliotheque/model/Categorie.class
