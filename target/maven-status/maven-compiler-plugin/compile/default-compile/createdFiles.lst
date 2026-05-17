@@ -4,6 +4,7 @@ com/bibliotheque/strategy/PenaliteStandard.class
 com/bibliotheque/controller/HomeController.class
 com/bibliotheque/repository/OuvrageRepository.class
 com/bibliotheque/App.class
+com/bibliotheque/controller/NotificationController.class
 com/bibliotheque/model/Categorie.class
 com/bibliotheque/observer/Observateur.class
 com/bibliotheque/strategy/PenaliteBoursier.class
@@ -14,6 +15,7 @@ com/bibliotheque/service/ReservationService.class
 com/bibliotheque/strategy/CalculPenalite.class
 com/bibliotheque/model/Reservation.class
 com/bibliotheque/model/StatutEmprunt.class
+com/bibliotheque/service/NotificationService.class
 com/bibliotheque/repository/EmpruntRepository.class
 com/bibliotheque/controller/StatistiqueController.class
 com/bibliotheque/config/DatabaseConfig.class

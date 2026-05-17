@@ -15,6 +15,7 @@
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/service/EmpruntService.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/observer/Observable.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/factory/UtilisateurFactory.java
+/home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/controller/NotificationController.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/strategy/PenaliteBoursier.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/observer/OuvrageDisponible.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/repository/UtilisateurRepository.java
@@ -31,3 +32,4 @@
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/App.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/model/Ouvrage.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/controller/HomeController.java
+/home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/service/NotificationService.java
