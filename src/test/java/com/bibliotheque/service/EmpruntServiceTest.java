@@ -22,6 +22,9 @@ public class EmpruntServiceTest {
     @Mock
     private OuvrageRepository ouvrageRepository;
 
+    @Mock
+    private NotificationService notificationService;
+
     @InjectMocks
     private EmpruntService empruntService;
 
@@ -35,6 +38,7 @@ public class EmpruntServiceTest {
         etudiant.setId(1L);
         etudiant.setNom("Moumouni");
         etudiant.setPrenom("Test");
+        etudiant.setEmail("test@gmail.com");
 
         ouvrage = new Ouvrage();
         ouvrage.setId(1L);
@@ -54,12 +58,14 @@ public class EmpruntServiceTest {
     void testCreerEmprunt() {
         when(ouvrageRepository.save(any(Ouvrage.class))).thenReturn(ouvrage);
         when(empruntRepository.save(any(Emprunt.class))).thenReturn(emprunt);
+        doNothing().when(notificationService).envoyerConfirmationEmprunt(any());
 
         Emprunt result = empruntService.creerEmprunt(etudiant, ouvrage);
 
         assertNotNull(result);
         assertEquals(StatutEmprunt.EN_COURS, result.getStatut());
         verify(empruntRepository, times(1)).save(any(Emprunt.class));
+        verify(notificationService, times(1)).envoyerConfirmationEmprunt(any());
     }
 
     @Test
@@ -95,7 +101,6 @@ public class EmpruntServiceTest {
         emprunt.setDateRetourReelle(LocalDate.now());
         emprunt.setDateRetourPrevue(LocalDate.now().plusDays(5));
         when(empruntRepository.findById(1L)).thenReturn(Optional.of(emprunt));
-
         double penalite = empruntService.calculerPenalite(1L);
         assertEquals(0.0, penalite);
     }
@@ -105,7 +110,6 @@ public class EmpruntServiceTest {
         emprunt.setDateRetourPrevue(LocalDate.now().minusDays(5));
         emprunt.setDateRetourReelle(LocalDate.now());
         when(empruntRepository.findById(1L)).thenReturn(Optional.of(emprunt));
-
         double penalite = empruntService.calculerPenalite(1L);
         assertEquals(500.0, penalite);
     }

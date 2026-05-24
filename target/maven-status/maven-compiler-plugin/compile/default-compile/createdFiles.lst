@@ -33,3 +33,4 @@ com/bibliotheque/controller/OuvrageController.class
 com/bibliotheque/controller/EmpruntController.class
 com/bibliotheque/model/Utilisateur.class
 com/bibliotheque/controller/CategorieController.class
+com/bibliotheque/controller/UtilisateurController.class

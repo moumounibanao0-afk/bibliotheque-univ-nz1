@@ -1,3 +1,4 @@
+
 ---
 title: "Rapport Final — Application de Gestion de Bibliothèque Universitaire"
 author: "Équipe de Développement — Université Norbert Zongo"
@@ -256,6 +257,94 @@ La couverture de code a été mesurée avec **JaCoCo** :
 
 ---
 
+## 5.6 Description des fonctionnalités implémentées
+
+### Gestion du catalogue
+Le module de gestion du catalogue permet aux bibliothécaires d'ajouter,
+modifier et supprimer des ouvrages. Chaque ouvrage possède un titre,
+un auteur, un ISBN unique, une description, une année de publication,
+un nombre d'exemplaires total et un nombre d'exemplaires disponibles.
+La catégorie de l'ouvrage est également gérée permettant une organisation
+par rayon de bibliothèque.
+
+### Système d'emprunt
+Le système d'emprunt vérifie automatiquement la disponibilité d'un ouvrage
+avant de créer un emprunt. Lors de la création d'un emprunt, le nombre
+d'exemplaires disponibles est décrémenté automatiquement. La date de retour
+prévue est calculée automatiquement à 14 jours après la date d'emprunt.
+Lors du retour, le nombre d'exemplaires disponibles est incrémenté.
+
+### Système de réservation
+Quand tous les exemplaires d'un ouvrage sont empruntés, l'étudiant peut
+créer une réservation. Le système vérifie qu'il n'existe pas déjà une
+réservation active pour le même étudiant et le même ouvrage. La réservation
+expire automatiquement après 7 jours si l'étudiant ne vient pas récupérer
+l'ouvrage.
+
+### Calcul des pénalités
+Le calcul des pénalités utilise le Pattern Strategy pour permettre
+différents modes de calcul. La pénalité standard est de 100 FCFA par jour
+de retard. La pénalité boursier est de 50 FCFA par jour de retard.
+Le calcul se fait automatiquement en comparant la date de retour réelle
+avec la date de retour prévue.
+
+### Système de notifications email
+Le système de notifications utilise Spring Mail avec le protocole SMTP
+de Gmail. Deux types de notifications sont implémentés :
+le rappel de retour avant la date limite et la notification de
+disponibilité d'un ouvrage réservé. Les notifications sont envoyées
+automatiquement par email à l'adresse de l'étudiant.
+
+### Statistiques et rapports
+Le module de statistiques fournit en temps réel le nombre total d'ouvrages,
+le nombre total d'emprunts, le nombre d'emprunts en cours, le nombre
+d'emprunts en retard, le nombre total de réservations et le nombre total
+d'utilisateurs. Ces statistiques sont accessibles via l'API REST et
+affichées sur l'interface web.
+
+## 5.7 Sécurité de l'application
+
+La sécurité de l'application est assurée par plusieurs mécanismes :
+
+### Configuration Spring Security
+Spring Security est configuré pour protéger toutes les routes de
+l'application. La configuration CSRF est désactivée pour permettre
+les requêtes API REST. Les headers CORS sont configurés pour permettre
+les requêtes depuis le frontend.
+
+### Authentification JWT
+Le système d'authentification utilise des tokens JWT (JSON Web Token).
+Chaque token contient l'identifiant de l'utilisateur, son rôle et
+une date d'expiration de 24 heures. Le secret JWT est stocké dans
+le fichier de configuration application.properties.
+
+### Protection des données
+Les mots de passe des utilisateurs sont stockés de façon sécurisée.
+Les informations sensibles comme les credentials de la base de données
+et le mot de passe email sont externalisés dans le fichier
+application.properties qui n'est pas commité sur GitHub public.
+
+## 5.8 Interface utilisateur
+
+L'interface web a été développée en HTML5, CSS3 et JavaScript pur
+sans framework frontend. Elle est responsive et s'adapte aux écrans
+d'ordinateur et mobile.
+
+### Page d'accueil
+La page d'accueil affiche les statistiques en temps réel, le catalogue
+des ouvrages avec recherche, l'historique des emprunts et les réservations.
+
+### Catalogue des ouvrages
+Le catalogue affiche tous les ouvrages avec leur titre, auteur, ISBN
+et le nombre d'exemplaires disponibles. Un bouton de recherche permet
+de filtrer par titre. Un bouton d'ajout permet aux bibliothécaires
+d'ajouter de nouveaux ouvrages.
+
+### Formulaire d'ajout
+Le formulaire d'ajout permet de saisir le titre, l'auteur, l'ISBN
+et le nombre d'exemplaires d'un nouvel ouvrage. La soumission du
+formulaire appelle l'API REST et met à jour le catalogue automatiquement.
+
 # 6. Gestion Agile (Scrum)
 
 ## 6.1 Organisation de l'équipe
@@ -348,4 +437,125 @@ La méthodologie Scrum a été appliquée avec succès à travers 3 sprints de 2
 - Améliorer l'interface utilisateur avec un framework moderne (React ou Angular)
 - Mettre en place une intégration continue (CI/CD) avec GitHub Actions
 - Déployer l'application sur un serveur cloud avec une base de données persistante
+---
 
+# 9. Hébergement et Déploiement
+
+## 9.1 Environnement local
+
+L'application fonctionne parfaitement en local avec la configuration suivante :
+
+- **URL** : http://localhost:8081
+- **Base de données** : MySQL 8.4 sur localhost:3306
+- **Java** : OpenJDK 21
+- **Maven** : 3.9.9
+
+## 9.2 Dockerisation
+
+Un Dockerfile a été fourni pour faciliter le déploiement :
+
+- Image de build : maven:3.9.5-eclipse-temurin-21
+- Image de production : eclipse-temurin:21-jre
+- Port exposé : 8081
+
+## 9.3 Tentative de déploiement sur Railway
+
+Une tentative de déploiement sur Railway (railway.app) a été réalisée :
+
+- Le code source est connecté au dépôt GitHub
+- La base de données PostgreSQL a été configurée
+- Le Dockerfile a été optimisé pour Railway
+- Des problèmes de configuration de port ont été rencontrés
+
+## 9.4 Conclusion sur l'hébergement
+
+L'application est pleinement fonctionnelle en environnement local.
+Le Dockerfile fourni permet un déploiement futur sur n'importe quelle
+plateforme supportant Docker (Railway, Render, AWS, Heroku, etc.).
+---
+
+# 10. Analyse de la qualité du code
+
+## 10.1 Respect des principes SOLID
+
+### Single Responsibility Principle (SRP)
+Chaque classe du projet a une seule responsabilité bien définie.
+La classe OuvrageService gère uniquement la logique métier des ouvrages.
+La classe EmpruntService gère uniquement la logique des emprunts.
+La classe NotificationService gère uniquement l'envoi des notifications.
+Les Controllers se chargent uniquement de recevoir et retourner les
+requêtes HTTP sans contenir de logique métier.
+
+### Open/Closed Principle (OCP)
+Les classes sont ouvertes à l'extension mais fermées à la modification.
+Le Pattern Strategy illustre parfaitement ce principe : pour ajouter
+un nouveau mode de calcul de pénalité, il suffit de créer une nouvelle
+classe implémentant l'interface CalculPenalite sans modifier le code
+existant.
+
+### Liskov Substitution Principle (LSP)
+Les sous-classes Etudiant, Bibliothecaire et Administrateur peuvent
+remplacer leur classe mère Utilisateur sans altérer le comportement
+du programme. Chaque sous-classe respecte le contrat défini par
+la classe mère.
+
+### Interface Segregation Principle (ISP)
+Les interfaces sont petites et spécifiques. L'interface Observable
+définit uniquement les méthodes liées à la gestion des observateurs.
+L'interface Observateur définit uniquement la méthode de réception
+des notifications. L'interface CalculPenalite définit uniquement
+la méthode de calcul.
+
+### Dependency Inversion Principle (DIP)
+Les classes de haut niveau ne dépendent pas des classes de bas niveau.
+Spring Boot gère l'injection de dépendances via l'annotation @Autowired.
+Les Controllers dépendent des interfaces de Service, pas des
+implémentations concrètes.
+
+## 10.2 Bonnes pratiques de développement
+
+### Conventions de nommage
+Les noms de classes, méthodes et variables suivent les conventions
+Java standard. Les classes utilisent le PascalCase, les méthodes
+et variables utilisent le camelCase, les constantes utilisent
+le UPPER_SNAKE_CASE.
+
+### Commentaires et documentation
+Chaque Design Pattern est documenté avec un commentaire expliquant
+son rôle et son utilisation. Les méthodes importantes sont commentées
+pour faciliter la maintenance et la compréhension du code.
+
+### Gestion des exceptions
+Les Controllers utilisent des blocs try/catch pour gérer les exceptions
+et retourner des messages d'erreur appropriés avec les codes HTTP
+correspondants (400, 404, 500).
+
+### Versionnement Git
+Le code est versionné avec Git en suivant les bonnes pratiques :
+messages de commit descriptifs, utilisation de branches séparées
+(main pour la production, develop pour le développement), et
+merge régulier entre les branches.
+
+## 10.3 Métriques de qualité
+
+| Métrique | Valeur |
+|---|---|
+| Nombre de classes Java | 33 |
+| Nombre de méthodes | 85+ |
+| Lignes de code | 1500+ |
+| Couverture de tests | 88% |
+| Nombre de tests | 28 |
+| Nombre d'endpoints API | 12 |
+| Design Patterns | 4 |
+| Commits GitHub | 20+ |
+
+## 10.4 Outils de qualité utilisés
+
+- **JUnit 5** : Framework de tests unitaires
+- **Mockito** : Framework de simulation pour les tests
+- **JaCoCo** : Outil de mesure de couverture de code
+- **Maven** : Outil de build et gestion des dépendances
+- **Git** : Système de contrôle de version
+- **GitHub** : Plateforme de collaboration et versionnement
+- **PlantUML** : Outil de génération de diagrammes UML
+- **GitHub Projects** : Outil de gestion de projet Scrum

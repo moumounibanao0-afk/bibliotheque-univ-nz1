@@ -15,6 +15,9 @@ public class ReservationService {
     @Autowired
     private OuvrageRepository ouvrageRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     public Reservation creerReservation(Etudiant etudiant, Ouvrage ouvrage) {
         if (reservationRepository.existsByEtudiantIdAndOuvrageIdAndStatut(
                 etudiant.getId(), ouvrage.getId(), StatutReservation.EN_ATTENTE)) {
@@ -25,14 +28,36 @@ public class ReservationService {
         reservation.setEtudiant(etudiant);
         reservation.setOuvrage(ouvrage);
         reservation.setStatut(StatutReservation.EN_ATTENTE);
-        return reservationRepository.save(reservation);
+
+        Reservation saved = reservationRepository.save(reservation);
+
+        // ✅ Notification confirmation réservation
+        notificationService.envoyerConfirmationReservation(saved);
+
+        return saved;
     }
 
     public Reservation annulerReservation(Long id) {
         Reservation reservation = reservationRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Réservation non trouvée"));
+                .orElseThrow(() -> new RuntimeException("Réservation non trouvée"));
+
         reservation.setStatut(StatutReservation.ANNULEE);
-        return reservationRepository.save(reservation);
+        Reservation saved = reservationRepository.save(reservation);
+
+        // ✅ Notification annulation
+        notificationService.envoyerAnnulationReservation(saved);
+
+        return saved;
+    }
+
+    // ✅ AJOUTÉ — notifier le premier étudiant en attente quand un ouvrage est retourné
+    public void notifierDisponibilite(Ouvrage ouvrage) {
+        List<Reservation> reservations = reservationRepository
+                .findByOuvrageIdAndStatut(ouvrage.getId(), StatutReservation.EN_ATTENTE);
+        if (!reservations.isEmpty()) {
+            Reservation premiere = reservations.get(0);
+            notificationService.envoyerNotificationDisponibilite(premiere);
+        }
     }
 
     public List<Reservation> getReservationsEtudiant(Long etudiantId) {

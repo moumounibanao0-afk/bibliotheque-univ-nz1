@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibliothèque UNZ</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            background: #0d1b2a;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        body::before {
+            content: ''; position: fixed;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(26,35,126,0.4) 0%, transparent 70%);
+            top: -100px; left: -100px;
+            animation: float1 8s ease-in-out infinite;
+        }
+        body::after {
+            content: ''; position: fixed;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(46,125,50,0.2) 0%, transparent 70%);
+            bottom: -50px; right: -50px;
+            animation: float2 10s ease-in-out infinite;
+        }
+        @keyframes float1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,30px)} }
+        @keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,-20px)} }
+
+        .card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px 45px;
+            width: 460px;
+            position: relative; z-index: 10;
+            animation: slideUp 0.6s ease;
+        }
+        @keyframes slideUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+
+        .logo { text-align: center; margin-bottom: 24px; }
+        .logo-icon { font-size: 42px; display: block; margin-bottom: 10px; }
+        .logo h1 { font-family: 'Playfair Display', serif; color: #fff; font-size: 23px; }
+        .logo p { color: rgba(255,255,255,0.4); font-size: 12px; margin-top: 4px; font-weight: 300; }
+
+        .tabs {
+            display: flex; gap: 4px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px; padding: 4px;
+            margin-bottom: 24px;
+        }
+        .tab {
+            flex: 1; padding: 9px;
+            background: transparent; border: none;
+            color: rgba(255,255,255,0.4);
+            border-radius: 7px; cursor: pointer;
+            font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+            transition: all 0.2s;
+        }
+        .tab.active { background: rgba(255,255,255,0.1); color: #fff; }
+
+        .form-section { display: none; }
+        .form-section.active { display: block; }
+
+        .form-group { margin-bottom: 14px; }
+        .form-group label {
+            display: block; color: rgba(255,255,255,0.55);
+            font-size: 11px; font-weight: 500;
+            letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px;
+        }
+        .form-group input {
+            width: 100%; padding: 11px 13px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 9px; color: #fff;
+            font-family: 'DM Sans', sans-serif; font-size: 14px;
+            transition: all 0.3s; outline: none;
+        }
+        .form-group input:focus {
+            border-color: rgba(100,160,255,0.5);
+            background: rgba(255,255,255,0.09);
+            box-shadow: 0 0 0 3px rgba(100,160,255,0.08);
+        }
+        .form-group input.valid { border-color: rgba(76,175,80,0.6); }
+        .form-group input.invalid { border-color: rgba(198,40,40,0.6); }
+        .form-group input::placeholder { color: rgba(255,255,255,0.2); }
+
+        .hint {
+            font-size: 11px; margin-top: 5px;
+            color: rgba(255,255,255,0.25);
+        }
+        .hint.error { color: #ef9a9a; }
+        .hint.ok { color: #a5d6a7; }
+
+        .form-row { display: flex; gap: 12px; }
+        .form-row .form-group { flex: 1; }
+
+        .btn-submit {
+            width: 100%; padding: 13px;
+            background: linear-gradient(135deg, #1a237e, #283593);
+            color: white; border: none; border-radius: 9px;
+            font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+            cursor: pointer; margin-top: 6px; transition: all 0.3s;
+        }
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #283593, #3949ab);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(26,35,126,0.5);
+        }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .msg {
+            padding: 11px 14px; border-radius: 8px;
+            font-size: 13px; margin-top: 12px;
+            text-align: center; display: none;
+        }
+        .msg.error { background: rgba(198,40,40,0.15); border: 1px solid rgba(198,40,40,0.3); color: #ef9a9a; display: block; }
+        .msg.success { background: rgba(46,125,50,0.15); border: 1px solid rgba(46,125,50,0.3); color: #a5d6a7; display: block; }
+
+        .spinner {
+            width: 15px; height: 15px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff; border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: inline-block; vertical-align: middle; margin-right: 6px;
+        }
+        @keyframes spin { to{transform:rotate(360deg)} }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="logo">
+        <span class="logo-icon">📚</span>
+        <h1>Bibliothèque UNZ</h1>
+        <p>Université Norbert Zongo</p>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="changerTab('login', this)">Se connecter</button>
+        <button class="tab" onclick="changerTab('register', this)">Créer un compte</button>
+    </div>
+
+    <!-- CONNEXION -->
+    <div id="form-login" class="form-section active">
+        <div class="form-group">
+            <label>Adresse Gmail</label>
+            <input type="email" id="login-email" placeholder="votre@gmail.com">
+        </div>
+        <div class="form-group">
+            <label>Mot de passe</label>
+            <input type="password" id="login-password" placeholder="••••••••"
+                   onkeydown="if(event.key==='Enter') seConnecter()">
+        </div>
+        <button class="btn-submit" onclick="seConnecter()" id="btn-login">Se connecter</button>
+        <div class="msg" id="msg-login"></div>
+    </div>
+
+    <!-- INSCRIPTION -->
+    <div id="form-register" class="form-section">
+        <div class="form-row">
+            <div class="form-group">
+                <label>Nom *</label>
+                <input type="text" id="reg-nom" placeholder="Dupont">
+            </div>
+            <div class="form-group">
+                <label>Prénom *</label>
+                <input type="text" id="reg-prenom" placeholder="Jean">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Adresse Gmail *</label>
+            <input type="email" id="reg-email" placeholder="votre@gmail.com"
+                   oninput="validerEmail(this)">
+            <div class="hint" id="hint-email">Seules les adresses @gmail.com sont acceptées</div>
+        </div>
+
+        <div class="form-group">
+            <label>INE *</label>
+            <input type="text" id="reg-ine" placeholder="N12345678901 ou E12345678901"
+                   oninput="validerINE(this)" maxlength="12">
+            <div class="hint" id="hint-ine">Commence par N ou E suivi de 11 chiffres (ex: N12345678901)</div>
+        </div>
+
+        <div class="form-group">
+            <label>Mot de passe *</label>
+            <input type="password" id="reg-password" placeholder="Minimum 6 caractères"
+                   oninput="validerPassword(this)">
+            <div class="hint" id="hint-password">Au moins 6 caractères</div>
+        </div>
+
+        <div class="form-group">
+            <label>Confirmer le mot de passe *</label>
+            <input type="password" id="reg-confirm" placeholder="Répétez le mot de passe"
+                   oninput="validerConfirm(this)"
+                   onkeydown="if(event.key==='Enter') sInscrire()">
+            <div class="hint" id="hint-confirm"></div>
+        </div>
+
+        <button class="btn-submit" onclick="sInscrire()" id="btn-register">Créer mon compte</button>
+        <div class="msg" id="msg-register"></div>
+    </div>
+</div>
+
+<script>
+const API = 'http://localhost:8081';
+
+function changerTab(tab, btn) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.form-section').forEach(f => f.classList.remove('active'));
+    document.getElementById(`form-${tab}`).classList.add('active');
+    btn.classList.add('active');
+    document.getElementById('msg-login').className = 'msg';
+    document.getElementById('msg-register').className = 'msg';
+}
+
+// Validations en temps réel
+function validerEmail(input) {
+    const hint = document.getElementById('hint-email');
+    if (input.value.endsWith('@gmail.com')) {
+        input.className = 'valid'; hint.textContent = '✓ Email valide'; hint.className = 'hint ok';
+    } else if (input.value.length > 0) {
+        input.className = 'invalid'; hint.textContent = '✗ Doit se terminer par @gmail.com'; hint.className = 'hint error';
+    } else {
+        input.className = ''; hint.textContent = 'Seules les adresses @gmail.com sont acceptées'; hint.className = 'hint';
+    }
+}
+
+function validerINE(input) {
+    const hint = document.getElementById('hint-ine');
+    const val = input.value.toUpperCase();
+    input.value = val;
+    const regex = /^[NE]\d{11}$/;
+    if (regex.test(val)) {
+        input.className = 'valid'; hint.textContent = '✓ INE valide'; hint.className = 'hint ok';
+    } else if (val.length > 0) {
+        input.className = 'invalid';
+        hint.textContent = '✗ Format : N ou E suivi de 11 chiffres exactement'; hint.className = 'hint error';
+    } else {
+        input.className = ''; hint.textContent = 'Commence par N ou E suivi de 11 chiffres (ex: N12345678901)'; hint.className = 'hint';
+    }
+}
+
+function validerPassword(input) {
+    const hint = document.getElementById('hint-password');
+    if (input.value.length >= 6) {
+        input.className = 'valid'; hint.textContent = '✓ Mot de passe valide'; hint.className = 'hint ok';
+    } else if (input.value.length > 0) {
+        input.className = 'invalid'; hint.textContent = '✗ Au moins 6 caractères requis'; hint.className = 'hint error';
+    } else {
+        input.className = ''; hint.textContent = 'Au moins 6 caractères'; hint.className = 'hint';
+    }
+    validerConfirm(document.getElementById('reg-confirm'));
+}
+
+function validerConfirm(input) {
+    const hint = document.getElementById('hint-confirm');
+    const password = document.getElementById('reg-password').value;
+    if (input.value.length === 0) { input.className = ''; hint.textContent = ''; return; }
+    if (input.value === password) {
+        input.className = 'valid'; hint.textContent = '✓ Mots de passe identiques'; hint.className = 'hint ok';
+    } else {
+        input.className = 'invalid'; hint.textContent = '✗ Les mots de passe ne correspondent pas'; hint.className = 'hint error';
+    }
+}
+
+async function seConnecter() {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const btn = document.getElementById('btn-login');
+
+    if (!email || !password) { afficherMsg('msg-login', 'Remplissez tous les champs', 'error'); return; }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Connexion...';
+    document.getElementById('msg-login').className = 'msg';
+
+    try {
+        const res = await fetch(`${API}/api/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, motDePasse: password })
+        });
+        const data = await res.json();
+
+        if (!res.ok) { afficherMsg('msg-login', data || 'Identifiants incorrects', 'error'); return; }
+
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('role', data.role);
+        localStorage.setItem('nom', data.nom);
+        localStorage.setItem('prenom', data.prenom);
+        localStorage.setItem('userId', data.id);
+
+        if (data.role === 'ADMINISTRATEUR' || data.role === 'BIBLIOTHECAIRE') {
+            window.location.href = 'admin.html';
+        } else {
+            window.location.href = 'etudiant.html';
+        }
+    } catch(e) {
+        afficherMsg('msg-login', 'Impossible de contacter le serveur', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Se connecter';
+    }
+}
+
+async function sInscrire() {
+    const nom = document.getElementById('reg-nom').value.trim();
+    const prenom = document.getElementById('reg-prenom').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const ine = document.getElementById('reg-ine').value.trim().toUpperCase();
+    const password = document.getElementById('reg-password').value;
+    const confirm = document.getElementById('reg-confirm').value;
+    const btn = document.getElementById('btn-register');
+
+    // Validations
+    if (!nom || !prenom || !email || !ine || !password || !confirm) {
+        afficherMsg('msg-register', 'Veuillez remplir tous les champs obligatoires (*)', 'error'); return;
+    }
+    if (!email.endsWith('@gmail.com')) {
+        afficherMsg('msg-register', 'Seules les adresses @gmail.com sont acceptées', 'error'); return;
+    }
+    if (!/^[NE]\d{11}$/.test(ine)) {
+        afficherMsg('msg-register', 'INE invalide : N ou E suivi de 11 chiffres exactement', 'error'); return;
+    }
+    if (password.length < 6) {
+        afficherMsg('msg-register', 'Le mot de passe doit faire au moins 6 caractères', 'error'); return;
+    }
+    if (password !== confirm) {
+        afficherMsg('msg-register', 'Les mots de passe ne correspondent pas', 'error'); return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Création du compte...';
+
+    try {
+        const res = await fetch(`${API}/api/utilisateurs/etudiant`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                nom, prenom, email,
+                motDePasse: password,
+                numeroEtudiant: ine
+            })
+        });
+        const data = await res.text();
+
+        if (!res.ok) { afficherMsg('msg-register', data, 'error'); return; }
+
+        afficherMsg('msg-register', '✅ Compte créé avec succès ! Connectez-vous.', 'success');
+        setTimeout(() => {
+            document.querySelectorAll('.tab')[0].click();
+            document.getElementById('login-email').value = email;
+        }, 2000);
+    } catch(e) {
+        afficherMsg('msg-register', 'Erreur serveur, réessayez', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Créer mon compte';
+    }
+}
+
+function afficherMsg(id, texte, type) {
+    const el = document.getElementById(id);
+    el.textContent = texte;
+    el.className = `msg ${type}`;
+}
+</script>
+</body>
+</html>

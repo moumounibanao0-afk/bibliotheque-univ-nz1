@@ -1,5 +1,4 @@
 package com.bibliotheque.controller;
-
 import com.bibliotheque.model.*;
 import com.bibliotheque.service.EmpruntService;
 import com.bibliotheque.repository.*;
@@ -23,18 +22,22 @@ public class EmpruntController {
     @Autowired
     private UtilisateurRepository utilisateurRepository;
 
+    // GET tous les emprunts ✅ AJOUTÉ
+    @GetMapping
+    public List<Emprunt> getTousEmprunts() {
+        return empruntService.getTousLesEmprunts();
+    }
+
     // POST créer un emprunt
     @PostMapping
     public ResponseEntity<?> creerEmprunt(@RequestBody Map<String, Long> request) {
         try {
             Etudiant etudiant = (Etudiant) utilisateurRepository
-                .findById(request.get("etudiantId"))
-                .orElseThrow(() -> new RuntimeException("Etudiant non trouvé"));
-
+                    .findById(request.get("etudiantId"))
+                    .orElseThrow(() -> new RuntimeException("Etudiant non trouvé"));
             Ouvrage ouvrage = ouvrageRepository
-                .findById(request.get("ouvrageId"))
-                .orElseThrow(() -> new RuntimeException("Ouvrage non trouvé"));
-
+                    .findById(request.get("ouvrageId"))
+                    .orElseThrow(() -> new RuntimeException("Ouvrage non trouvé"));
             Emprunt emprunt = empruntService.creerEmprunt(etudiant, ouvrage);
             return ResponseEntity.ok(emprunt);
         } catch (RuntimeException e) {

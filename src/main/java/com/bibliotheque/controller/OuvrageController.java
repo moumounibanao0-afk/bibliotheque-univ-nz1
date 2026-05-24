@@ -25,8 +25,8 @@ public class OuvrageController {
     @GetMapping("/{id}")
     public ResponseEntity<Ouvrage> getOuvrageParId(@PathVariable Long id) {
         return ouvrageService.getOuvrageParId(id)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // GET recherche par titre
@@ -39,6 +39,32 @@ public class OuvrageController {
     @GetMapping("/recherche/auteur")
     public List<Ouvrage> rechercherParAuteur(@RequestParam String auteur) {
         return ouvrageService.rechercherParAuteur(auteur);
+    }
+
+    // GET recherche par ISBN ✅ AJOUTÉ
+    @GetMapping("/recherche/isbn")
+    public ResponseEntity<Ouvrage> rechercherParIsbn(@RequestParam String isbn) {
+        return ouvrageService.rechercherParIsbn(isbn)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // GET recherche avancée multi-critères ✅ AJOUTÉ
+    @GetMapping("/recherche")
+    public List<Ouvrage> rechercheAvancee(@RequestParam String motCle) {
+        return ouvrageService.rechercheAvancee(motCle);
+    }
+
+    // GET recherche par catégorie ✅ AJOUTÉ
+    @GetMapping("/recherche/categorie")
+    public List<Ouvrage> rechercherParCategorie(@RequestParam String nom) {
+        return ouvrageService.rechercherParCategorie(nom);
+    }
+
+    // GET recherche par rayon ✅ AJOUTÉ
+    @GetMapping("/recherche/rayon")
+    public List<Ouvrage> rechercherParRayon(@RequestParam String rayon) {
+        return ouvrageService.rechercherParRayon(rayon);
     }
 
     // GET ouvrages disponibles

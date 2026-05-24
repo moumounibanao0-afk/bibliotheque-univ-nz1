@@ -1,8 +1,12 @@
+/home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/model/Bibliothecaire.java
+/home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/config/UtilisateurRepository.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/observer/Observateur.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/model/Role.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/strategy/PenaliteStandard.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/model/StatutEmprunt.java
+/home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/config/SecurityConfig.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/model/Etudiant.java
+/home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/controller/AuthController.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/model/Reservation.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/BibliothequeApplication.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/repository/CategorieRepository.java
@@ -12,6 +16,7 @@
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/repository/EmpruntRepository.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/model/Categorie.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/model/StatutReservation.java
+/home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/config/JwtFilter.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/service/EmpruntService.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/observer/Observable.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/factory/UtilisateurFactory.java
@@ -23,8 +28,10 @@
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/config/DatabaseConfig.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/repository/OuvrageRepository.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/controller/ReservationController.java
+/home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/config/JwtUtil.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/service/OuvrageService.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/model/Emprunt.java
+/home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/controller/UtilisateurController.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/model/Utilisateur.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/strategy/CalculPenalite.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/controller/EmpruntController.java

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Étudiant — Bibliothèque UNZ</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: #f0f2f5; color: #1a1a2e; }
+
+        nav {
+            background: #1b5e20; color: white; padding: 0 30px;
+            display: flex; justify-content: space-between; align-items: center;
+            height: 64px; position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.2);
+        }
+        .nav-brand { display: flex; align-items: center; gap: 12px; font-family: 'Playfair Display', serif; font-size: 18px; color: #fff; }
+        .nav-brand span { font-size: 24px; }
+        .nav-right { display: flex; align-items: center; gap: 14px; }
+        .nav-user { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 6px 14px; font-size: 13px; color: rgba(255,255,255,0.85); }
+        .btn-logout { background: rgba(198,40,40,0.2); border: 1px solid rgba(198,40,40,0.3); color: #ef9a9a; padding: 7px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+        .btn-logout:hover { background: rgba(198,40,40,0.35); }
+
+        .hero { background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 60%, #388e3c 100%); color: white; padding: 35px 30px; }
+        .hero h2 { font-family: 'Playfair Display', serif; font-size: 26px; margin-bottom: 6px; }
+        .hero p { color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 300; }
+
+        /* Cartes résumé étudiant */
+        .my-stats { display: flex; gap: 16px; padding: 20px 30px 0; flex-wrap: wrap; }
+        .my-stat { background: white; border-radius: 12px; padding: 16px 20px; flex: 1; min-width: 120px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border-left: 4px solid #2e7d32; }
+        .my-stat h3 { font-family: 'Playfair Display', serif; font-size: 28px; color: #2e7d32; }
+        .my-stat p { color: #888; font-size: 11px; margin-top: 3px; font-weight: 500; letter-spacing: 0.5px; }
+        .my-stat.warning { border-left-color: #e65100; } .my-stat.warning h3 { color: #e65100; }
+        .my-stat.danger { border-left-color: #c62828; } .my-stat.danger h3 { color: #c62828; }
+
+        .section { background: white; margin: 20px 30px; border-radius: 12px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid #f0f2f5; flex-wrap: wrap; gap: 10px; }
+        .section-header h3 { font-size: 16px; font-weight: 600; }
+
+        .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .toolbar input, .toolbar select { padding: 9px 14px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px; font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.2s; }
+        .toolbar input:focus, .toolbar select:focus { border-color: #2e7d32; }
+
+        .btn { padding: 9px 18px; background: #2e7d32; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 500; transition: all 0.2s; white-space: nowrap; }
+        .btn:hover { background: #1b5e20; transform: translateY(-1px); }
+        .btn-danger { background: #c62828; } .btn-danger:hover { background: #b71c1c; }
+        .btn-orange { background: #e65100; } .btn-orange:hover { background: #bf360c; }
+        .btn-sm { padding: 5px 12px; font-size: 12px; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #1b5e20; color: white; padding: 11px 14px; text-align: left; font-size: 12px; font-weight: 500; letter-spacing: 0.5px; }
+        th:first-child { border-radius: 6px 0 0 6px; } th:last-child { border-radius: 0 6px 6px 0; }
+        td { padding: 11px 14px; border-bottom: 1px solid #f0f2f5; font-size: 14px; }
+        tr:hover td { background: #fafafa; } tr:last-child td { border-bottom: none; }
+
+        .badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .badge-success { background: #e8f5e9; color: #2e7d32; }
+        .badge-warning { background: #fff3e0; color: #e65100; }
+        .badge-danger { background: #ffebee; color: #c62828; }
+        .badge-info { background: #e3f2fd; color: #0277bd; }
+
+        .alert { position: fixed; top: 80px; right: 20px; z-index: 2000; padding: 12px 20px; border-radius: 10px; font-size: 14px; display: none; min-width: 220px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.15); animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from{transform:translateX(50px);opacity:0} to{transform:translateX(0);opacity:1} }
+        .alert.success { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; display: block; }
+        .alert.error { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; display: block; }
+
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
+        .modal.active { display: flex; }
+        .modal-box { background: white; padding: 32px; border-radius: 16px; width: 400px; max-width: 90%; animation: slideUp 0.25s ease; }
+        @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+        .modal-box h3 { font-size: 18px; margin-bottom: 16px; color: #1b5e20; }
+        .modal-box p { font-size: 14px; color: #555; margin-bottom: 20px; line-height: 1.6; }
+        .modal-buttons { display: flex; gap: 10px; }
+
+        /* Détail ouvrage */
+        .ouvrage-detail { background: #f8f9fa; border-radius: 10px; padding: 14px; margin-bottom: 16px; font-size: 14px; }
+        .ouvrage-detail strong { color: #1b5e20; display: block; font-size: 16px; margin-bottom: 6px; }
+        .ouvrage-detail span { color: #666; display: block; margin-bottom: 3px; }
+
+        /* Retard warning */
+        .retard-banner { background: linear-gradient(135deg, #ffebee, #fce4ec); border: 1px solid #ef9a9a; border-radius: 10px; padding: 14px 18px; margin-bottom: 16px; font-size: 13px; color: #c62828; display: none; }
+        .retard-banner.show { display: block; }
+
+        footer { text-align: center; padding: 20px; color: #999; font-size: 13px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-brand"><span>📚</span> Bibliothèque UNZ — Espace Étudiant</div>
+    <div class="nav-right">
+        <div class="nav-user">👤 <span id="user-name">Étudiant</span></div>
+        <button class="btn-logout" onclick="seDeconnecter()">Déconnexion</button>
+    </div>
+</nav>
+
+<div class="hero">
+    <h2 id="hero-title">Bienvenue dans votre espace</h2>
+    <p>Consultez le catalogue, vos emprunts et vos réservations</p>
+</div>
+
+<div id="alert" class="alert"></div>
+
+<!-- CARTES RÉSUMÉ -->
+<div class="my-stats">
+    <div class="my-stat"><h3 id="my-emprunts">0</h3><p>MES EMPRUNTS</p></div>
+    <div class="my-stat warning"><h3 id="my-reservations">0</h3><p>MES RÉSERVATIONS</p></div>
+    <div class="my-stat danger"><h3 id="my-retards">0</h3><p>EN RETARD</p></div>
+</div>
+
+<!-- BANNIÈRE RETARD -->
+<div style="margin: 16px 30px 0;">
+    <div id="retard-banner" class="retard-banner">
+        ⚠️ <strong>Attention !</strong> Vous avez des emprunts en retard. Des pénalités s'appliquent. Veuillez retourner les ouvrages dès que possible.
+    </div>
+</div>
+
+<!-- CATALOGUE -->
+<div class="section">
+    <div class="section-header">
+        <h3>📖 Catalogue des Ouvrages</h3>
+        <div class="toolbar">
+            <input type="text" id="search-input" placeholder="Rechercher..." style="width:180px"
+                   onkeydown="if(event.key==='Enter') rechercherOuvrage()">
+            <select id="search-type" style="width:140px">
+                <option value="titre">Par titre</option>
+                <option value="auteur">Par auteur</option>
+                <option value="isbn">Par ISBN</option>
+                <option value="categorie">Par catégorie</option>
+                <option value="global">Multi-critères</option>
+            </select>
+            <button class="btn" onclick="rechercherOuvrage()">Rechercher</button>
+            <button class="btn" style="background:#555" onclick="chargerOuvrages()">Réinitialiser</button>
+        </div>
+    </div>
+    <table>
+        <thead><tr><th>Titre</th><th>Auteur</th><th>ISBN</th><th>Catégorie</th><th>Disponibilité</th><th>Action</th></tr></thead>
+        <tbody id="ouvrages-table"><tr><td colspan="6" style="text-align:center;padding:30px;color:#999">Chargement...</td></tr></tbody>
+    </table>
+</div>
+
+<!-- MES EMPRUNTS -->
+<div class="section">
+    <div class="section-header">
+        <h3>📋 Mes Emprunts</h3>
+        <span style="font-size:12px;color:#999">Les emprunts durent 14 jours</span>
+    </div>
+    <table>
+        <thead><tr><th>Ouvrage</th><th>Auteur</th><th>Date Emprunt</th><th>Date Retour</th><th>Statut</th></tr></thead>
+        <tbody id="emprunts-table"><tr><td colspan="5" style="text-align:center;padding:30px;color:#999">Chargement...</td></tr></tbody>
+    </table>
+</div>
+
+<!-- MES RÉSERVATIONS -->
+<div class="section">
+    <div class="section-header">
+        <h3>🔖 Mes Réservations</h3>
+        <span style="font-size:12px;color:#999">Vous serez notifié par email à la disponibilité</span>
+    </div>
+    <table>
+        <thead><tr><th>Ouvrage</th><th>Auteur</th><th>Date Réservation</th><th>Statut</th><th>Action</th></tr></thead>
+        <tbody id="reservations-table"><tr><td colspan="5" style="text-align:center;padding:30px;color:#999">Chargement...</td></tr></tbody>
+    </table>
+</div>
+
+<!-- MODAL RÉSERVATION -->
+<div id="modal-reservation" class="modal">
+    <div class="modal-box">
+        <h3>🔖 Réserver un ouvrage</h3>
+        <div class="ouvrage-detail" id="detail-ouvrage">
+            <strong id="reserve-titre">-</strong>
+            <span id="reserve-auteur">-</span>
+            <span id="reserve-isbn">-</span>
+        </div>
+        <p>Cet ouvrage n'est pas disponible actuellement. En le réservant, vous serez notifié par email dès qu'un exemplaire sera disponible.</p>
+        <div class="modal-buttons">
+            <button class="btn" onclick="confirmerReservation()">✅ Confirmer la réservation</button>
+            <button class="btn btn-danger" onclick="fermerModal()">Annuler</button>
+        </div>
+    </div>
+</div>
+
+<footer>© 2026 Bibliothèque Universitaire Norbert Zongo — Tous droits réservés</footer>
+
+<script>
+const API = 'http://localhost:8081';
+let userId = null;
+let ouvrageAReserver = null;
+
+window.onload = () => {
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+    if (!token) { window.location.href = 'login.html'; return; }
+    if (role === 'ADMINISTRATEUR' || role === 'BIBLIOTHECAIRE') { window.location.href = 'admin.html'; return; }
+
+    userId = localStorage.getItem('userId');
+    const nom = localStorage.getItem('nom') || '';
+    const prenom = localStorage.getItem('prenom') || '';
+    document.getElementById('user-name').textContent = `${prenom} ${nom}`;
+    document.getElementById('hero-title').textContent = `Bienvenue, ${prenom} !`;
+
+    chargerOuvrages();
+    chargerMesEmprunts();
+    chargerMesReservations();
+};
+
+function getHeaders() {
+    return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` };
+}
+
+function seDeconnecter() { localStorage.clear(); window.location.href = 'login.html'; }
+
+async function chargerOuvrages() {
+    try {
+        const res = await fetch(`${API}/api/ouvrages`, { headers: getHeaders() });
+        const ouvrages = await res.json();
+        afficherOuvrages(ouvrages);
+    } catch(e) { console.error(e); }
+}
+
+function afficherOuvrages(ouvrages) {
+    const tbody = document.getElementById('ouvrages-table');
+    if (!ouvrages.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:#999">Aucun ouvrage trouvé</td></tr>';
+        return;
+    }
+    tbody.innerHTML = ouvrages.map(o => `
+        <tr>
+            <td><strong>${o.titre}</strong>${o.description ? `<br><span style="font-size:12px;color:#999">${o.description}</span>` : ''}</td>
+            <td>${o.auteur}</td>
+            <td>${o.isbn || '-'}</td>
+            <td>${o.categorie ? `<span class="badge badge-info">${o.categorie.nom}</span><br><small style="color:#999">${o.categorie.rayon || ''}</small>` : '-'}</td>
+            <td>
+                <span class="badge ${o.exemplairesDisponibles > 0 ? 'badge-success' : 'badge-danger'}">
+                    ${o.exemplairesDisponibles > 0 ? '✅ Disponible' : '❌ Indisponible'}
+                </span>
+                <br><small style="color:#999">${o.exemplairesDisponibles}/${o.nombreExemplaires} ex.</small>
+            </td>
+            <td>
+                ${o.exemplairesDisponibles === 0
+                    ? `<button class="btn btn-orange btn-sm" onclick="ouvrirReservation(${o.id}, '${o.titre.replace(/'/g,"\\'")}', '${o.auteur}', '${o.isbn || ''}')">🔖 Réserver</button>`
+                    : '<span style="color:#999;font-size:12px">Disponible en bibliothèque</span>'
+                }
+            </td>
+        </tr>`).join('');
+}
+
+async function rechercherOuvrage() {
+    const val = document.getElementById('search-input').value.trim();
+    const type = document.getElementById('search-type').value;
+    if (!val) { chargerOuvrages(); return; }
+    try {
+        let url;
+        if (type === 'titre') url = `${API}/api/ouvrages/recherche/titre?titre=${encodeURIComponent(val)}`;
+        else if (type === 'auteur') url = `${API}/api/ouvrages/recherche/auteur?auteur=${encodeURIComponent(val)}`;
+        else if (type === 'isbn') url = `${API}/api/ouvrages/recherche/isbn?isbn=${encodeURIComponent(val)}`;
+        else if (type === 'categorie') url = `${API}/api/ouvrages/recherche/categorie?nom=${encodeURIComponent(val)}`;
+        else url = `${API}/api/ouvrages/recherche?motCle=${encodeURIComponent(val)}`;
+
+        const res = await fetch(url, { headers: getHeaders() });
+        let ouvrages = await res.json();
+        if (!Array.isArray(ouvrages)) ouvrages = ouvrages ? [ouvrages] : [];
+        afficherOuvrages(ouvrages);
+    } catch(e) { console.error(e); }
+}
+
+async function chargerMesEmprunts() {
+    if (!userId) return;
+    try {
+        const res = await fetch(`${API}/api/emprunts/etudiant/${userId}`, { headers: getHeaders() });
+        const emprunts = await res.json();
+        const tbody = document.getElementById('emprunts-table');
+
+        // Compteurs
+        const enCours = emprunts.filter(e => e.statut === 'EN_COURS').length;
+        const enRetard = emprunts.filter(e => e.statut === 'EN_RETARD').length;
+        document.getElementById('my-emprunts').textContent = enCours;
+        document.getElementById('my-retards').textContent = enRetard;
+
+        // Bannière retard
+        if (enRetard > 0) document.getElementById('retard-banner').classList.add('show');
+
+        if (!emprunts.length) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:#999">Aucun emprunt</td></tr>';
+            return;
+        }
+        tbody.innerHTML = emprunts.map(e => {
+            const retard = e.statut === 'EN_RETARD';
+            return `<tr ${retard ? 'style="background:#fff8f8"' : ''}>
+                <td><strong>${e.ouvrage ? e.ouvrage.titre : '-'}</strong></td>
+                <td>${e.ouvrage ? e.ouvrage.auteur : '-'}</td>
+                <td>${e.dateEmprunt || '-'}</td>
+                <td style="${retard ? 'color:#c62828;font-weight:600' : ''}">${e.dateRetourPrevue || '-'}</td>
+                <td><span class="badge ${e.statut === 'EN_COURS' ? 'badge-warning' : e.statut === 'RETOURNE' ? 'badge-success' : 'badge-danger'}">${e.statut}</span>
+                ${retard ? '<br><small style="color:#c62828">⚠️ Pénalité en cours</small>' : ''}</td>
+            </tr>`;
+        }).join('');
+    } catch(e) { console.error(e); }
+}
+
+async function chargerMesReservations() {
+    if (!userId) return;
+    try {
+        const res = await fetch(`${API}/api/reservations`, { headers: getHeaders() });
+        const toutes = await res.json();
+        const miennes = toutes.filter(r => r.etudiant && String(r.etudiant.id) === String(userId));
+        const tbody = document.getElementById('reservations-table');
+
+        // Compteur
+        const enAttente = miennes.filter(r => r.statut === 'EN_ATTENTE').length;
+        document.getElementById('my-reservations').textContent = enAttente;
+
+        if (!miennes.length) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:#999">Aucune réservation</td></tr>';
+            return;
+        }
+        tbody.innerHTML = miennes.map(r => `
+            <tr>
+                <td><strong>${r.ouvrage ? r.ouvrage.titre : '-'}</strong></td>
+                <td>${r.ouvrage ? r.ouvrage.auteur : '-'}</td>
+                <td>${r.dateReservation || '-'}</td>
+                <td><span class="badge ${r.statut === 'EN_ATTENTE' ? 'badge-warning' : r.statut === 'CONFIRMEE' ? 'badge-success' : 'badge-danger'}">${r.statut}</span></td>
+                <td>${r.statut === 'EN_ATTENTE'
+                    ? `<button class="btn btn-danger btn-sm" onclick="annulerReservation(${r.id})">Annuler</button>`
+                    : '-'}</td>
+            </tr>`).join('');
+    } catch(e) { console.error(e); }
+}
+
+function ouvrirReservation(ouvrageId, titre, auteur, isbn) {
+    ouvrageAReserver = ouvrageId;
+    document.getElementById('reserve-titre').textContent = titre;
+    document.getElementById('reserve-auteur').textContent = '✍️ ' + auteur;
+    document.getElementById('reserve-isbn').textContent = isbn ? 'ISBN : ' + isbn : '';
+    document.getElementById('modal-reservation').classList.add('active');
+}
+
+function fermerModal() {
+    document.getElementById('modal-reservation').classList.remove('active');
+    ouvrageAReserver = null;
+}
+
+async function confirmerReservation() {
+    if (!ouvrageAReserver || !userId) return;
+    try {
+        const res = await fetch(`${API}/api/reservations`, {
+            method: 'POST', headers: getHeaders(),
+            body: JSON.stringify({ etudiantId: parseInt(userId), ouvrageId: ouvrageAReserver })
+        });
+        if (res.ok) {
+            afficherAlert('✅ Réservation créée ! Vous serez notifié par email.', 'success');
+            fermerModal();
+            chargerMesReservations();
+        } else {
+            const err = await res.text();
+            afficherAlert(err, 'error');
+        }
+    } catch(e) { afficherAlert('Erreur serveur', 'error'); }
+}
+
+async function annulerReservation(id) {
+    if (!confirm('Annuler cette réservation ?')) return;
+    try {
+        const res = await fetch(`${API}/api/reservations/${id}/annuler`, { method: 'PUT', headers: getHeaders() });
+        if (res.ok) {
+            afficherAlert('Réservation annulée !', 'success');
+            chargerMesReservations();
+            chargerOuvrages();
+        }
+    } catch(e) { afficherAlert('Erreur annulation', 'error'); }
+}
+
+function afficherAlert(msg, type) {
+    const alert = document.getElementById('alert');
+    alert.textContent = msg;
+    alert.className = `alert ${type}`;
+    clearTimeout(window._alertTimer);
+    window._alertTimer = setTimeout(() => { alert.className = 'alert'; }, 4000);
+}
+</script>
+</body>
+</html>
