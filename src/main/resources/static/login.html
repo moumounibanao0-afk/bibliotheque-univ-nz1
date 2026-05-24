@@ -149,7 +149,7 @@
     <div id="form-login" class="form-section active">
         <div class="form-group">
             <label>Adresse Gmail</label>
-            <input type="email" id="login-email" placeholder="votre@gmail.com">
+            <input type="email" id="login-email" placeholder="votre@unz.bf">
         </div>
         <div class="form-group">
             <label>Mot de passe</label>
@@ -175,9 +175,9 @@
 
         <div class="form-group">
             <label>Adresse Gmail *</label>
-            <input type="email" id="reg-email" placeholder="votre@gmail.com"
+            <input type="email" id="reg-email" placeholder="votre@unz.bf"
                    oninput="validerEmail(this)">
-            <div class="hint" id="hint-email">Seules les adresses @gmail.com sont acceptées</div>
+            <div class="hint" id="hint-email">Adresses @gmail.com ou @unz.bf acceptées</div>
         </div>
 
         <div class="form-group">
@@ -222,12 +222,12 @@ function changerTab(tab, btn) {
 // Validations en temps réel
 function validerEmail(input) {
     const hint = document.getElementById('hint-email');
-    if (input.value.endsWith('@gmail.com')) {
+    if (input.value.endsWith('@gmail.com') || input.value.endsWith('@unz.bf')) {
         input.className = 'valid'; hint.textContent = '✓ Email valide'; hint.className = 'hint ok';
     } else if (input.value.length > 0) {
-        input.className = 'invalid'; hint.textContent = '✗ Doit se terminer par @gmail.com'; hint.className = 'hint error';
+        input.className = 'invalid'; hint.textContent = '✗ Doit se terminer par @gmail.com ou @unz.bf'; hint.className = 'hint error';
     } else {
-        input.className = ''; hint.textContent = 'Seules les adresses @gmail.com sont acceptées'; hint.className = 'hint';
+        input.className = ''; hint.textContent = 'Adresses @gmail.com ou @unz.bf acceptées'; hint.className = 'hint';
     }
 }
 
@@ -322,8 +322,8 @@ async function sInscrire() {
     if (!nom || !prenom || !email || !ine || !password || !confirm) {
         afficherMsg('msg-register', 'Veuillez remplir tous les champs obligatoires (*)', 'error'); return;
     }
-    if (!email.endsWith('@gmail.com')) {
-        afficherMsg('msg-register', 'Seules les adresses @gmail.com sont acceptées', 'error'); return;
+    if (!email.endsWith('@gmail.com') && !email.endsWith('@unz.bf')) {
+        afficherMsg('msg-register', 'Adresses @gmail.com ou @unz.bf acceptées', 'error'); return;
     }
     if (!/^[NE]\d{11}$/.test(ine)) {
         afficherMsg('msg-register', 'INE invalide : N ou E suivi de 11 chiffres exactement', 'error'); return;

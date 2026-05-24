@@ -1,11 +1,14 @@
 package com.bibliotheque.controller;
 
 import com.bibliotheque.model.Ouvrage;
+import com.bibliotheque.model.Categorie;
+import com.bibliotheque.repository.CategorieRepository;
 import com.bibliotheque.service.OuvrageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/ouvrages")
@@ -14,6 +17,8 @@ public class OuvrageController {
 
     @Autowired
     private OuvrageService ouvrageService;
+    @Autowired
+    private CategorieRepository categorieRepository;
 
     // GET tous les ouvrages
     @GetMapping
@@ -75,13 +80,36 @@ public class OuvrageController {
 
     // POST ajouter ouvrage
     @PostMapping
-    public Ouvrage ajouterOuvrage(@RequestBody Ouvrage ouvrage) {
+    public Ouvrage ajouterOuvrage(@RequestBody Map<String, Object> body) {
+        Ouvrage ouvrage = new Ouvrage();
+        ouvrage.setTitre((String) body.get("titre"));
+        ouvrage.setAuteur((String) body.get("auteur"));
+        ouvrage.setIsbn((String) body.get("isbn"));
+        ouvrage.setDescription((String) body.get("description"));
+        if (body.get("anneePublication") != null)
+            ouvrage.setAnneePublication((Integer) body.get("anneePublication"));
+        if (body.get("nombreExemplaires") != null)
+            ouvrage.setNombreExemplaires((Integer) body.get("nombreExemplaires"));
+        if (body.get("categorieId") != null) {
+            Long catId = Long.valueOf(body.get("categorieId").toString());
+            categorieRepository.findById(catId).ifPresent(ouvrage::setCategorie);
+        }
         return ouvrageService.ajouterOuvrage(ouvrage);
     }
 
     // PUT modifier ouvrage
     @PutMapping("/{id}")
-    public Ouvrage modifierOuvrage(@PathVariable Long id, @RequestBody Ouvrage ouvrage) {
+    public Ouvrage modifierOuvrage(@PathVariable Long id, @RequestBody Map<String, Object> body) {
+        Ouvrage ouvrage = ouvrageService.getOuvrageParId(id).orElseThrow();
+        if (body.get("titre") != null) ouvrage.setTitre((String) body.get("titre"));
+        if (body.get("auteur") != null) ouvrage.setAuteur((String) body.get("auteur"));
+        if (body.get("isbn") != null) ouvrage.setIsbn((String) body.get("isbn"));
+        if (body.get("anneePublication") != null) ouvrage.setAnneePublication((Integer) body.get("anneePublication"));
+        if (body.get("nombreExemplaires") != null) ouvrage.setNombreExemplaires((Integer) body.get("nombreExemplaires"));
+        if (body.get("categorieId") != null) {
+            Long catId = Long.valueOf(body.get("categorieId").toString());
+            categorieRepository.findById(catId).ifPresent(ouvrage::setCategorie);
+        }
         return ouvrageService.modifierOuvrage(id, ouvrage);
     }
 

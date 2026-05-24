@@ -366,7 +366,7 @@ async function annulerReservation(id) {
         const res = await fetch(`${API}/api/reservations/${id}/annuler`, { method: 'PUT', headers: getHeaders() });
         if (res.ok) {
             afficherAlert('Réservation annulée !', 'success');
-            chargerMesReservations();
+            chargerMesReservations(); chargerMesEmprunts();
             chargerOuvrages();
         }
     } catch(e) { afficherAlert('Erreur annulation', 'error'); }

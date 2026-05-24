@@ -36,16 +36,11 @@ public class StatistiqueController {
         stats.put("totalEmprunts", empruntRepository.count());
         stats.put("totalUtilisateurs", utilisateurRepository.count());
         stats.put("totalReservations", reservationRepository.count());
-        stats.put("empruntsEnCours", empruntRepository
-                .findByStatut(StatutEmprunt.EN_COURS).size());
-        stats.put("empruntsEnRetard", empruntRepository
-                .findByStatut(StatutEmprunt.EN_RETARD).size());
-        stats.put("reservationsEnAttente", reservationRepository
-                .findByStatut(StatutReservation.EN_ATTENTE).size());
-        stats.put("ouvragesDisponibles", ouvrageRepository
-                .findByExemplairesDisponiblesGreaterThan(0).size());
+        stats.put("empruntsEnCours", empruntRepository.findByStatut(StatutEmprunt.EN_COURS).size());
+        stats.put("empruntsEnRetard", empruntRepository.findByStatut(StatutEmprunt.EN_RETARD).size());
+        stats.put("reservationsEnAttente", reservationRepository.findByStatut(StatutReservation.EN_ATTENTE).size());
+        stats.put("ouvragesDisponibles", ouvrageRepository.findByExemplairesDisponiblesGreaterThan(0).size());
 
-        // Taux de retard
         long totalEmprunts = empruntRepository.count();
         long enRetard = empruntRepository.findByStatut(StatutEmprunt.EN_RETARD).size();
         double tauxRetard = totalEmprunts > 0 ? (enRetard * 100.0 / totalEmprunts) : 0;

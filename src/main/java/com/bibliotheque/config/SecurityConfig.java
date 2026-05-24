@@ -55,7 +55,7 @@ public class SecurityConfig {
 
                 // 🔒 ADMIN UNIQUEMENT — gestion utilisateurs et statistiques
                 .requestMatchers("/api/utilisateurs/**").hasRole("ADMINISTRATEUR")
-                .requestMatchers("/api/statistiques/**").hasRole("ADMINISTRATEUR")
+                .requestMatchers("/api/statistiques/**").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
 
                 // 🔒 Tout le reste — connecté
                 .anyRequest().authenticated()

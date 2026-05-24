@@ -383,7 +383,7 @@ async function chargerStats() {
         const d = await res.json();
         document.getElementById('stat-ouvrages').textContent = d.totalOuvrages || 0;
         document.getElementById('stat-emprunts').textContent = d.totalEmprunts || 0;
-        document.getElementById('stat-reservations').textContent = d.totalReservations || 0;
+        document.getElementById('stat-reservations').textContent = d.reservationsEnAttente || 0;
         document.getElementById('stat-utilisateurs').textContent = d.totalUtilisateurs || 0;
         document.getElementById('stat-en-cours').textContent = d.empruntsEnCours || 0;
         document.getElementById('stat-retard').textContent = d.empruntsEnRetard || 0;
@@ -447,7 +447,7 @@ async function chargerOuvrages() {
                 <td>${o.isbn || '-'}</td>
                 <td>${o.categorie ? `<span class="badge badge-info">${o.categorie.nom}</span>` : '-'}</td>
                 <td><span class="badge ${o.exemplairesDisponibles > 0 ? 'badge-success' : 'badge-danger'}">${o.exemplairesDisponibles}/${o.nombreExemplaires}</span></td>
-                <td><button class="btn btn-danger btn-sm" onclick="supprimerOuvrage(${o.id})">Supprimer</button></td>
+                <td><button class="btn btn-warning btn-sm" onclick="ouvrirModalModifier(${o.id},'${o.titre}','${o.auteur}','${o.isbn || ""}',${o.anneePublication},${o.nombreExemplaires},${o.categorie ? o.categorie.id : 0})">Modifier</button> <button class="btn btn-danger btn-sm" onclick="supprimerOuvrage(${o.id})">Supprimer</button></td>
             </tr>`).join('');
     } catch(e) { console.error('Ouvrages:', e); }
 }
@@ -578,7 +578,7 @@ async function rechercherOuvrage() {
                 <td>${o.isbn || '-'}</td>
                 <td>${o.categorie ? `<span class="badge badge-info">${o.categorie.nom}</span>` : '-'}</td>
                 <td><span class="badge ${o.exemplairesDisponibles > 0 ? 'badge-success' : 'badge-danger'}">${o.exemplairesDisponibles}/${o.nombreExemplaires}</span></td>
-                <td><button class="btn btn-danger btn-sm" onclick="supprimerOuvrage(${o.id})">Supprimer</button></td>
+                <td><button class="btn btn-warning btn-sm" onclick="ouvrirModalModifier(${o.id},'${o.titre}','${o.auteur}','${o.isbn || ""}',${o.anneePublication},${o.nombreExemplaires},${o.categorie ? o.categorie.id : 0})">Modifier</button> <button class="btn btn-danger btn-sm" onclick="supprimerOuvrage(${o.id})">Supprimer</button></td>
             </tr>`).join('');
     } catch(e) { console.error(e); }
 }
@@ -743,6 +743,112 @@ function afficherAlert(msg, type) {
     alert.className = `alert ${type}`;
     clearTimeout(window._alertTimer);
     window._alertTimer = setTimeout(() => { alert.className = 'alert'; }, 3500);
+}
+</script>
+
+<!-- Modal Modifier Ouvrage -->
+<div id="modal-modifier" class="modal">
+  <div class="modal-content">
+    <h3>Modifier l'Ouvrage</h3>
+    <input type="hidden" id="modifier-id">
+    <div class="form-group"><label>Titre *</label><input type="text" id="modifier-titre"></div>
+    <div class="form-group"><label>Auteur *</label><input type="text" id="modifier-auteur"></div>
+    <div class="form-group"><label>ISBN</label><input type="text" id="modifier-isbn"></div>
+    <div class="form-group"><label>Année</label><input type="number" id="modifier-annee"></div>
+    <div class="form-group"><label>Exemplaires</label><input type="number" id="modifier-exemplaires"></div>
+    <div class="form-group"><label>Catégorie</label>
+      <select id="modifier-categorie">
+        <option value="">-- Choisir --</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:15px">
+      <button class="btn btn-primary" onclick="sauvegarderModification()">Enregistrer</button>
+      <button class="btn btn-secondary" onclick="fermerModal('modal-modifier')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<script>
+async function ouvrirModalModifier(id, titre, auteur, isbn, annee, exemplaires, catId) {
+    document.getElementById("modifier-id").value = id;
+    document.getElementById("modifier-titre").value = titre;
+    document.getElementById("modifier-auteur").value = auteur;
+    document.getElementById("modifier-isbn").value = isbn;
+    document.getElementById("modifier-annee").value = annee;
+    document.getElementById("modifier-exemplaires").value = exemplaires;
+    // Charger les catégories
+    const res = await fetch(`${API}/api/categories`, { headers: getHeaders() });
+    const cats = await res.json();
+    const sel = document.getElementById("modifier-categorie");
+    sel.innerHTML = '<option value="">-- Choisir --</option>' + cats.map(c => `<option value="${c.id}" ${c.id == catId ? "selected" : ""}>${c.nom}</option>`).join("");
+    ouvrirModal("modal-modifier");
+}
+async function sauvegarderModification() {
+    const id = document.getElementById("modifier-id").value;
+    const data = {
+        titre: document.getElementById("modifier-titre").value,
+        auteur: document.getElementById("modifier-auteur").value,
+        isbn: document.getElementById("modifier-isbn").value,
+        anneePublication: parseInt(document.getElementById("modifier-annee").value),
+        nombreExemplaires: parseInt(document.getElementById("modifier-exemplaires").value),
+        categorieId: parseInt(document.getElementById("modifier-categorie").value) || null
+    };
+    const res = await fetch(`${API}/api/ouvrages/${id}`, { method: "PUT", headers: getHeaders(), body: JSON.stringify(data) });
+    if (res.ok) { afficherAlert("Ouvrage modifié !", "success"); fermerModal("modal-modifier"); chargerOuvrages(); chargerStats(); }
+    else { afficherAlert("Erreur modification", "error"); }
+}
+</script>
+
+<!-- Modal Modifier Ouvrage -->
+<div id="modal-modifier" class="modal">
+  <div class="modal-content">
+    <h3>Modifier l'Ouvrage</h3>
+    <input type="hidden" id="modifier-id">
+    <div class="form-group"><label>Titre *</label><input type="text" id="modifier-titre"></div>
+    <div class="form-group"><label>Auteur *</label><input type="text" id="modifier-auteur"></div>
+    <div class="form-group"><label>ISBN</label><input type="text" id="modifier-isbn"></div>
+    <div class="form-group"><label>Année</label><input type="number" id="modifier-annee"></div>
+    <div class="form-group"><label>Exemplaires</label><input type="number" id="modifier-exemplaires"></div>
+    <div class="form-group"><label>Catégorie</label>
+      <select id="modifier-categorie">
+        <option value="">-- Choisir --</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:15px">
+      <button class="btn btn-primary" onclick="sauvegarderModification()">Enregistrer</button>
+      <button class="btn btn-secondary" onclick="fermerModal('modal-modifier')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<script>
+async function ouvrirModalModifier(id, titre, auteur, isbn, annee, exemplaires, catId) {
+    document.getElementById("modifier-id").value = id;
+    document.getElementById("modifier-titre").value = titre;
+    document.getElementById("modifier-auteur").value = auteur;
+    document.getElementById("modifier-isbn").value = isbn;
+    document.getElementById("modifier-annee").value = annee;
+    document.getElementById("modifier-exemplaires").value = exemplaires;
+    // Charger les catégories
+    const res = await fetch(`${API}/api/categories`, { headers: getHeaders() });
+    const cats = await res.json();
+    const sel = document.getElementById("modifier-categorie");
+    sel.innerHTML = '<option value="">-- Choisir --</option>' + cats.map(c => `<option value="${c.id}" ${c.id == catId ? "selected" : ""}>${c.nom}</option>`).join("");
+    ouvrirModal("modal-modifier");
+}
+async function sauvegarderModification() {
+    const id = document.getElementById("modifier-id").value;
+    const data = {
+        titre: document.getElementById("modifier-titre").value,
+        auteur: document.getElementById("modifier-auteur").value,
+        isbn: document.getElementById("modifier-isbn").value,
+        anneePublication: parseInt(document.getElementById("modifier-annee").value),
+        nombreExemplaires: parseInt(document.getElementById("modifier-exemplaires").value),
+        categorieId: parseInt(document.getElementById("modifier-categorie").value) || null
+    };
+    const res = await fetch(`${API}/api/ouvrages/${id}`, { method: "PUT", headers: getHeaders(), body: JSON.stringify(data) });
+    if (res.ok) { afficherAlert("Ouvrage modifié !", "success"); fermerModal("modal-modifier"); chargerOuvrages(); chargerStats(); }
+    else { afficherAlert("Erreur modification", "error"); }
 }
 </script>
 </body>

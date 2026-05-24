@@ -90,7 +90,11 @@ public class UtilisateurController {
     // DELETE supprimer utilisateur — admin uniquement
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> supprimerUtilisateur(@PathVariable Long id) {
-        utilisateurRepository.deleteById(id);
-        return ResponseEntity.ok().build();
+        try {
+            utilisateurRepository.deleteById(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }
