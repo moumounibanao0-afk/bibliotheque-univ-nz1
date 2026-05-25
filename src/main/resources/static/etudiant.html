@@ -241,7 +241,7 @@ function afficherOuvrages(ouvrages) {
             <td>
                 ${o.exemplairesDisponibles === 0
                     ? `<button class="btn btn-orange btn-sm" onclick="ouvrirReservation(${o.id}, '${o.titre.replace(/'/g,"\\'")}', '${o.auteur}', '${o.isbn || ''}')">🔖 Réserver</button>`
-                    : '<span style="color:#999;font-size:12px">Disponible en bibliothèque</span>'
+                    : `<button class="btn btn-success btn-sm" onclick="emprunterOuvrage(${o.id}, '${o.titre}')">📚 Emprunter</button>`
                 }
             </td>
         </tr>`).join('');
@@ -378,6 +378,28 @@ function afficherAlert(msg, type) {
     alert.className = `alert ${type}`;
     clearTimeout(window._alertTimer);
     window._alertTimer = setTimeout(() => { alert.className = 'alert'; }, 4000);
+}
+</script>
+
+<script>
+async function emprunterOuvrage(ouvrageId, titre) {
+    if (!confirm('Emprunter "' + titre + '" ?')) return;
+    try {
+        const res = await fetch(`${API}/api/emprunts`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ etudiantId: userId, ouvrageId: ouvrageId })
+        });
+        if (res.ok) {
+            afficherAlert('Emprunt enregistré ! Durée : 14 jours.', 'success');
+            chargerOuvrages();
+            chargerMesEmprunts();
+            chargerStats();
+        } else {
+            const msg = await res.text();
+            afficherAlert('Erreur : ' + msg, 'error');
+        }
+    } catch(e) { afficherAlert('Erreur connexion', 'error'); }
 }
 </script>
 </body>

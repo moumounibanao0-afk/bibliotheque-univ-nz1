@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/ouvrages").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
                 .requestMatchers(HttpMethod.PUT, "/api/ouvrages/**").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
                 .requestMatchers(HttpMethod.DELETE, "/api/ouvrages/**").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
-                .requestMatchers(HttpMethod.POST, "/api/emprunts").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
+                .requestMatchers(HttpMethod.POST, "/api/emprunts").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/emprunts/**").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
                 .requestMatchers(HttpMethod.GET, "/api/emprunts").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
                 .requestMatchers(HttpMethod.POST, "/api/categories/**").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
