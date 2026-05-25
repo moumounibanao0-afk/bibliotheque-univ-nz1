@@ -9,7 +9,7 @@ services:
       - key: SPRING_DATASOURCE_USERNAME
         value: avnadmin
       - key: SPRING_DATASOURCE_PASSWORD
-        value: AVNS_SzBpCElp8jT1V0dbPMC
+        value: AVNS_SzBpCEIp8jT1V0dbPMC
       - key: JWT_SECRET
         value: bibliothequeUnivNZSecretKey2024XYZ
       - key: SPRING_MAIL_USERNAME
