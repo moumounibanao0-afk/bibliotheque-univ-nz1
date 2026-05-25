@@ -5,11 +5,11 @@ services:
     dockerfilePath: ./Dockerfile
     envVars:
       - key: SPRING_DATASOURCE_URL
-        value: jdbc:mysql://sql8.freesqldatabase.com:3306/sql8828189?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+        value: jdbc:mysql://mysql-3c88a380-banaomoumouni12-43fa.c.aivencloud.com:19836/defaultdb?useSSL=true&requireSSL=true&allowPublicKeyRetrieval=true&serverTimezone=UTC
       - key: SPRING_DATASOURCE_USERNAME
-        value: sql8828189
+        value: avnadmin
       - key: SPRING_DATASOURCE_PASSWORD
-        value: IQIIZqNG33
+        value: AVNS_SzBpCElp8jT1V0dbPMC
       - key: JWT_SECRET
         value: bibliothequeUnivNZSecretKey2024XYZ
       - key: SPRING_MAIL_USERNAME
