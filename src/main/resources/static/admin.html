@@ -355,6 +355,9 @@ window.onload = () => {
     if (role === 'ETUDIANT') { window.location.href = 'etudiant.html'; return; }
     document.getElementById('user-name').textContent =
         `${localStorage.getItem('prenom') || ''} ${localStorage.getItem('nom') || ''}`;
+    if (role === 'BIBLIOTHECAIRE') {
+        document.querySelector("button[onclick*='utilisateurs']").style.display = 'none';
+    }
     chargerTout();
 };
 
