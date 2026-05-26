@@ -32,11 +32,14 @@ public class SecurityConfig {
                 .requestMatchers("/api/utilisateurs/etudiant").permitAll()
 
                 // ✅ Catalogue
-                .requestMatchers(HttpMethod.GET, "/api/ouvrages/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/api/categories/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/ouvrages/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
 
                 // ✅ Étudiant
-                .requestMatchers(HttpMethod.GET, "/api/emprunts/etudiant/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/emprunts/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/reservations/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/statistiques/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/utilisateurs/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/reservations").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/reservations").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/reservations/*/annuler").authenticated()
