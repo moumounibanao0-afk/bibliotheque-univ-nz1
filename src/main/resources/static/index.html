@@ -310,7 +310,7 @@ async function inscrireEtudiant() {
             method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(etudiant)
         });
         if (res.ok) { afficherAlert('Étudiant inscrit !', 'success'); fermerModal('modal-etudiant'); chargerEtudiants(); chargerStats(); }
-        else { const err = await res.text(); afficherAlert(err, 'error'); }
+        else { const err = await res.text(); afficherAlert('Email déjà utilisé ou données invalides', 'error'); fermerModal('modal-etudiant'); }
     } catch(e) { afficherAlert('Erreur inscription', 'error'); }
 }
 
@@ -332,7 +332,7 @@ async function creerEmprunt() {
             body: JSON.stringify({etudiantId: parseInt(etudiantId), ouvrageId: parseInt(ouvrageId)})
         });
         if (res.ok) { afficherAlert('Emprunt créé !', 'success'); chargerEmprunts(); chargerOuvrages(); chargerStats(); }
-        else { const err = await res.text(); afficherAlert(err, 'error'); }
+        else { const err = await res.text(); afficherAlert('Email déjà utilisé ou données invalides', 'error'); fermerModal('modal-etudiant'); }
     } catch(e) { afficherAlert('Erreur emprunt', 'error'); }
 }
 
@@ -354,7 +354,7 @@ async function creerReservation() {
             body: JSON.stringify({etudiantId: parseInt(etudiantId), ouvrageId: parseInt(ouvrageId)})
         });
         if (res.ok) { afficherAlert('Réservation créée !', 'success'); chargerReservations(); chargerStats(); }
-        else { const err = await res.text(); afficherAlert(err, 'error'); }
+        else { const err = await res.text(); afficherAlert('Email déjà utilisé ou données invalides', 'error'); fermerModal('modal-etudiant'); }
     } catch(e) { afficherAlert('Erreur réservation', 'error'); }
 }
 
