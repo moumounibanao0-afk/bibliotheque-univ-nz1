@@ -277,7 +277,8 @@ async function ajouterOuvrage() {
         titre: document.getElementById('titre').value,
         auteur: document.getElementById('auteur').value,
         isbn: document.getElementById('isbn').value,
-        nombreExemplaires: parseInt(document.getElementById('exemplaires').value)
+        nombreExemplaires: parseInt(document.getElementById('exemplaires').value),
+        categorieId: parseInt(document.getElementById('categorie-id').value)
     };
     try {
         const res = await fetch(`${API}/api/ouvrages`, {
