@@ -27,21 +27,21 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
 
                 // ✅ Routes publiques
+                .requestMatchers("/", "/index.html", "/*.html", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                 .requestMatchers("/api/auth/login").permitAll()
                 .requestMatchers("/api/utilisateurs/etudiant").permitAll()
-                .requestMatchers("/*.html", "/css/**", "/js/**").permitAll()
 
-                // ✅ Catalogue — lecture pour tous les connectés
+                // ✅ Catalogue
                 .requestMatchers(HttpMethod.GET, "/api/ouvrages/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/categories/**").authenticated()
 
-                // ✅ Étudiant — ses emprunts et réservations
+                // ✅ Étudiant
                 .requestMatchers(HttpMethod.GET, "/api/emprunts/etudiant/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/reservations").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/reservations").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/reservations/*/annuler").authenticated()
 
-                // ✅ BIBLIOTHÉCAIRE + ADMIN — gestion emprunts et catalogue
+                // ✅ BIBLIOTHÉCAIRE + ADMIN
                 .requestMatchers(HttpMethod.POST, "/api/ouvrages").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
                 .requestMatchers(HttpMethod.PUT, "/api/ouvrages/**").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
                 .requestMatchers(HttpMethod.DELETE, "/api/ouvrages/**").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
@@ -53,11 +53,10 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
                 .requestMatchers(HttpMethod.PUT, "/api/reservations/**").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
 
-                // 🔒 ADMIN UNIQUEMENT — gestion utilisateurs et statistiques
+                // 🔒 ADMIN
                 .requestMatchers("/api/utilisateurs/**").hasRole("ADMINISTRATEUR")
                 .requestMatchers("/api/statistiques/**").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
 
-                // 🔒 Tout le reste — connecté
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
