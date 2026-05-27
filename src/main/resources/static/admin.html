@@ -357,6 +357,13 @@ window.onload = () => {
         `${localStorage.getItem('prenom') || ''} ${localStorage.getItem('nom') || ''}`;
     if (role === 'BIBLIOTHECAIRE') {
         document.querySelector("button[onclick*='utilisateurs']").style.display = 'none';
+        document.querySelector('.stats').style.display = 'none';
+        document.querySelector('.charts-row').style.display = 'none';
+        document.querySelector('h2').textContent = 'Espace Bibliothécaire';
+        document.querySelector('h2 + p').textContent = 'Gestion du catalogue, emprunts et retours';
+        // Masquer stat-utilisateurs même si stats visibles
+        const statUtil = document.getElementById('stat-utilisateurs');
+        if (statUtil) statUtil.closest('.stat-card').style.display = 'none';
     }
     chargerTout();
 };
