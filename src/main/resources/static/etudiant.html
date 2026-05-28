@@ -1,406 +1,1324 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Espace Étudiant — Bibliothèque UNZ</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'DM Sans', sans-serif; background: #f0f2f5; color: #1a1a2e; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Espace Étudiant — Bibliothèque Universitaire</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    :root {
+      --vert:        #1e8a5e;
+      --vert-clair:  #25a872;
+      --vert-pale:   #e6f7f1;
+      --vert-bg:     #f0fbf6;
+      --dark:        #0f2018;
+      --text:        #1a3328;
+      --muted:       #6b8f7e;
+      --border:      #cce8db;
+      --white:       #ffffff;
+      --sidebar-w:   260px;
+      --shadow:      0 2px 16px rgba(30,138,94,.10);
+      --radius:      14px;
+    }
 
-        nav {
-            background: #1b5e20; color: white; padding: 0 30px;
-            display: flex; justify-content: space-between; align-items: center;
-            height: 64px; position: sticky; top: 0; z-index: 100;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.2);
-        }
-        .nav-brand { display: flex; align-items: center; gap: 12px; font-family: 'Playfair Display', serif; font-size: 18px; color: #fff; }
-        .nav-brand span { font-size: 24px; }
-        .nav-right { display: flex; align-items: center; gap: 14px; }
-        .nav-user { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 6px 14px; font-size: 13px; color: rgba(255,255,255,0.85); }
-        .btn-logout { background: rgba(198,40,40,0.2); border: 1px solid rgba(198,40,40,0.3); color: #ef9a9a; padding: 7px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
-        .btn-logout:hover { background: rgba(198,40,40,0.35); }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--vert-bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+    }
 
-        .hero { background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 60%, #388e3c 100%); color: white; padding: 35px 30px; }
-        .hero h2 { font-family: 'Playfair Display', serif; font-size: 26px; margin-bottom: 6px; }
-        .hero p { color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 300; }
+    /* ───────── SIDEBAR ───────── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--dark);
+      min-height: 100vh;
+      position: fixed;
+      left: 0; top: 0;
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+      transition: transform .3s ease;
+    }
+    .sidebar-brand {
+      padding: 28px 24px 20px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .sidebar-brand .logo {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.3rem;
+      color: #fff;
+      line-height: 1.2;
+    }
+    .sidebar-brand .logo span { color: var(--vert-clair); }
+    .sidebar-brand .sub {
+      font-size: .72rem;
+      color: var(--muted);
+      margin-top: 4px;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
 
-        /* Cartes résumé étudiant */
-        .my-stats { display: flex; gap: 16px; padding: 20px 30px 0; flex-wrap: wrap; }
-        .my-stat { background: white; border-radius: 12px; padding: 16px 20px; flex: 1; min-width: 120px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border-left: 4px solid #2e7d32; }
-        .my-stat h3 { font-family: 'Playfair Display', serif; font-size: 28px; color: #2e7d32; }
-        .my-stat p { color: #888; font-size: 11px; margin-top: 3px; font-weight: 500; letter-spacing: 0.5px; }
-        .my-stat.warning { border-left-color: #e65100; } .my-stat.warning h3 { color: #e65100; }
-        .my-stat.danger { border-left-color: #c62828; } .my-stat.danger h3 { color: #c62828; }
+    .sidebar-user {
+      margin: 16px 16px 8px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .sidebar-user .avatar {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: var(--vert);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: .95rem;
+      flex-shrink: 0;
+    }
+    .sidebar-user .info .name {
+      color: #fff; font-size: .88rem; font-weight: 600;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;
+    }
+    .sidebar-user .info .role {
+      font-size: .7rem; color: var(--vert-clair);
+      text-transform: uppercase; letter-spacing: .06em;
+    }
 
-        .section { background: white; margin: 20px 30px; border-radius: 12px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid #f0f2f5; flex-wrap: wrap; gap: 10px; }
-        .section-header h3 { font-size: 16px; font-weight: 600; }
+    .sidebar-nav {
+      flex: 1;
+      padding: 8px 12px 16px;
+      overflow-y: auto;
+    }
+    .nav-label {
+      font-size: .65rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: rgba(255,255,255,.3);
+      padding: 14px 8px 6px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 12px;
+      border-radius: 9px;
+      cursor: pointer;
+      color: rgba(255,255,255,.6);
+      font-size: .875rem;
+      font-weight: 500;
+      transition: all .2s;
+      user-select: none;
+      margin-bottom: 2px;
+    }
+    .nav-item i { width: 18px; text-align: center; font-size: .9rem; }
+    .nav-item:hover { background: rgba(255,255,255,.07); color: #fff; }
+    .nav-item.active {
+      background: var(--vert);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(30,138,94,.35);
+    }
+    .nav-item .badge {
+      margin-left: auto;
+      background: #e55;
+      color: #fff;
+      font-size: .68rem;
+      font-weight: 700;
+      min-width: 20px; height: 20px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 5px;
+    }
 
-        .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-        .toolbar input, .toolbar select { padding: 9px 14px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px; font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.2s; }
-        .toolbar input:focus, .toolbar select:focus { border-color: #2e7d32; }
+    .sidebar-footer {
+      padding: 16px 12px;
+      border-top: 1px solid rgba(255,255,255,.07);
+    }
+    .btn-logout {
+      width: 100%;
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px;
+      border-radius: 9px;
+      background: rgba(220,50,50,.12);
+      border: 1px solid rgba(220,50,50,.2);
+      color: #f87171;
+      font-size: .85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-logout:hover { background: rgba(220,50,50,.22); }
 
-        .btn { padding: 9px 18px; background: #2e7d32; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 500; transition: all 0.2s; white-space: nowrap; }
-        .btn:hover { background: #1b5e20; transform: translateY(-1px); }
-        .btn-danger { background: #c62828; } .btn-danger:hover { background: #b71c1c; }
-        .btn-orange { background: #e65100; } .btn-orange:hover { background: #bf360c; }
-        .btn-sm { padding: 5px 12px; font-size: 12px; }
+    /* ───────── MAIN ───────── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .topbar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .topbar-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.35rem;
+      color: var(--dark);
+    }
+    .topbar-title span { color: var(--vert); font-style: italic; }
+    .topbar-right { display: flex; align-items: center; gap: 14px; }
+    .topbar-right .date {
+      font-size: .8rem; color: var(--muted);
+    }
+    .topbar-notif {
+      position: relative;
+      width: 36px; height: 36px;
+      border-radius: 9px;
+      background: var(--vert-pale);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      color: var(--vert);
+    }
+    .topbar-notif .dot {
+      position: absolute; top: 6px; right: 6px;
+      width: 8px; height: 8px;
+      background: #e55;
+      border-radius: 50%;
+      border: 2px solid #fff;
+    }
 
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #1b5e20; color: white; padding: 11px 14px; text-align: left; font-size: 12px; font-weight: 500; letter-spacing: 0.5px; }
-        th:first-child { border-radius: 6px 0 0 6px; } th:last-child { border-radius: 0 6px 6px 0; }
-        td { padding: 11px 14px; border-bottom: 1px solid #f0f2f5; font-size: 14px; }
-        tr:hover td { background: #fafafa; } tr:last-child td { border-bottom: none; }
+    .content {
+      flex: 1;
+      padding: 32px;
+      overflow-y: auto;
+    }
 
-        .badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-        .badge-success { background: #e8f5e9; color: #2e7d32; }
-        .badge-warning { background: #fff3e0; color: #e65100; }
-        .badge-danger { background: #ffebee; color: #c62828; }
-        .badge-info { background: #e3f2fd; color: #0277bd; }
+    /* ───────── SECTIONS ───────── */
+    .section { display: none; animation: fadeIn .3s ease; }
+    .section.active { display: block; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
 
-        .alert { position: fixed; top: 80px; right: 20px; z-index: 2000; padding: 12px 20px; border-radius: 10px; font-size: 14px; display: none; min-width: 220px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.15); animation: slideIn 0.3s ease; }
-        @keyframes slideIn { from{transform:translateX(50px);opacity:0} to{transform:translateX(0);opacity:1} }
-        .alert.success { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; display: block; }
-        .alert.error { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; display: block; }
+    .page-header {
+      margin-bottom: 28px;
+    }
+    .page-header h2 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.7rem;
+      color: var(--dark);
+    }
+    .page-header p { font-size: .875rem; color: var(--muted); margin-top: 4px; }
 
-        /* Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
-        .modal.active { display: flex; }
-        .modal-box { background: white; padding: 32px; border-radius: 16px; width: 400px; max-width: 90%; animation: slideUp 0.25s ease; }
-        @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-        .modal-box h3 { font-size: 18px; margin-bottom: 16px; color: #1b5e20; }
-        .modal-box p { font-size: 14px; color: #555; margin-bottom: 20px; line-height: 1.6; }
-        .modal-buttons { display: flex; gap: 10px; }
+    /* ───────── STATS CARDS ───────── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      display: flex; align-items: center; gap: 16px;
+    }
+    .stat-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .stat-icon.green  { background: var(--vert-pale); color: var(--vert); }
+    .stat-icon.amber  { background: #fff7e6; color: #d97706; }
+    .stat-icon.red    { background: #fef2f2; color: #dc2626; }
+    .stat-icon.blue   { background: #eff6ff; color: #2563eb; }
+    .stat-info .val {
+      font-size: 1.8rem; font-weight: 700; color: var(--dark); line-height: 1;
+    }
+    .stat-info .lbl { font-size: .78rem; color: var(--muted); margin-top: 4px; }
 
-        /* Détail ouvrage */
-        .ouvrage-detail { background: #f8f9fa; border-radius: 10px; padding: 14px; margin-bottom: 16px; font-size: 14px; }
-        .ouvrage-detail strong { color: #1b5e20; display: block; font-size: 16px; margin-bottom: 6px; }
-        .ouvrage-detail span { color: #666; display: block; margin-bottom: 3px; }
+    /* ───────── TABLE ───────── */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .card-head {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-head h3 { font-size: 1rem; font-weight: 600; color: var(--dark); }
+    .card-head .sub { font-size: .78rem; color: var(--muted); margin-top: 2px; }
 
-        /* Retard warning */
-        .retard-banner { background: linear-gradient(135deg, #ffebee, #fce4ec); border: 1px solid #ef9a9a; border-radius: 10px; padding: 14px 18px; margin-bottom: 16px; font-size: 13px; color: #c62828; display: none; }
-        .retard-banner.show { display: block; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      background: var(--vert-bg);
+      padding: 11px 16px;
+      text-align: left;
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    tbody tr { border-bottom: 1px solid #f0f7f4; transition: background .15s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--vert-bg); }
+    tbody td { padding: 13px 16px; font-size: .875rem; color: var(--text); }
 
-        footer { text-align: center; padding: 20px; color: #999; font-size: 13px; margin-top: 10px; }
-    </style>
+    .badge-status {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: .72rem;
+      font-weight: 600;
+    }
+    .badge-status.actif   { background: #e6f7f1; color: #1e8a5e; }
+    .badge-status.retard  { background: #fef2f2; color: #dc2626; }
+    .badge-status.retourne { background: #f0f0ff; color: #6366f1; }
+    .badge-status.reserve { background: #fff7e6; color: #d97706; }
+    .badge-status.dispo   { background: #e6f7f1; color: #1e8a5e; }
+
+    /* ───────── CATALOGUE ───────── */
+    .search-bar {
+      display: flex; gap: 10px; margin-bottom: 22px; flex-wrap: wrap;
+    }
+    .search-bar input, .search-bar select {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      font-family: inherit; font-size: .875rem;
+      background: var(--white);
+      outline: none;
+      transition: border .2s;
+    }
+    .search-bar input { flex: 1; min-width: 200px; }
+    .search-bar input:focus, .search-bar select:focus { border-color: var(--vert); }
+
+    .books-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 18px;
+    }
+    .book-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .book-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(30,138,94,.15); }
+    .book-cover {
+      height: 140px;
+      background: linear-gradient(135deg, var(--vert) 0%, #0f5e3c 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem;
+      color: rgba(255,255,255,.5);
+      position: relative;
+    }
+    .book-cover .avail {
+      position: absolute; top: 10px; right: 10px;
+      font-size: .68rem; font-weight: 700;
+      padding: 3px 9px; border-radius: 20px;
+    }
+    .book-cover .avail.ok  { background: rgba(255,255,255,.9); color: var(--vert); }
+    .book-cover .avail.ko  { background: rgba(220,50,50,.85); color: #fff; }
+    .book-body { padding: 16px; }
+    .book-title { font-weight: 700; font-size: .9rem; color: var(--dark); margin-bottom: 4px; line-height: 1.3; }
+    .book-auteur { font-size: .78rem; color: var(--muted); margin-bottom: 8px; }
+    .book-cat {
+      display: inline-block;
+      font-size: .68rem; font-weight: 600;
+      padding: 2px 9px; border-radius: 20px;
+      background: var(--vert-pale); color: var(--vert);
+      margin-bottom: 12px;
+    }
+    .book-actions { display: flex; gap: 8px; }
+    .btn {
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: .8rem; font-weight: 600;
+      cursor: pointer; border: none;
+      font-family: inherit;
+      transition: all .2s;
+    }
+    .btn-primary { background: var(--vert); color: #fff; flex: 1; }
+    .btn-primary:hover { background: var(--vert-clair); }
+    .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .btn-outline:hover { border-color: var(--vert); color: var(--vert); }
+
+    /* ───────── RESERVATIONS ───────── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 24px;
+      color: var(--muted);
+    }
+    .empty-state i { font-size: 2.5rem; margin-bottom: 14px; opacity: .4; }
+    .empty-state p { font-size: .9rem; }
+
+    /* ───────── PROFIL ───────── */
+    .profil-grid {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .profil-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 32px 24px;
+      text-align: center;
+    }
+    .profil-avatar {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: var(--vert);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; font-weight: 700; color: #fff;
+      margin: 0 auto 16px;
+    }
+    .profil-name { font-size: 1.1rem; font-weight: 700; color: var(--dark); }
+    .profil-role {
+      display: inline-block;
+      font-size: .72rem; font-weight: 600;
+      padding: 3px 12px; border-radius: 20px;
+      background: var(--vert-pale); color: var(--vert);
+      margin-top: 6px;
+      text-transform: uppercase; letter-spacing: .06em;
+    }
+    .profil-stats { display: flex; justify-content: center; gap: 24px; margin-top: 20px; }
+    .profil-stats .ps { text-align: center; }
+    .profil-stats .ps .n { font-size: 1.4rem; font-weight: 700; color: var(--dark); }
+    .profil-stats .ps .l { font-size: .7rem; color: var(--muted); }
+    .profil-form { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); padding: 28px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: .78rem; font-weight: 600; color: var(--text); }
+    .form-group input {
+      padding: 10px 13px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      font-family: inherit; font-size: .875rem;
+      outline: none; transition: border .2s;
+    }
+    .form-group input:focus { border-color: var(--vert); }
+    .form-group input:read-only { background: var(--vert-bg); color: var(--muted); cursor: not-allowed; }
+    .btn-save {
+      padding: 11px 28px;
+      background: var(--vert); color: #fff;
+      border: none; border-radius: 9px;
+      font-family: inherit; font-size: .875rem; font-weight: 600;
+      cursor: pointer; transition: background .2s;
+    }
+    .btn-save:hover { background: var(--vert-clair); }
+
+    /* ───────── TOAST ───────── */
+    .toast-container {
+      position: fixed; bottom: 28px; right: 28px;
+      z-index: 999;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .toast {
+      padding: 13px 20px;
+      border-radius: 10px;
+      font-size: .875rem; font-weight: 500;
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(0,0,0,.2);
+      animation: slideIn .3s ease;
+      min-width: 260px;
+    }
+    .toast.success { background: var(--vert); }
+    .toast.error   { background: #dc2626; }
+    .toast.info    { background: #2563eb; }
+    @keyframes slideIn { from { opacity:0; transform:translateX(40px); } to { opacity:1; transform:none; } }
+
+    /* ───────── MODAL ───────── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 200;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 32px;
+      width: 440px; max-width: 90vw;
+      box-shadow: 0 20px 60px rgba(0,0,0,.3);
+      animation: fadeIn .25s ease;
+    }
+    .modal h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+    .modal p  { font-size: .875rem; color: var(--muted); margin-bottom: 20px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+    .btn-cancel { background: #f3f4f6; color: var(--text); padding: 9px 20px; border: none; border-radius: 8px; font-family: inherit; font-size: .875rem; font-weight: 500; cursor: pointer; }
+
+    /* ───────── RESPONSIVE ───────── */
+    .hamburger {
+      display: none;
+      background: none; border: none;
+      font-size: 1.3rem; color: var(--text); cursor: pointer;
+      margin-right: 12px;
+    }
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: none; }
+      .main { margin-left: 0; }
+      .hamburger { display: flex; }
+      .content { padding: 20px 16px; }
+      .profil-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    .overlay-mobile {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.4);
+      z-index: 99;
+    }
+    .overlay-mobile.open { display: block; }
+  </style>
 </head>
 <body>
 
-<nav>
-    <div class="nav-brand"><span>📚</span> Bibliothèque UNZ — Espace Étudiant</div>
-    <div class="nav-right">
-        <div class="nav-user">👤 <span id="user-name">Étudiant</span></div>
-        <button class="btn-logout" onclick="seDeconnecter()">Déconnexion</button>
+<!-- ════ SIDEBAR ════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="logo">Biblio<span>Univ</span></div>
+    <div class="sub">Espace Étudiant</div>
+  </div>
+
+  <div class="sidebar-user">
+    <div class="avatar" id="sidebarInitiales">ET</div>
+    <div class="info">
+      <div class="name" id="sidebarNom">Chargement…</div>
+      <div class="role">Étudiant</div>
     </div>
-</nav>
+  </div>
 
-<div class="hero">
-    <h2 id="hero-title">Bienvenue dans votre espace</h2>
-    <p>Consultez le catalogue, vos emprunts et vos réservations</p>
-</div>
-
-<div id="alert" class="alert"></div>
-
-<!-- CARTES RÉSUMÉ -->
-<div class="my-stats">
-    <div class="my-stat"><h3 id="my-emprunts">0</h3><p>MES EMPRUNTS</p></div>
-    <div class="my-stat warning"><h3 id="my-reservations">0</h3><p>MES RÉSERVATIONS</p></div>
-    <div class="my-stat danger"><h3 id="my-retards">0</h3><p>EN RETARD</p></div>
-</div>
-
-<!-- BANNIÈRE RETARD -->
-<div style="margin: 16px 30px 0;">
-    <div id="retard-banner" class="retard-banner">
-        ⚠️ <strong>Attention !</strong> Vous avez des emprunts en retard. Des pénalités s'appliquent. Veuillez retourner les ouvrages dès que possible.
+  <nav class="sidebar-nav">
+    <div class="nav-label">Navigation</div>
+    <div class="nav-item active" data-section="dashboard" onclick="showSection('dashboard', this)">
+      <i class="fa-solid fa-house"></i> Tableau de Bord
     </div>
-</div>
+    <div class="nav-item" data-section="catalogue" onclick="showSection('catalogue', this)">
+      <i class="fa-solid fa-book-open"></i> Catalogue
+    </div>
 
-<!-- CATALOGUE -->
-<div class="section">
-    <div class="section-header">
-        <h3>📖 Catalogue des Ouvrages</h3>
-        <div class="toolbar">
-            <input type="text" id="search-input" placeholder="Rechercher..." style="width:180px"
-                   onkeydown="if(event.key==='Enter') rechercherOuvrage()">
-            <select id="search-type" style="width:140px">
-                <option value="titre">Par titre</option>
-                <option value="auteur">Par auteur</option>
-                <option value="isbn">Par ISBN</option>
-                <option value="categorie">Par catégorie</option>
-                <option value="global">Multi-critères</option>
-            </select>
-            <button class="btn" onclick="rechercherOuvrage()">Rechercher</button>
-            <button class="btn" style="background:#555" onclick="chargerOuvrages()">Réinitialiser</button>
+    <div class="nav-label">Mes Activités</div>
+    <div class="nav-item" data-section="emprunts" onclick="showSection('emprunts', this)">
+      <i class="fa-solid fa-book-bookmark"></i> Mes Emprunts
+      <span class="badge" id="badgeEmprunts" style="display:none">0</span>
+    </div>
+    <div class="nav-item" data-section="reservations" onclick="showSection('reservations', this)">
+      <i class="fa-solid fa-clock-rotate-left"></i> Mes Réservations
+      <span class="badge" id="badgeReservations" style="display:none">0</span>
+    </div>
+    <div class="nav-item" data-section="historique" onclick="showSection('historique', this)">
+      <i class="fa-solid fa-rectangle-list"></i> Historique
+    </div>
+
+    <div class="nav-label">Compte</div>
+    <div class="nav-item" data-section="profil" onclick="showSection('profil', this)">
+      <i class="fa-solid fa-user-circle"></i> Mon Profil
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="btn-logout" onclick="deconnexion()">
+      <i class="fa-solid fa-arrow-right-from-bracket"></i> Se déconnecter
+    </button>
+  </div>
+</aside>
+
+<div class="overlay-mobile" id="overlayMobile" onclick="toggleSidebar()"></div>
+
+<!-- ════ MAIN ════ -->
+<div class="main">
+  <!-- Topbar -->
+  <header class="topbar">
+    <div style="display:flex;align-items:center;">
+      <button class="hamburger" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+      <div class="topbar-title">Espace <span id="topbarNom">Étudiant</span></div>
+    </div>
+    <div class="topbar-right">
+      <span class="date" id="dateAujourdhui"></span>
+      <div class="topbar-notif" title="Notifications">
+        <i class="fa-solid fa-bell" style="font-size:.9rem;"></i>
+        <span class="dot" id="notifDot" style="display:none"></span>
+      </div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ══ TABLEAU DE BORD ══ -->
+    <section class="section active" id="sec-dashboard">
+      <div class="page-header">
+        <h2>Bonjour, <span id="prenomBienvenue" style="color:var(--vert);">Étudiant</span> 👋</h2>
+        <p>Voici un aperçu de votre activité à la bibliothèque</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon green"><i class="fa-solid fa-book-bookmark"></i></div>
+          <div class="stat-info">
+            <div class="val" id="statEmpruntsEnCours">0</div>
+            <div class="lbl">Emprunts en cours</div>
+          </div>
         </div>
-    </div>
-    <table>
-        <thead><tr><th>Titre</th><th>Auteur</th><th>ISBN</th><th>Catégorie</th><th>Disponibilité</th><th>Action</th></tr></thead>
-        <tbody id="ouvrages-table"><tr><td colspan="6" style="text-align:center;padding:30px;color:#999">Chargement...</td></tr></tbody>
-    </table>
-</div>
-
-<!-- MES EMPRUNTS -->
-<div class="section">
-    <div class="section-header">
-        <h3>📋 Mes Emprunts</h3>
-        <span style="font-size:12px;color:#999">Les emprunts durent 14 jours</span>
-    </div>
-    <table>
-        <thead><tr><th>Ouvrage</th><th>Auteur</th><th>Date Emprunt</th><th>Date Retour</th><th>Statut</th></tr></thead>
-        <tbody id="emprunts-table"><tr><td colspan="5" style="text-align:center;padding:30px;color:#999">Chargement...</td></tr></tbody>
-    </table>
-</div>
-
-<!-- MES RÉSERVATIONS -->
-<div class="section">
-    <div class="section-header">
-        <h3>🔖 Mes Réservations</h3>
-        <span style="font-size:12px;color:#999">Vous serez notifié par email à la disponibilité</span>
-    </div>
-    <table>
-        <thead><tr><th>Ouvrage</th><th>Auteur</th><th>Date Réservation</th><th>Statut</th><th>Action</th></tr></thead>
-        <tbody id="reservations-table"><tr><td colspan="5" style="text-align:center;padding:30px;color:#999">Chargement...</td></tr></tbody>
-    </table>
-</div>
-
-<!-- MODAL RÉSERVATION -->
-<div id="modal-reservation" class="modal">
-    <div class="modal-box">
-        <h3>🔖 Réserver un ouvrage</h3>
-        <div class="ouvrage-detail" id="detail-ouvrage">
-            <strong id="reserve-titre">-</strong>
-            <span id="reserve-auteur">-</span>
-            <span id="reserve-isbn">-</span>
+        <div class="stat-card">
+          <div class="stat-icon amber"><i class="fa-solid fa-clock"></i></div>
+          <div class="stat-info">
+            <div class="val" id="statReservations">0</div>
+            <div class="lbl">Réservations actives</div>
+          </div>
         </div>
-        <p>Cet ouvrage n'est pas disponible actuellement. En le réservant, vous serez notifié par email dès qu'un exemplaire sera disponible.</p>
-        <div class="modal-buttons">
-            <button class="btn" onclick="confirmerReservation()">✅ Confirmer la réservation</button>
-            <button class="btn btn-danger" onclick="fermerModal()">Annuler</button>
+        <div class="stat-card">
+          <div class="stat-icon red"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <div class="stat-info">
+            <div class="val" id="statRetards">0</div>
+            <div class="lbl">Livres en retard</div>
+          </div>
         </div>
-    </div>
-</div>
+        <div class="stat-card">
+          <div class="stat-icon blue"><i class="fa-solid fa-check-circle"></i></div>
+          <div class="stat-info">
+            <div class="val" id="statTotal">0</div>
+            <div class="lbl">Total emprunts (hist.)</div>
+          </div>
+        </div>
+      </div>
 
-<footer>© 2026 Bibliothèque Universitaire Norbert Zongo — Tous droits réservés</footer>
-
-<script>
-const API = 'http://localhost:8081';
-let userId = null;
-let ouvrageAReserver = null;
-
-window.onload = () => {
-    const token = localStorage.getItem('token');
-    const role = localStorage.getItem('role');
-    if (!token) { window.location.href = 'login.html'; return; }
-    if (role === 'ADMINISTRATEUR' || role === 'BIBLIOTHECAIRE') { window.location.href = 'admin.html'; return; }
-
-    userId = localStorage.getItem('userId');
-    const nom = localStorage.getItem('nom') || '';
-    const prenom = localStorage.getItem('prenom') || '';
-    document.getElementById('user-name').textContent = `${prenom} ${nom}`;
-    document.getElementById('hero-title').textContent = `Bienvenue, ${prenom} !`;
-
-    chargerOuvrages();
-    chargerMesEmprunts();
-    chargerMesReservations();
-};
-
-function getHeaders() {
-    return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` };
-}
-
-function seDeconnecter() { localStorage.clear(); window.location.href = 'login.html'; }
-
-async function chargerOuvrages() {
-    try {
-        const res = await fetch(`${API}/api/ouvrages`, { headers: getHeaders() });
-        const ouvrages = await res.json();
-        afficherOuvrages(ouvrages);
-    } catch(e) { console.error(e); }
-}
-
-function afficherOuvrages(ouvrages) {
-    const tbody = document.getElementById('ouvrages-table');
-    if (!ouvrages.length) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:#999">Aucun ouvrage trouvé</td></tr>';
-        return;
-    }
-    tbody.innerHTML = ouvrages.map(o => `
-        <tr>
-            <td><strong>${o.titre}</strong>${o.description ? `<br><span style="font-size:12px;color:#999">${o.description}</span>` : ''}</td>
-            <td>${o.auteur}</td>
-            <td>${o.isbn || '-'}</td>
-            <td>${o.categorie ? `<span class="badge badge-info">${o.categorie.nom}</span><br><small style="color:#999">${o.categorie.rayon || ''}</small>` : '-'}</td>
-            <td>
-                <span class="badge ${o.exemplairesDisponibles > 0 ? 'badge-success' : 'badge-danger'}">
-                    ${o.exemplairesDisponibles > 0 ? '✅ Disponible' : '❌ Indisponible'}
-                </span>
-                <br><small style="color:#999">${o.exemplairesDisponibles}/${o.nombreExemplaires} ex.</small>
-            </td>
-            <td>
-                ${o.exemplairesDisponibles === 0
-                    ? `<button class="btn btn-orange btn-sm" onclick="ouvrirReservation(${o.id}, '${o.titre.replace(/'/g,"\\'")}', '${o.auteur}', '${o.isbn || ''}')">🔖 Réserver</button>`
-                    : `<button class="btn btn-success btn-sm" onclick="emprunterOuvrage(${o.id}, '${o.titre}')">📚 Emprunter</button>`
-                }
-            </td>
-        </tr>`).join('');
-}
-
-async function rechercherOuvrage() {
-    const val = document.getElementById('search-input').value.trim();
-    const type = document.getElementById('search-type').value;
-    if (!val) { chargerOuvrages(); return; }
-    try {
-        let url;
-        if (type === 'titre') url = `${API}/api/ouvrages/recherche/titre?titre=${encodeURIComponent(val)}`;
-        else if (type === 'auteur') url = `${API}/api/ouvrages/recherche/auteur?auteur=${encodeURIComponent(val)}`;
-        else if (type === 'isbn') url = `${API}/api/ouvrages/recherche/isbn?isbn=${encodeURIComponent(val)}`;
-        else if (type === 'categorie') url = `${API}/api/ouvrages/recherche/categorie?nom=${encodeURIComponent(val)}`;
-        else url = `${API}/api/ouvrages/recherche?motCle=${encodeURIComponent(val)}`;
-
-        const res = await fetch(url, { headers: getHeaders() });
-        let ouvrages = await res.json();
-        if (!Array.isArray(ouvrages)) ouvrages = ouvrages ? [ouvrages] : [];
-        afficherOuvrages(ouvrages);
-    } catch(e) { console.error(e); }
-}
-
-async function chargerMesEmprunts() {
-    if (!userId) return;
-    try {
-        const res = await fetch(`${API}/api/emprunts/etudiant/${userId}`, { headers: getHeaders() });
-        const emprunts = await res.json();
-        const tbody = document.getElementById('emprunts-table');
-
-        // Compteurs
-        const enCours = emprunts.filter(e => e.statut === 'EN_COURS').length;
-        const enRetard = emprunts.filter(e => e.statut === 'EN_RETARD').length;
-        document.getElementById('my-emprunts').textContent = enCours;
-        document.getElementById('my-retards').textContent = enRetard;
-
-        // Bannière retard
-        if (enRetard > 0) document.getElementById('retard-banner').classList.add('show');
-
-        if (!emprunts.length) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:#999">Aucun emprunt</td></tr>';
-            return;
-        }
-        tbody.innerHTML = emprunts.map(e => {
-            const retard = e.statut === 'EN_RETARD';
-            return `<tr ${retard ? 'style="background:#fff8f8"' : ''}>
-                <td><strong>${e.ouvrage ? e.ouvrage.titre : '-'}</strong></td>
-                <td>${e.ouvrage ? e.ouvrage.auteur : '-'}</td>
-                <td>${e.dateEmprunt || '-'}</td>
-                <td style="${retard ? 'color:#c62828;font-weight:600' : ''}">${e.dateRetourPrevue || '-'}</td>
-                <td><span class="badge ${e.statut === 'EN_COURS' ? 'badge-warning' : e.statut === 'RETOURNE' ? 'badge-success' : 'badge-danger'}">${e.statut}</span>
-                ${retard ? '<br><small style="color:#c62828">⚠️ Pénalité en cours</small>' : ''}</td>
-            </tr>`;
-        }).join('');
-    } catch(e) { console.error(e); }
-}
-
-async function chargerMesReservations() {
-    if (!userId) return;
-    try {
-        const res = await fetch(`${API}/api/reservations`, { headers: getHeaders() });
-        const toutes = await res.json();
-        const miennes = toutes.filter(r => r.etudiant && String(r.etudiant.id) === String(userId));
-        const tbody = document.getElementById('reservations-table');
-
-        // Compteur
-        const enAttente = miennes.filter(r => r.statut === 'EN_ATTENTE').length;
-        document.getElementById('my-reservations').textContent = enAttente;
-
-        if (!miennes.length) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:#999">Aucune réservation</td></tr>';
-            return;
-        }
-        tbody.innerHTML = miennes.map(r => `
+      <!-- Emprunts en cours -->
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3>📚 Mes emprunts en cours</h3>
+            <div class="sub">Livres actuellement entre vos mains</div>
+          </div>
+          <button class="btn btn-outline" onclick="showSection('emprunts', null)">Voir tout</button>
+        </div>
+        <table>
+          <thead>
             <tr>
-                <td><strong>${r.ouvrage ? r.ouvrage.titre : '-'}</strong></td>
-                <td>${r.ouvrage ? r.ouvrage.auteur : '-'}</td>
-                <td>${r.dateReservation || '-'}</td>
-                <td><span class="badge ${r.statut === 'EN_ATTENTE' ? 'badge-warning' : r.statut === 'CONFIRMEE' ? 'badge-success' : 'badge-danger'}">${r.statut}</span></td>
-                <td>${r.statut === 'EN_ATTENTE'
-                    ? `<button class="btn btn-danger btn-sm" onclick="annulerReservation(${r.id})">Annuler</button>`
-                    : '-'}</td>
-            </tr>`).join('');
-    } catch(e) { console.error(e); }
-}
+              <th>Titre</th><th>Date retour</th><th>Statut</th>
+            </tr>
+          </thead>
+          <tbody id="dashEmprunts">
+            <tr><td colspan="3" style="text-align:center;padding:24px;color:var(--muted);">Chargement…</td></tr>
+          </tbody>
+        </table>
+      </div>
 
-function ouvrirReservation(ouvrageId, titre, auteur, isbn) {
-    ouvrageAReserver = ouvrageId;
-    document.getElementById('reserve-titre').textContent = titre;
-    document.getElementById('reserve-auteur').textContent = '✍️ ' + auteur;
-    document.getElementById('reserve-isbn').textContent = isbn ? 'ISBN : ' + isbn : '';
-    document.getElementById('modal-reservation').classList.add('active');
-}
+      <!-- Réservations en attente -->
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3>🕐 Mes réservations en attente</h3>
+            <div class="sub">Livres réservés, en attente de disponibilité</div>
+          </div>
+          <button class="btn btn-outline" onclick="showSection('reservations', null)">Voir tout</button>
+        </div>
+        <table>
+          <thead><tr><th>Titre</th><th>Date réservation</th><th>Statut</th></tr></thead>
+          <tbody id="dashReservations">
+            <tr><td colspan="3" style="text-align:center;padding:24px;color:var(--muted);">Chargement…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
-function fermerModal() {
-    document.getElementById('modal-reservation').classList.remove('active');
-    ouvrageAReserver = null;
-}
+    <!-- ══ CATALOGUE ══ -->
+    <section class="section" id="sec-catalogue">
+      <div class="page-header">
+        <h2>Catalogue des livres</h2>
+        <p>Parcourez et empruntez les ouvrages disponibles</p>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="rechercheInput" placeholder="🔍  Rechercher un titre, auteur…" oninput="filtrerLivres()" />
+        <select id="filtreCategorie" onchange="filtrerLivres()">
+          <option value="">Toutes les catégories</option>
+        </select>
+        <select id="filtreDisponibilite" onchange="filtrerLivres()">
+          <option value="">Tous les statuts</option>
+          <option value="dispo">Disponible</option>
+          <option value="indispo">Non disponible</option>
+        </select>
+      </div>
+      <div class="books-grid" id="booksGrid">
+        <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">Chargement du catalogue…</div>
+      </div>
+    </section>
 
-async function confirmerReservation() {
-    if (!ouvrageAReserver || !userId) return;
-    try {
-        const res = await fetch(`${API}/api/reservations`, {
-            method: 'POST', headers: getHeaders(),
-            body: JSON.stringify({ etudiantId: parseInt(userId), ouvrageId: ouvrageAReserver })
-        });
-        if (res.ok) {
-            afficherAlert('✅ Réservation créée ! Vous serez notifié par email.', 'success');
-            fermerModal();
-            chargerMesReservations();
-        } else {
-            const err = await res.text();
-            afficherAlert(err, 'error');
-        }
-    } catch(e) { afficherAlert('Erreur serveur', 'error'); }
-}
+    <!-- ══ EMPRUNTS ══ -->
+    <section class="section" id="sec-emprunts">
+      <div class="page-header">
+        <h2>Mes emprunts</h2>
+        <p>Livres actuellement empruntés et en attente de retour</p>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>📖 Liste de mes emprunts</h3></div>
+        <table>
+          <thead>
+            <tr>
+              <th>Titre</th><th>Auteur</th><th>Date emprunt</th><th>Date retour</th><th>Statut</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyEmprunts">
+            <tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted);">Chargement…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
-async function annulerReservation(id) {
-    if (!confirm('Annuler cette réservation ?')) return;
-    try {
-        const res = await fetch(`${API}/api/reservations/${id}/annuler`, { method: 'PUT', headers: getHeaders() });
-        if (res.ok) {
-            afficherAlert('Réservation annulée !', 'success');
-            chargerMesReservations(); chargerMesEmprunts();
-            chargerOuvrages();
-        }
-    } catch(e) { afficherAlert('Erreur annulation', 'error'); }
-}
+    <!-- ══ RESERVATIONS ══ -->
+    <section class="section" id="sec-reservations">
+      <div class="page-header">
+        <h2>Mes réservations</h2>
+        <p>Livres réservés en attente de disponibilité</p>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <h3>🕐 Réservations en cours</h3>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Titre</th><th>Auteur</th><th>Date réservation</th><th>Statut</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyReservations">
+            <tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted);">Chargement…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
-function afficherAlert(msg, type) {
-    const alert = document.getElementById('alert');
-    alert.textContent = msg;
-    alert.className = `alert ${type}`;
-    clearTimeout(window._alertTimer);
-    window._alertTimer = setTimeout(() => { alert.className = 'alert'; }, 4000);
-}
-</script>
+    <!-- ══ HISTORIQUE ══ -->
+    <section class="section" id="sec-historique">
+      <div class="page-header">
+        <h2>Historique</h2>
+        <p>Tous vos emprunts passés</p>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>📋 Historique complet</h3></div>
+        <table>
+          <thead>
+            <tr>
+              <th>Titre</th><th>Auteur</th><th>Emprunté le</th><th>Retourné le</th><th>Statut</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyHistorique">
+            <tr><td colspan="5" style="text-align:center;padding:32px;color:var(--muted);">Chargement…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══ PROFIL ══ -->
+    <section class="section" id="sec-profil">
+      <div class="page-header">
+        <h2>Mon profil</h2>
+        <p>Gérez vos informations personnelles</p>
+      </div>
+      <div class="profil-grid">
+        <div class="profil-card">
+          <div class="profil-avatar" id="profilAvatar">ET</div>
+          <div class="profil-name" id="profilNomComplet">—</div>
+          <div class="profil-role">Étudiant</div>
+          <div class="profil-stats">
+            <div class="ps"><div class="n" id="psEmprunts">0</div><div class="l">Emprunts</div></div>
+            <div class="ps"><div class="n" id="psResv">0</div><div class="l">Réservations</div></div>
+            <div class="ps"><div class="n" id="psTotal">0</div><div class="l">Au total</div></div>
+          </div>
+        </div>
+        <div class="profil-form">
+          <h3 style="margin-bottom:20px;font-size:1rem;">Informations personnelles</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Prénom</label>
+              <input type="text" id="pfPrenom" />
+            </div>
+            <div class="form-group">
+              <label>Nom</label>
+              <input type="text" id="pfNom" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nom d'utilisateur</label>
+              <input type="text" id="pfUsername" readonly />
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="pfEmail" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Rôle</label>
+              <input type="text" value="ETUDIANT" readonly />
+            </div>
+            <div class="form-group">
+              <label>Nouveau mot de passe (optionnel)</label>
+              <input type="password" id="pfPassword" placeholder="Laisser vide pour ne pas changer" />
+            </div>
+          </div>
+          <button class="btn-save" onclick="sauvegarderProfil()">
+            <i class="fa-solid fa-floppy-disk" style="margin-right:6px;"></i> Sauvegarder
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Modal confirmation réservation -->
+<div class="modal-overlay" id="modalReservation">
+  <div class="modal">
+    <h3>Annuler la réservation</h3>
+    <p id="modalResvMsg">Voulez-vous annuler cette réservation ?</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="fermerModal('modalReservation')">Annuler</button>
+      <button class="btn btn-primary" onclick="confirmerAnnulationReservation()">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal emprunter -->
+<div class="modal-overlay" id="modalEmprunt">
+  <div class="modal">
+    <h3 id="modalEmpruntTitre">Emprunter</h3>
+    <p>Confirmez-vous vouloir emprunter ce livre pour <strong>14 jours</strong> ?</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="fermerModal('modalEmprunt')">Annuler</button>
+      <button class="btn btn-primary" onclick="confirmerEmprunt()">Emprunter</button>
+    </div>
+  </div>
+</div>
 
 <script>
-async function emprunterOuvrage(ouvrageId, titre) {
-    if (!confirm('Emprunter "' + titre + '" ?')) return;
-    try {
-        const res = await fetch(`${API}/api/emprunts`, {
-            method: 'POST',
-            headers: getHeaders(),
-            body: JSON.stringify({ etudiantId: userId, ouvrageId: ouvrageId })
-        });
-        if (res.ok) {
-            afficherAlert('Emprunt enregistré ! Durée : 14 jours.', 'success');
-            chargerOuvrages();
-            chargerMesEmprunts();
-            chargerStats();
-        } else {
-            const msg = await res.text();
-            afficherAlert('Erreur : ' + msg, 'error');
-        }
-    } catch(e) { afficherAlert('Erreur connexion', 'error'); }
+// ═══════════════════════════════════════════
+//  CONFIGURATION API
+// ═══════════════════════════════════════════
+const API = '';  // Même domaine, pas de préfixe nécessaire
+
+// ═══════════════════════════════════════════
+//  ÉTAT GLOBAL
+// ═══════════════════════════════════════════
+let utilisateur = null;
+let tousLesLivres = [];
+let reservationAnnulerIndex = null;
+let livrePendantEmprunt = null;
+
+// ═══════════════════════════════════════════
+//  INITIALISATION
+// ═══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async () => {
+  const session = localStorage.getItem('utilisateur');
+  if (!session) { window.location.href = 'index.html'; return; }
+
+  utilisateur = JSON.parse(session);
+  if (utilisateur.role !== 'ETUDIANT') {
+    window.location.href = utilisateur.role === 'ADMINISTRATEUR' || utilisateur.role === 'BIBLIOTHECAIRE'
+      ? 'admin.html' : 'index.html';
+    return;
+  }
+
+  afficherInfosUtilisateur();
+  afficherDate();
+  await Promise.all([
+    chargerDashboard(),
+    chargerCatalogue(),
+    chargerEmprunts(),
+    chargerReservations(),
+    chargerHistorique()
+  ]);
+  remplirProfil();
+});
+
+function afficherInfosUtilisateur() {
+  const nom = utilisateur.prenom
+    ? utilisateur.prenom + ' ' + utilisateur.nom
+    : utilisateur.username || 'Étudiant';
+  const initiales = (utilisateur.prenom ? utilisateur.prenom[0] : '') +
+                    (utilisateur.nom    ? utilisateur.nom[0]    : (utilisateur.username || 'E')[0]);
+  document.getElementById('sidebarNom').textContent = nom;
+  document.getElementById('sidebarInitiales').textContent = initiales.toUpperCase();
+  document.getElementById('topbarNom').textContent = utilisateur.prenom || utilisateur.username;
+  document.getElementById('prenomBienvenue').textContent = utilisateur.prenom || utilisateur.username;
+  document.getElementById('profilNomComplet').textContent = nom;
+  document.getElementById('profilAvatar').textContent = initiales.toUpperCase();
 }
+
+function afficherDate() {
+  const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  document.getElementById('dateAujourdhui').textContent =
+    new Date().toLocaleDateString('fr-FR', opts);
+}
+
+// ═══════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════
+function showSection(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  const target = el || document.querySelector(`[data-section="${id}"]`);
+  if (target) target.classList.add('active');
+  if (window.innerWidth <= 768) toggleSidebar(false);
+}
+
+function toggleSidebar(force) {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('overlayMobile');
+  const open = typeof force === 'boolean' ? force : !sb.classList.contains('open');
+  sb.classList.toggle('open', open);
+  ov.classList.toggle('open', open);
+}
+
+// ═══════════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════════
+async function chargerDashboard() {
+  try {
+    const [emprunts, reservations] = await Promise.all([
+      apiFetch('/emprunts/etudiant/' + utilisateur.id),
+      apiFetch('/reservations/etudiant/' + utilisateur.id)
+    ]);
+
+    const enCours  = (emprunts  || []).filter(e => e.statut === 'EMPRUNTE' || e.statut === 'EN_COURS');
+    const resvAct  = (reservations || []).filter(r => r.statut === 'EN_ATTENTE' || r.statut === 'RESERVE');
+    const retards  = enCours.filter(e => new Date(e.dateRetourPrevue) < new Date());
+    const total    = (emprunts || []).length;
+
+    document.getElementById('statEmpruntsEnCours').textContent = enCours.length;
+    document.getElementById('statReservations').textContent    = resvAct.length;
+    document.getElementById('statRetards').textContent         = retards.length;
+    document.getElementById('statTotal').textContent           = total;
+
+    // Badges sidebar
+    if (enCours.length > 0) {
+      const b = document.getElementById('badgeEmprunts');
+      b.textContent = enCours.length; b.style.display = '';
+    }
+    if (resvAct.length > 0) {
+      const b2 = document.getElementById('badgeReservations');
+      b2.textContent = resvAct.length; b2.style.display = '';
+      document.getElementById('notifDot').style.display = '';
+    }
+    if (retards.length > 0) {
+      document.getElementById('notifDot').style.display = '';
+    }
+
+    // Profil stats
+    document.getElementById('psEmprunts').textContent = enCours.length;
+    document.getElementById('psResv').textContent     = resvAct.length;
+    document.getElementById('psTotal').textContent    = total;
+
+    // Mini-tableau dashboard emprunts
+    const tbody = document.getElementById('dashEmprunts');
+    if (enCours.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="3"><div class="empty-state"><i class="fa-solid fa-book-open"></i><p>Aucun emprunt en cours</p></div></td></tr>`;
+    } else {
+      tbody.innerHTML = enCours.slice(0,5).map(e => {
+        const retard = new Date(e.dateRetourPrevue) < new Date();
+        return `<tr>
+          <td><strong>${e.livre?.titre || e.titreLivre || '—'}</strong></td>
+          <td>${formaterDate(e.dateRetourPrevue)}</td>
+          <td><span class="badge-status ${retard ? 'retard' : 'actif'}">${retard ? '⚠ Retard' : '✓ En cours'}</span></td>
+        </tr>`;
+      }).join('');
+    }
+
+    // Mini-tableau réservations
+    const tbody2 = document.getElementById('dashReservations');
+    if (resvAct.length === 0) {
+      tbody2.innerHTML = `<tr><td colspan="3"><div class="empty-state"><i class="fa-solid fa-clock"></i><p>Aucune réservation active</p></div></td></tr>`;
+    } else {
+      tbody2.innerHTML = resvAct.slice(0,4).map(r => `<tr>
+        <td><strong>${r.livre?.titre || r.titreLivre || '—'}</strong></td>
+        <td>${formaterDate(r.dateReservation)}</td>
+        <td><span class="badge-status reserve">⏳ En attente</span></td>
+      </tr>`).join('');
+    }
+
+  } catch (e) {
+    console.warn('Dashboard:', e);
+    remplirDashboardVide();
+  }
+}
+
+function remplirDashboardVide() {
+  ['statEmpruntsEnCours','statReservations','statRetards','statTotal',
+   'psEmprunts','psResv','psTotal'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = '0';
+  });
+  document.getElementById('dashEmprunts').innerHTML =
+    `<tr><td colspan="3" style="text-align:center;padding:24px;color:var(--muted);">Aucun emprunt</td></tr>`;
+  document.getElementById('dashReservations').innerHTML =
+    `<tr><td colspan="3" style="text-align:center;padding:24px;color:var(--muted);">Aucune réservation</td></tr>`;
+}
+
+// ═══════════════════════════════════════════
+//  CATALOGUE
+// ═══════════════════════════════════════════
+async function chargerCatalogue() {
+  try {
+    const [livres, categories] = await Promise.all([
+      apiFetch('/livres'),
+      apiFetch('/categories')
+    ]);
+    tousLesLivres = livres || [];
+
+    // Remplir filtre catégories
+    const sel = document.getElementById('filtreCategorie');
+    (categories || []).forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id || c.nom;
+      opt.textContent = c.nom;
+      sel.appendChild(opt);
+    });
+
+    afficherLivres(tousLesLivres);
+  } catch (e) {
+    console.warn('Catalogue:', e);
+    document.getElementById('booksGrid').innerHTML =
+      `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">
+        <i class="fa-solid fa-triangle-exclamation" style="font-size:2rem;margin-bottom:10px;"></i>
+        <br>Impossible de charger le catalogue
+      </div>`;
+  }
+}
+
+function afficherLivres(livres) {
+  const grid = document.getElementById('booksGrid');
+  if (!livres.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted);">
+      <i class="fa-solid fa-magnifying-glass" style="font-size:2rem;margin-bottom:10px;"></i>
+      <br>Aucun livre trouvé
+    </div>`;
+    return;
+  }
+  const emojis = ['📚','📖','📕','📗','📘','📙','🔬','⚗️','🧮','🌍','🏛️','🎓'];
+  grid.innerHTML = livres.map((l, i) => {
+    const dispo = l.disponible !== false && (l.quantiteDisponible === undefined || l.quantiteDisponible > 0);
+    const emoji = emojis[i % emojis.length];
+    return `<div class="book-card">
+      <div class="book-cover" style="background:${couleursLivres(i)}">
+        <span>${emoji}</span>
+        <span class="avail ${dispo ? 'ok' : 'ko'}">${dispo ? 'Disponible' : 'Indisponible'}</span>
+      </div>
+      <div class="book-body">
+        <div class="book-title">${l.titre}</div>
+        <div class="book-auteur">${l.auteur || '—'}</div>
+        <div class="book-cat">${l.categorie?.nom || l.categorieNom || 'Général'}</div>
+        <div class="book-actions">
+          <button class="btn btn-primary" ${dispo ? '' : 'disabled'} onclick="ouvrirModalEmprunt(${l.id}, '${escapeStr(l.titre)}')">
+            <i class="fa-solid fa-book-bookmark"></i> Emprunter
+          </button>
+          <button class="btn btn-outline" onclick="reserverLivre(${l.id}, '${escapeStr(l.titre)}')" title="Réserver">
+            <i class="fa-solid fa-clock"></i>
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filtrerLivres() {
+  const q    = document.getElementById('rechercheInput').value.toLowerCase();
+  const cat  = document.getElementById('filtreCategorie').value;
+  const disp = document.getElementById('filtreDisponibilite').value;
+
+  const filtres = tousLesLivres.filter(l => {
+    const ok1 = !q || l.titre.toLowerCase().includes(q) || (l.auteur || '').toLowerCase().includes(q);
+    const ok2 = !cat || String(l.categorie?.id || l.categorieId) === String(cat) || l.categorie?.nom === cat;
+    const isDispo = l.disponible !== false && (l.quantiteDisponible === undefined || l.quantiteDisponible > 0);
+    const ok3 = !disp || (disp === 'dispo' ? isDispo : !isDispo);
+    return ok1 && ok2 && ok3;
+  });
+  afficherLivres(filtres);
+}
+
+function couleursLivres(i) {
+  const g = [
+    'linear-gradient(135deg,#1e8a5e,#0f5e3c)',
+    'linear-gradient(135deg,#2563eb,#1e40af)',
+    'linear-gradient(135deg,#d97706,#92400e)',
+    'linear-gradient(135deg,#7c3aed,#4c1d95)',
+    'linear-gradient(135deg,#dc2626,#991b1b)',
+    'linear-gradient(135deg,#0891b2,#164e63)',
+  ];
+  return g[i % g.length];
+}
+
+// ═══════════════════════════════════════════
+//  EMPRUNTS
+// ═══════════════════════════════════════════
+async function chargerEmprunts() {
+  try {
+    const emprunts = await apiFetch('/emprunts/etudiant/' + utilisateur.id);
+    const enCours = (emprunts || []).filter(e => e.statut === 'EMPRUNTE' || e.statut === 'EN_COURS');
+    const tbody = document.getElementById('tbodyEmprunts');
+
+    if (!enCours.length) {
+      tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">
+        <i class="fa-solid fa-book-open"></i><p>Aucun emprunt en cours</p>
+      </div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = enCours.map(e => {
+      const retard = new Date(e.dateRetourPrevue) < new Date();
+      return `<tr>
+        <td><strong>${e.livre?.titre || e.titreLivre || '—'}</strong></td>
+        <td>${e.livre?.auteur || e.auteurLivre || '—'}</td>
+        <td>${formaterDate(e.dateEmprunt)}</td>
+        <td>${formaterDate(e.dateRetourPrevue)}</td>
+        <td><span class="badge-status ${retard ? 'retard' : 'actif'}">${retard ? '⚠ Retard' : '✓ En cours'}</span></td>
+      </tr>`;
+    }).join('');
+  } catch (e) {
+    console.warn('Emprunts:', e);
+    document.getElementById('tbodyEmprunts').innerHTML =
+      `<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted);">Impossible de charger les emprunts</td></tr>`;
+  }
+}
+
+// ═══════════════════════════════════════════
+//  RESERVATIONS
+// ═══════════════════════════════════════════
+async function chargerReservations() {
+  try {
+    const reservations = await apiFetch('/reservations/etudiant/' + utilisateur.id);
+    const actives = (reservations || []).filter(r => r.statut === 'EN_ATTENTE' || r.statut === 'RESERVE');
+    const tbody = document.getElementById('tbodyReservations');
+
+    if (!actives.length) {
+      tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">
+        <i class="fa-solid fa-clock"></i><p>Aucune réservation active</p>
+      </div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = actives.map((r, i) => `<tr>
+      <td><strong>${r.livre?.titre || r.titreLivre || '—'}</strong></td>
+      <td>${r.livre?.auteur || r.auteurLivre || '—'}</td>
+      <td>${formaterDate(r.dateReservation)}</td>
+      <td><span class="badge-status reserve">⏳ En attente</span></td>
+      <td>
+        <button class="btn btn-outline" style="font-size:.78rem;padding:6px 12px;" 
+          onclick="demanderAnnulationReservation(${r.id}, '${escapeStr(r.livre?.titre || r.titreLivre || '')}')">
+          <i class="fa-solid fa-xmark"></i> Annuler
+        </button>
+      </td>
+    </tr>`).join('');
+  } catch (e) {
+    console.warn('Réservations:', e);
+    document.getElementById('tbodyReservations').innerHTML =
+      `<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted);">Impossible de charger les réservations</td></tr>`;
+  }
+}
+
+function demanderAnnulationReservation(id, titre) {
+  reservationAnnulerIndex = id;
+  document.getElementById('modalResvMsg').textContent =
+    `Voulez-vous annuler la réservation de « ${titre} » ?`;
+  document.getElementById('modalReservation').classList.add('open');
+}
+
+async function confirmerAnnulationReservation() {
+  fermerModal('modalReservation');
+  try {
+    await apiFetch('/reservations/' + reservationAnnulerIndex, { method: 'DELETE' });
+    toast('Réservation annulée', 'success');
+    await Promise.all([chargerReservations(), chargerDashboard()]);
+  } catch (e) {
+    toast('Erreur lors de l\'annulation', 'error');
+  }
+}
+
+// ═══════════════════════════════════════════
+//  HISTORIQUE
+// ═══════════════════════════════════════════
+async function chargerHistorique() {
+  try {
+    const emprunts = await apiFetch('/emprunts/etudiant/' + utilisateur.id);
+    const hist = (emprunts || []).filter(e => e.statut === 'RETOURNE' || e.statut === 'RENDU');
+    const tbody = document.getElementById('tbodyHistorique');
+
+    if (!hist.length) {
+      tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state">
+        <i class="fa-solid fa-rectangle-list"></i><p>Aucun historique disponible</p>
+      </div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = hist.map(e => `<tr>
+      <td><strong>${e.livre?.titre || e.titreLivre || '—'}</strong></td>
+      <td>${e.livre?.auteur || e.auteurLivre || '—'}</td>
+      <td>${formaterDate(e.dateEmprunt)}</td>
+      <td>${formaterDate(e.dateRetourEffectif || e.dateRetour)}</td>
+      <td><span class="badge-status retourne">✓ Retourné</span></td>
+    </tr>`).join('');
+  } catch (e) {
+    console.warn('Historique:', e);
+    document.getElementById('tbodyHistorique').innerHTML =
+      `<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted);">Impossible de charger l\'historique</td></tr>`;
+  }
+}
+
+// ═══════════════════════════════════════════
+//  EMPRUNTER UN LIVRE
+// ═══════════════════════════════════════════
+function ouvrirModalEmprunt(livreId, titre) {
+  livrePendantEmprunt = livreId;
+  document.getElementById('modalEmpruntTitre').textContent = `Emprunter « ${titre} »`;
+  document.getElementById('modalEmprunt').classList.add('open');
+}
+
+async function confirmerEmprunt() {
+  fermerModal('modalEmprunt');
+  try {
+    await apiFetch('/emprunts', {
+      method: 'POST',
+      body: JSON.stringify({ livreId: livrePendantEmprunt, etudiantId: utilisateur.id })
+    });
+    toast('Emprunt enregistré avec succès !', 'success');
+    await Promise.all([chargerDashboard(), chargerEmprunts(), chargerCatalogue()]);
+  } catch (e) {
+    toast(e.message || 'Erreur lors de l\'emprunt', 'error');
+  }
+}
+
+async function reserverLivre(livreId, titre) {
+  try {
+    await apiFetch('/reservations', {
+      method: 'POST',
+      body: JSON.stringify({ livreId, etudiantId: utilisateur.id })
+    });
+    toast(`« ${titre} » réservé !`, 'success');
+    await Promise.all([chargerDashboard(), chargerReservations()]);
+  } catch (e) {
+    toast(e.message || 'Erreur lors de la réservation', 'error');
+  }
+}
+
+// ═══════════════════════════════════════════
+//  PROFIL
+// ═══════════════════════════════════════════
+function remplirProfil() {
+  document.getElementById('pfPrenom').value   = utilisateur.prenom   || '';
+  document.getElementById('pfNom').value      = utilisateur.nom      || '';
+  document.getElementById('pfUsername').value = utilisateur.username || '';
+  document.getElementById('pfEmail').value    = utilisateur.email    || '';
+}
+
+async function sauvegarderProfil() {
+  const prenom   = document.getElementById('pfPrenom').value.trim();
+  const nom      = document.getElementById('pfNom').value.trim();
+  const email    = document.getElementById('pfEmail').value.trim();
+  const password = document.getElementById('pfPassword').value;
+
+  const payload = { prenom, nom, email };
+  if (password) payload.motDePasse = password;
+
+  try {
+    const updated = await apiFetch('/utilisateurs/' + utilisateur.id, {
+      method: 'PUT',
+      body: JSON.stringify(payload)
+    });
+    const saved = { ...utilisateur, ...payload, ...updated };
+    localStorage.setItem('utilisateur', JSON.stringify(saved));
+    utilisateur = saved;
+    afficherInfosUtilisateur();
+    toast('Profil mis à jour !', 'success');
+    document.getElementById('pfPassword').value = '';
+  } catch (e) {
+    toast(e.message || 'Erreur lors de la sauvegarde', 'error');
+  }
+}
+
+// ═══════════════════════════════════════════
+//  DÉCONNEXION
+// ═══════════════════════════════════════════
+function deconnexion() {
+  localStorage.removeItem('utilisateur');
+  window.location.href = 'index.html';
+}
+
+// ═══════════════════════════════════════════
+//  UTILITAIRES
+// ═══════════════════════════════════════════
+async function apiFetch(endpoint, options = {}) {
+  const headers = { 'Content-Type': 'application/json', ...options.headers };
+  const token = utilisateur?.token || localStorage.getItem('token');
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+
+  const res = await fetch(API + endpoint, { ...options, headers });
+  if (!res.ok) {
+    let msg = 'Erreur serveur';
+    try { const d = await res.json(); msg = d.message || d.error || msg; } catch {}
+    throw new Error(msg);
+  }
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
+
+function formaterDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+function escapeStr(s) {
+  return String(s || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+}
+
+function fermerModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function toast(msg, type = 'success') {
+  const container = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  container.appendChild(t);
+  setTimeout(() => t.remove(), 3800);
+}
+
+// Fermer modals en cliquant overlay
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => {
+    if (e.target === el) el.classList.remove('open');
+  });
+});
 </script>
 </body>
 </html>

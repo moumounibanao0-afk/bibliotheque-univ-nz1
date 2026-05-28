@@ -3,386 +3,309 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bibliothèque Universitaire - UNZ</title>
+    <title>Bibliothèque UNZ — Université Norbert Zongo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f5f5f5; }
-        nav { background: #1a237e; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
-        nav h1 { font-size: 20px; }
-        nav a { color: white; text-decoration: none; margin-left: 20px; font-size: 14px; }
-        nav a:hover { text-decoration: underline; }
-        .hero { background: linear-gradient(135deg, #1a237e, #283593); color: white; text-align: center; padding: 60px 20px; }
-        .hero h2 { font-size: 32px; margin-bottom: 10px; }
-        .hero p { font-size: 16px; opacity: 0.9; }
-        .stats { display: flex; justify-content: center; gap: 20px; padding: 30px; flex-wrap: wrap; }
-        .stat-card { background: white; border-radius: 10px; padding: 20px 30px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); min-width: 150px; }
-        .stat-card h3 { font-size: 36px; color: #1a237e; }
-        .stat-card p { color: #666; font-size: 14px; }
-        .section { background: white; padding: 30px; margin: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .section h3 { margin-bottom: 15px; color: #1a237e; }
-        .toolbar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
-        .toolbar input { padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
-        .btn { padding: 10px 20px; background: #1a237e; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; }
-        .btn:hover { background: #283593; }
-        .btn-danger { background: #c62828; }
-        .btn-success { background: #2e7d32; }
-        .btn-warning { background: #e65100; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th { background: #1a237e; color: white; padding: 10px; text-align: left; }
-        td { padding: 10px; border-bottom: 1px solid #eee; }
-        tr:hover { background: #f5f5f5; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
-        .modal.active { display: flex; }
-        .modal-content { background: white; padding: 30px; border-radius: 10px; width: 400px; max-width: 90%; }
-        .modal-content h3 { margin-bottom: 20px; color: #1a237e; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-size: 14px; }
-        .form-group input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; }
-        .modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
-        .alert { padding: 10px 15px; border-radius: 5px; margin: 10px 20px; display: none; }
-        .alert.success { background: #e8f5e9; color: #2e7d32; display: block; }
-        .alert.error { background: #ffebee; color: #c62828; display: block; }
-        footer { text-align: center; padding: 20px; background: #1a237e; color: white; margin-top: 40px; font-size: 14px; }
-        .badge { padding: 3px 8px; border-radius: 10px; font-size: 12px; color: white; }
-        .badge-success { background: #2e7d32; }
-        .badge-warning { background: #e65100; }
-        .badge-danger { background: #c62828; }
+        :root {
+            --navy:   #0b1628;
+            --navy2:  #132038;
+            --gold:   #c9a84c;
+            --gold2:  #e8c96d;
+            --amber:  #d4762a;
+            --green:  #1e6b42;
+            --text:   rgba(255,255,255,0.88);
+            --muted:  rgba(255,255,255,0.40);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--navy);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Fond animé ─────────────────────────────── */
+        .bg-orbs {
+            position: fixed; inset: 0; pointer-events: none; z-index: 0;
+        }
+        .orb {
+            position: absolute; border-radius: 50%;
+            filter: blur(80px); opacity: 0.18;
+        }
+        .orb1 { width:600px; height:600px; background:#1a237e; top:-150px; left:-150px;
+                 animation: drift1 14s ease-in-out infinite; }
+        .orb2 { width:400px; height:400px; background:#c9a84c; bottom:-100px; right:-80px;
+                 animation: drift2 18s ease-in-out infinite; }
+        .orb3 { width:300px; height:300px; background:#1e6b42; top:40%; left:55%;
+                 animation: drift3 22s ease-in-out infinite; }
+        @keyframes drift1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,30px)} }
+        @keyframes drift2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,-20px)} }
+        @keyframes drift3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(20px,-30px)} }
+
+        /* ── Ligne or déco ──────────────────────────── */
+        .gold-line {
+            width: 60px; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 0 auto;
+        }
+
+        /* ── Contenu principal ──────────────────────── */
+        .wrapper {
+            position: relative; z-index: 1;
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 40px 20px 60px;
+        }
+
+        /* ── En-tête ────────────────────────────────── */
+        .header { text-align: center; margin-bottom: 60px; }
+        .univ-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(201,168,76,0.12);
+            border: 1px solid rgba(201,168,76,0.3);
+            border-radius: 30px; padding: 6px 18px;
+            font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+            color: var(--gold); margin-bottom: 24px;
+            animation: fadeDown 0.5s ease both;
+        }
+        .header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(36px, 6vw, 64px);
+            font-weight: 700; line-height: 1.1;
+            letter-spacing: -0.5px;
+            animation: fadeDown 0.6s ease 0.1s both;
+        }
+        .header h1 span { color: var(--gold); }
+        .header .subtitle {
+            color: var(--muted); font-size: 15px; font-weight: 300;
+            margin-top: 12px; letter-spacing: 0.5px;
+            animation: fadeDown 0.6s ease 0.2s both;
+        }
+        .gold-line { margin: 20px auto; animation: fadeDown 0.6s ease 0.3s both; }
+
+        /* ── Bannière session active ─────────────────── */
+        #session-banner {
+            display: none;
+            background: rgba(46,125,50,0.15);
+            border: 1px solid rgba(46,125,50,0.4);
+            border-radius: 12px; padding: 14px 24px;
+            margin-bottom: 40px; text-align: center;
+            font-size: 14px; color: #a5d6a7;
+            animation: fadeDown 0.4s ease both;
+        }
+        #session-banner a {
+            color: #81c784; font-weight: 600;
+            text-decoration: underline; cursor: pointer;
+        }
+
+        /* ── Sous-titre choix profil ─────────────────── */
+        .choose-title {
+            text-align: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px; font-weight: 400;
+            color: var(--muted); letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            animation: fadeDown 0.6s ease 0.35s both;
+        }
+
+        /* ── Grille de profils ──────────────────────── */
+        .profiles {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            max-width: 1000px; width: 100%;
+        }
+        @media(max-width: 760px) { .profiles { grid-template-columns: 1fr; max-width: 420px; } }
+
+        .profile-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px; padding: 36px 28px;
+            display: flex; flex-direction: column;
+            cursor: pointer; text-decoration: none; color: inherit;
+            transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeUp 0.6s ease both;
+        }
+        .profile-card:nth-child(1) { animation-delay: 0.4s; }
+        .profile-card:nth-child(2) { animation-delay: 0.5s; }
+        .profile-card:nth-child(3) { animation-delay: 0.6s; }
+
+        .profile-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255,255,255,0.06);
+        }
+        .profile-card.admin:hover  { border-color: rgba(201,168,76,0.6); box-shadow: 0 20px 60px rgba(201,168,76,0.15); }
+        .profile-card.biblio:hover { border-color: rgba(212,118,42,0.6); box-shadow: 0 20px 60px rgba(212,118,42,0.15); }
+        .profile-card.student:hover{ border-color: rgba(30,107,66,0.7);  box-shadow: 0 20px 60px rgba(30,107,66,0.18); }
+
+        /* Icône du rôle */
+        .role-icon {
+            width: 64px; height: 64px; border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px; margin-bottom: 22px;
+        }
+        .admin  .role-icon { background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.2); }
+        .biblio .role-icon { background: rgba(212,118,42,0.12); border: 1px solid rgba(212,118,42,0.2); }
+        .student .role-icon{ background: rgba(30,107,66,0.18);  border: 1px solid rgba(30,107,66,0.3); }
+
+        .role-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22px; font-weight: 600; margin-bottom: 8px;
+        }
+        .admin  .role-name { color: var(--gold); }
+        .biblio .role-name { color: #e8924c; }
+        .student .role-name{ color: #4caf7d; }
+
+        .role-desc {
+            font-size: 13px; color: var(--muted);
+            font-weight: 300; line-height: 1.6; margin-bottom: 24px; flex: 1;
+        }
+
+        /* Liste des capacités */
+        .features {
+            list-style: none; margin-bottom: 28px;
+        }
+        .features li {
+            font-size: 12px; color: rgba(255,255,255,0.55);
+            padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .features li:last-child { border-bottom: none; }
+        .feat-dot {
+            width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+        }
+        .admin  .feat-dot { background: var(--gold); }
+        .biblio .feat-dot { background: #e8924c; }
+        .student .feat-dot{ background: #4caf7d; }
+
+        /* Bouton connexion */
+        .btn-connect {
+            width: 100%; padding: 12px;
+            border: none; border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px; font-weight: 600;
+            letter-spacing: 0.5px;
+            cursor: pointer; transition: all 0.25s;
+        }
+        .admin  .btn-connect { background: linear-gradient(135deg, #c9a84c, #e8c96d); color: #0b1628; }
+        .biblio .btn-connect { background: linear-gradient(135deg, #d4762a, #e8924c); color: white; }
+        .student .btn-connect{ background: linear-gradient(135deg, #1e6b42, #2e8b57); color: white; }
+        .btn-connect:hover    { transform: translateY(-2px); filter: brightness(1.1); }
+
+        /* ── Footer ─────────────────────────────────── */
+        footer {
+            position: relative; z-index: 1;
+            text-align: center; padding: 30px 20px 24px;
+            color: var(--muted); font-size: 12px; letter-spacing: 0.5px;
+        }
+        footer strong { color: rgba(255,255,255,0.4); }
+
+        /* ── Animations ─────────────────────────────── */
+        @keyframes fadeDown { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes fadeUp   { from{opacity:0;transform:translateY(24px)}  to{opacity:1;transform:translateY(0)} }
     </style>
 </head>
 <body>
 
-<nav>
-    <h1>📚 Bibliothèque UNZ</h1>
-    <div>
-        <a href="#stats">Statistiques</a>
-        <a href="#ouvrages">Catalogue</a>
-        <a href="#etudiants">Étudiants</a>
-        <a href="#emprunts">Emprunts</a>
-        <a href="#reservations">Réservations</a>
-    </div>
-</nav>
-
-<div class="hero">
-    <h2>Bienvenue à la Bibliothèque</h2>
-    <p>Université Norbert Zongo — Système de Gestion Documentaire</p>
+<div class="bg-orbs">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
 </div>
 
-<div id="alert" class="alert"></div>
+<div class="wrapper">
 
-<!-- STATISTIQUES -->
-<div id="stats" class="stats">
-    <div class="stat-card"><h3 id="stat-ouvrages">0</h3><p>Ouvrages</p></div>
-    <div class="stat-card"><h3 id="stat-emprunts">0</h3><p>Emprunts</p></div>
-    <div class="stat-card"><h3 id="stat-reservations">0</h3><p>Réservations</p></div>
-    <div class="stat-card"><h3 id="stat-utilisateurs">0</h3><p>Utilisateurs</p></div>
-    <div class="stat-card"><h3 id="stat-en-cours">0</h3><p>En cours</p></div>
-    <div class="stat-card"><h3 id="stat-retard">0</h3><p>En retard</p></div>
-</div>
+    <!-- En-tête -->
+    <header class="header">
+        <div class="univ-badge">📍 Université Norbert Zongo — Burkina Faso</div>
+        <h1>Bibliothèque <span>UNZ</span></h1>
+        <p class="subtitle">Système de Gestion Documentaire Universitaire</p>
+        <div class="gold-line"></div>
+    </header>
 
-<!-- CATALOGUE -->
-<div id="ouvrages" class="section">
-    <h3>📖 Catalogue des Ouvrages</h3>
-    <div class="toolbar">
-        <input type="text" id="search-input" placeholder="Rechercher par titre..." style="flex:1">
-        <button class="btn" onclick="rechercherOuvrage()">Rechercher</button>
-        <button class="btn btn-success" onclick="ouvrirModal('modal-ouvrage')">+ Ajouter</button>
-    </div>
-    <table>
-        <thead><tr><th>ID</th><th>Titre</th><th>Auteur</th><th>ISBN</th><th>Disponibles</th><th>Actions</th></tr></thead>
-        <tbody id="ouvrages-table"><tr><td colspan="6" style="text-align:center">Chargement...</td></tr></tbody>
-    </table>
-</div>
+    <!-- Bannière session active -->
+    <div id="session-banner"></div>
 
-<!-- ETUDIANTS -->
-<div id="etudiants" class="section">
-    <h3>👨‍🎓 Gestion des Étudiants</h3>
-    <div class="toolbar">
-        <button class="btn btn-success" onclick="ouvrirModal('modal-etudiant')">+ Inscrire Étudiant</button>
-    </div>
-    <table>
-        <thead><tr><th>ID</th><th>Nom</th><th>Prénom</th><th>Email</th><th>N° Étudiant</th><th>Filière</th><th>Actions</th></tr></thead>
-        <tbody id="etudiants-table"><tr><td colspan="7" style="text-align:center">Chargement...</td></tr></tbody>
-    </table>
-</div>
+    <!-- Sous-titre -->
+    <p class="choose-title">— Choisissez votre profil —</p>
 
-<!-- EMPRUNTS -->
-<div id="emprunts" class="section">
-    <h3>📋 Gestion des Emprunts</h3>
-    <div class="toolbar">
-        <input type="number" id="etudiant-id-emprunt" placeholder="ID Étudiant" style="width:130px">
-        <input type="number" id="ouvrage-id-emprunt" placeholder="ID Ouvrage" style="width:130px">
-        <button class="btn btn-success" onclick="creerEmprunt()">+ Emprunter</button>
-    </div>
-    <table>
-        <thead><tr><th>ID</th><th>Étudiant</th><th>Ouvrage</th><th>Date Emprunt</th><th>Date Retour</th><th>Statut</th><th>Actions</th></tr></thead>
-        <tbody id="emprunts-table"><tr><td colspan="7" style="text-align:center">Chargement...</td></tr></tbody>
-    </table>
-</div>
+    <!-- Cartes de profil -->
+    <div class="profiles">
 
-<!-- RESERVATIONS -->
-<div id="reservations" class="section">
-    <h3>🔖 Réservations</h3>
-    <div class="toolbar">
-        <input type="number" id="etudiant-id-reservation" placeholder="ID Étudiant" style="width:130px">
-        <input type="number" id="ouvrage-id-reservation" placeholder="ID Ouvrage" style="width:130px">
-        <button class="btn btn-success" onclick="creerReservation()">+ Réserver</button>
-    </div>
-    <table>
-        <thead><tr><th>ID</th><th>Étudiant</th><th>Ouvrage</th><th>Date Réservation</th><th>Date Expiration</th><th>Statut</th><th>Actions</th></tr></thead>
-        <tbody id="reservations-table"><tr><td colspan="7" style="text-align:center">Chargement...</td></tr></tbody>
-    </table>
-</div>
+        <!-- Administrateur -->
+        <a class="profile-card admin" href="login.html?profil=ADMINISTRATEUR">
+            <div class="role-icon">🔐</div>
+            <div class="role-name">Administrateur</div>
+            <p class="role-desc">Gestion complète du système, des utilisateurs et des statistiques de la bibliothèque.</p>
+            <ul class="features">
+                <li><span class="feat-dot"></span>Gestion des utilisateurs</li>
+                <li><span class="feat-dot"></span>Statistiques & rapports</li>
+                <li><span class="feat-dot"></span>Configuration du système</li>
+                <li><span class="feat-dot"></span>Catalogue & catégories</li>
+            </ul>
+            <button class="btn-connect">Se connecter →</button>
+        </a>
 
-<!-- MODAL OUVRAGE -->
-<div id="modal-ouvrage" class="modal">
-    <div class="modal-content">
-        <h3>Ajouter un Ouvrage</h3>
-        <div class="form-group"><label>Titre</label><input type="text" id="titre" placeholder="Titre"></div>
-        <div class="form-group"><label>Auteur</label><input type="text" id="auteur" placeholder="Auteur"></div>
-        <div class="form-group"><label>ISBN</label><input type="text" id="isbn" placeholder="ISBN"></div>
-        <div class="form-group"><label>Catégorie</label><select id="categorie-id" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:5px"><option value="1">Informatique</option><option value="2">Mathématiques</option><option value="3">Physique</option></select></div><div class="form-group"><label>Nombre d'exemplaires</label><input type="number" id="exemplaires" value="1"></div>
-        <div class="modal-buttons">
-            <button class="btn btn-success" onclick="ajouterOuvrage()">Ajouter</button>
-            <button class="btn btn-danger" onclick="fermerModal('modal-ouvrage')">Annuler</button>
-        </div>
-    </div>
-</div>
+        <!-- Bibliothécaire -->
+        <a class="profile-card biblio" href="login.html?profil=BIBLIOTHECAIRE">
+            <div class="role-icon">📚</div>
+            <div class="role-name">Bibliothécaire</div>
+            <p class="role-desc">Gestion quotidienne du catalogue, des emprunts, des retours et des pénalités de retard.</p>
+            <ul class="features">
+                <li><span class="feat-dot"></span>Gestion du catalogue</li>
+                <li><span class="feat-dot"></span>Emprunts & retours</li>
+                <li><span class="feat-dot"></span>Calcul des pénalités</li>
+                <li><span class="feat-dot"></span>Suivi des réservations</li>
+            </ul>
+            <button class="btn-connect">Se connecter →</button>
+        </a>
 
-<!-- MODAL ETUDIANT -->
-<div id="modal-etudiant" class="modal">
-    <div class="modal-content">
-        <h3>Inscrire un Étudiant</h3>
-        <div class="form-group"><label>Nom</label><input type="text" id="etudiant-nom" placeholder="Nom"></div>
-        <div class="form-group"><label>Prénom</label><input type="text" id="etudiant-prenom" placeholder="Prénom"></div>
-        <div class="form-group"><label>Email</label><input type="email" id="etudiant-email" placeholder="email@unz.bf"></div>
-        <div class="form-group"><label>Mot de passe</label><input type="password" id="etudiant-password" placeholder="Mot de passe"></div>
-        <div class="form-group"><label>Numéro Étudiant</label><input type="text" id="etudiant-numero" placeholder="ETU001"></div>
-        <div class="form-group"><label>Filière</label><input type="text" id="etudiant-filiere" placeholder="Informatique"></div>
-        <div class="modal-buttons">
-            <button class="btn btn-success" onclick="inscrireEtudiant()">Inscrire</button>
-            <button class="btn btn-danger" onclick="fermerModal('modal-etudiant')">Annuler</button>
-        </div>
+        <!-- Étudiant -->
+        <a class="profile-card student" href="login.html?profil=ETUDIANT">
+            <div class="role-icon">🎓</div>
+            <div class="role-name">Étudiant</div>
+            <p class="role-desc">Accédez au catalogue, empruntez, réservez des ouvrages et consultez votre historique.</p>
+            <ul class="features">
+                <li><span class="feat-dot"></span>Catalogue & recherche avancée</li>
+                <li><span class="feat-dot"></span>Emprunt & retour d'ouvrages</li>
+                <li><span class="feat-dot"></span>Réservations</li>
+                <li><span class="feat-dot"></span>Historique personnel</li>
+            </ul>
+            <button class="btn-connect">Se connecter →</button>
+        </a>
+
     </div>
 </div>
 
 <footer>
-    <p>© 2026 Bibliothèque Universitaire Norbert Zongo — Développé avec Spring Boot</p>
+    © 2025-2026 <strong>Bibliothèque Universitaire Norbert Zongo</strong> — Développé en Java Spring Boot · JWT · MySQL
 </footer>
 
 <script>
-const API = '';
-
-async function chargerStats() {
-    try {
-        const res = await fetch(`${API}/api/statistiques`);
-        const data = await res.json();
-        document.getElementById('stat-ouvrages').textContent = data.totalOuvrages || 0;
-        document.getElementById('stat-emprunts').textContent = data.totalEmprunts || 0;
-        document.getElementById('stat-reservations').textContent = data.totalReservations || 0;
-        document.getElementById('stat-utilisateurs').textContent = data.totalUtilisateurs || 0;
-        document.getElementById('stat-en-cours').textContent = data.empruntsEnCours || 0;
-        document.getElementById('stat-retard').textContent = data.empruntsEnRetard || 0;
-    } catch(e) { console.error('Erreur stats:', e); }
-}
-
-async function chargerOuvrages() {
-    try {
-        const res = await fetch(`${API}/api/ouvrages`);
-        const ouvrages = await res.json();
-        const tbody = document.getElementById('ouvrages-table');
-        if (!ouvrages.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Aucun ouvrage</td></tr>'; return; }
-        tbody.innerHTML = ouvrages.map(o => `
-            <tr>
-                <td>${o.id}</td><td>${o.titre}</td><td>${o.auteur}</td>
-                <td>${o.isbn || '-'}</td>
-                <td><span class="badge ${o.exemplairesDisponibles > 0 ? 'badge-success' : 'badge-danger'}">${o.exemplairesDisponibles}/${o.nombreExemplaires}</span></td>
-                <td><button class="btn btn-danger" onclick="supprimerOuvrage(${o.id})" style="padding:5px 10px;font-size:12px">Supprimer</button></td>
-            </tr>`).join('');
-    } catch(e) { console.error('Erreur ouvrages:', e); }
-}
-
-async function chargerEtudiants() {
-    try {
-        const res = await fetch(`${API}/api/utilisateurs`);
-        const utilisateurs = await res.json();
-        const etudiants = utilisateurs.filter(u => u.role === 'ETUDIANT');
-        const tbody = document.getElementById('etudiants-table');
-        if (!etudiants.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Aucun étudiant</td></tr>'; return; }
-        tbody.innerHTML = etudiants.map(e => `
-            <tr>
-                <td>${e.id}</td><td>${e.nom}</td><td>${e.prenom}</td>
-                <td>${e.email}</td><td>${e.numeroEtudiant || '-'}</td><td>${e.filiere || '-'}</td>
-                <td><button class="btn btn-danger" onclick="supprimerUtilisateur(${e.id})" style="padding:5px 10px;font-size:12px">Supprimer</button></td>
-            </tr>`).join('');
-    } catch(e) { console.error('Erreur étudiants:', e); }
-}
-
-async function chargerEmprunts() {
-    try {
-        // ✅ CORRECTION : charger TOUS les emprunts
-const res = await fetch(`${API}/api/emprunts`);
-        const emprunts = await res.json();
-        const tbody = document.getElementById('emprunts-table');
-        if (!emprunts.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Aucun emprunt</td></tr>'; return; }
-        tbody.innerHTML = emprunts.map(e => `
-            <tr>
-                <td>${e.id}</td>
-                <td>${e.etudiant ? e.etudiant.nom + ' ' + e.etudiant.prenom : '-'}</td>
-                <td>${e.ouvrage ? e.ouvrage.titre : '-'}</td>
-                <td>${e.dateEmprunt || '-'}</td>
-                <td>${e.dateRetourPrevue || '-'}</td>
-                <td><span class="badge ${e.statut === 'EN_COURS' ? 'badge-warning' : e.statut === 'RETOURNE' ? 'badge-success' : 'badge-danger'}">${e.statut}</span></td>
-                <td>${e.statut === 'EN_COURS' ? `<button class="btn btn-warning" onclick="retournerEmprunt(${e.id})" style="padding:5px 10px;font-size:12px">Retourner</button>` : '-'}</td>
-            </tr>`).join('');
-    } catch(e) { console.error('Erreur emprunts:', e); }
-}
-
-async function chargerReservations() {
-    try {
-        const res = await fetch(`${API}/api/reservations`);
-        const reservations = await res.json();
-        const tbody = document.getElementById('reservations-table');
-        if (!reservations.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Aucune réservation</td></tr>'; return; }
-        tbody.innerHTML = reservations.map(r => `
-            <tr>
-                <td>${r.id}</td>
-                <td>${r.etudiant ? r.etudiant.nom + ' ' + r.etudiant.prenom : '-'}</td>
-                <td>${r.ouvrage ? r.ouvrage.titre : '-'}</td>
-                <td>${r.dateReservation || '-'}</td>
-                <td>${r.dateExpiration || '-'}</td>
-                <td><!-- ✅ CORRECTION : badge dynamique selon le statut -->
-<span class="badge ${r.statut === 'EN_ATTENTE' ? 'badge-warning' : r.statut === 'CONFIRMEE' ? 'badge-success' : 'badge-danger'}">${r.statut}</span></td>
-                <td><button class="btn btn-danger" onclick="annulerReservation(${r.id})" style="padding:5px 10px;font-size:12px">Annuler</button></td>
-            </tr>`).join('');
-    } catch(e) { console.error('Erreur réservations:', e); }
-}
-
-async function rechercherOuvrage() {
-    const titre = document.getElementById('search-input').value;
-    if (!titre) { chargerOuvrages(); return; }
-    try {
-        const res = await fetch(`${API}/api/ouvrages/recherche/titre?titre=${titre}`);
-        const ouvrages = await res.json();
-        const tbody = document.getElementById('ouvrages-table');
-        tbody.innerHTML = ouvrages.map(o => `
-            <tr>
-                <td>${o.id}</td><td>${o.titre}</td><td>${o.auteur}</td>
-                <td>${o.isbn || '-'}</td><td>${o.exemplairesDisponibles}/${o.nombreExemplaires}</td><td></td>
-            </tr>`).join('');
-    } catch(e) { console.error('Erreur recherche:', e); }
-}
-
-async function ajouterOuvrage() {
-    const ouvrage = {
-        titre: document.getElementById('titre').value,
-        auteur: document.getElementById('auteur').value,
-        isbn: document.getElementById('isbn').value,
-        nombreExemplaires: parseInt(document.getElementById('exemplaires').value),
-        categorieId: parseInt(document.getElementById('categorie-id').value)
-    };
-    try {
-        const res = await fetch(`${API}/api/ouvrages`, {
-            method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(ouvrage)
-        });
-        if (res.ok) { afficherAlert('Ouvrage ajouté !', 'success'); fermerModal('modal-ouvrage'); chargerOuvrages(); chargerStats(); }
-    } catch(e) { afficherAlert('Erreur ajout', 'error'); }
-}
-
-async function supprimerOuvrage(id) {
-    if (!confirm('Confirmer la suppression ?')) return;
-    try {
-        await fetch(`${API}/api/ouvrages/${id}`, {method: 'DELETE'});
-        afficherAlert('Ouvrage supprimé !', 'success'); chargerOuvrages(); chargerStats();
-    } catch(e) { afficherAlert('Erreur suppression', 'error'); }
-}
-
-async function inscrireEtudiant() {
-    const etudiant = {
-        nom: document.getElementById('etudiant-nom').value,
-        prenom: document.getElementById('etudiant-prenom').value,
-        email: document.getElementById('etudiant-email').value,
-        motDePasse: document.getElementById('etudiant-password').value,
-        numeroEtudiant: document.getElementById('etudiant-numero').value,
-        filiere: document.getElementById('etudiant-filiere').value
-    };
-    try {
-        const res = await fetch(`${API}/api/utilisateurs/etudiant`, {
-            method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(etudiant)
-        });
-        if (res.ok) { afficherAlert('Étudiant inscrit !', 'success'); fermerModal('modal-etudiant'); chargerEtudiants(); chargerStats(); }
-        else { const err = await res.text(); afficherAlert('Email déjà utilisé ou données invalides', 'error'); fermerModal('modal-etudiant'); }
-    } catch(e) { afficherAlert('Erreur inscription', 'error'); }
-}
-
-async function supprimerUtilisateur(id) {
-    if (!confirm('Confirmer la suppression ?')) return;
-    try {
-        await fetch(`${API}/api/utilisateurs/${id}`, {method: 'DELETE'});
-        afficherAlert('Utilisateur supprimé !', 'success'); chargerEtudiants(); chargerStats();
-    } catch(e) { afficherAlert('Erreur suppression', 'error'); }
-}
-
-async function creerEmprunt() {
-    const etudiantId = document.getElementById('etudiant-id-emprunt').value;
-    const ouvrageId = document.getElementById('ouvrage-id-emprunt').value;
-    if (!etudiantId || !ouvrageId) { afficherAlert('Entrez ID étudiant et ID ouvrage', 'error'); return; }
-    try {
-        const res = await fetch(`${API}/api/emprunts`, {
-            method: 'POST', headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({etudiantId: parseInt(etudiantId), ouvrageId: parseInt(ouvrageId)})
-        });
-        if (res.ok) { afficherAlert('Emprunt créé !', 'success'); chargerEmprunts(); chargerOuvrages(); chargerStats(); }
-        else { const err = await res.text(); afficherAlert('Email déjà utilisé ou données invalides', 'error'); fermerModal('modal-etudiant'); }
-    } catch(e) { afficherAlert('Erreur emprunt', 'error'); }
-}
-
-async function retournerEmprunt(id) {
-    if (!confirm('Confirmer le retour ?')) return;
-    try {
-        const res = await fetch(`${API}/api/emprunts/${id}/retour`, {method: 'PUT'});
-        if (res.ok) { afficherAlert('Retour enregistré !', 'success'); chargerEmprunts(); chargerOuvrages(); chargerStats(); }
-    } catch(e) { afficherAlert('Erreur retour', 'error'); }
-}
-
-async function creerReservation() {
-    const etudiantId = document.getElementById('etudiant-id-reservation').value;
-    const ouvrageId = document.getElementById('ouvrage-id-reservation').value;
-    if (!etudiantId || !ouvrageId) { afficherAlert('Entrez ID étudiant et ID ouvrage', 'error'); return; }
-    try {
-        const res = await fetch(`${API}/api/reservations`, {
-            method: 'POST', headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({etudiantId: parseInt(etudiantId), ouvrageId: parseInt(ouvrageId)})
-        });
-        if (res.ok) { afficherAlert('Réservation créée !', 'success'); chargerReservations(); chargerStats(); }
-        else { const err = await res.text(); afficherAlert('Email déjà utilisé ou données invalides', 'error'); fermerModal('modal-etudiant'); }
-    } catch(e) { afficherAlert('Erreur réservation', 'error'); }
-}
-
-async function annulerReservation(id) {
-    if (!confirm('Annuler cette réservation ?')) return;
-    try {
-        const res = await fetch(`${API}/api/reservations/${id}/annuler`, {method: 'PUT'});
-        if (res.ok) { afficherAlert('Réservation annulée !', 'success'); chargerReservations(); chargerStats(); }
-    } catch(e) { afficherAlert('Erreur annulation', 'error'); }
-}
-
-function ouvrirModal(id) { document.getElementById(id).classList.add('active'); }
-function fermerModal(id) { document.getElementById(id).classList.remove('active'); }
-
-function afficherAlert(msg, type) {
-    const alert = document.getElementById('alert');
-    alert.textContent = msg;
-    alert.className = `alert ${type}`;
-    setTimeout(() => { alert.className = 'alert'; }, 3000);
-}
-
+// Si déjà connecté, afficher la bannière de session
 window.onload = () => {
-    chargerStats();
-    chargerOuvrages();
-    chargerEtudiants();
-    chargerEmprunts();
-    chargerReservations();
+    const token = localStorage.getItem('token');
+    const role  = localStorage.getItem('role');
+    const nom   = localStorage.getItem('nom');
+    const prenom= localStorage.getItem('prenom');
+    if (token && role) {
+        const dest = (role === 'ETUDIANT') ? 'etudiant.html' : 'admin.html';
+        const label = role === 'ADMINISTRATEUR' ? 'Administrateur'
+                    : role === 'BIBLIOTHECAIRE' ? 'Bibliothécaire' : 'Étudiant';
+        const banner = document.getElementById('session-banner');
+        banner.style.display = 'block';
+        banner.innerHTML = `✅ Session active : <strong>${prenom} ${nom}</strong> (${label})
+            — <a onclick="accederEspace('${dest}')">Accéder à mon espace</a>
+            &nbsp;|&nbsp; <a onclick="seDeconnecter()">Se déconnecter</a>`;
+    }
 };
+function accederEspace(url) { window.location.href = url; }
+function seDeconnecter() { localStorage.clear(); location.reload(); }
 </script>
 </body>
 </html>

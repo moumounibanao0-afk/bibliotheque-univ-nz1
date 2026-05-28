@@ -3,135 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administration — Bibliothèque UNZ</title>
+    <title id="page-title">Administration — Bibliothèque UNZ</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'DM Sans', sans-serif; background: #f0f2f5; color: #1a1a2e; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'DM Sans',sans-serif; background:#f0f2f5; color:#1a1a2e; }
 
+        /* NAV */
         nav {
-            background: #0d1b2a; color: white; padding: 0 30px;
-            display: flex; justify-content: space-between; align-items: center;
-            height: 64px; position: sticky; top: 0; z-index: 100;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+            background: #0d1b2a; color:white; padding: 0 30px;
+            display:flex; justify-content:space-between; align-items:center;
+            height:64px; position:sticky; top:0; z-index:100;
+            box-shadow:0 2px 20px rgba(0,0,0,0.3);
         }
-        .nav-brand { display: flex; align-items: center; gap: 12px; font-family: 'Playfair Display', serif; font-size: 18px; color: #fff; }
-        .nav-brand span { font-size: 24px; }
-        .nav-right { display: flex; align-items: center; gap: 14px; }
-        .nav-user { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 6px 14px; font-size: 13px; color: rgba(255,255,255,0.8); }
-        .btn-logout { background: rgba(198,40,40,0.2); border: 1px solid rgba(198,40,40,0.3); color: #ef9a9a; padding: 7px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
-        .btn-logout:hover { background: rgba(198,40,40,0.35); }
+        .nav-brand { display:flex; align-items:center; gap:12px; font-family:'Cormorant Garamond',serif; font-size:18px; color:#fff; }
+        .nav-brand span { font-size:24px; }
+        .nav-right { display:flex; align-items:center; gap:14px; }
+        .role-pill {
+            padding:4px 12px; border-radius:20px; font-size:11px; font-weight:600;
+            letter-spacing:0.5px; text-transform:uppercase;
+        }
+        .role-pill.admin  { background:rgba(201,168,76,0.18); border:1px solid rgba(201,168,76,0.35); color:#c9a84c; }
+        .role-pill.biblio { background:rgba(212,118,42,0.15); border:1px solid rgba(212,118,42,0.3); color:#e8924c; }
+        .nav-user { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:8px; padding:6px 14px; font-size:13px; color:rgba(255,255,255,0.8); }
+        .btn-logout { background:rgba(198,40,40,0.2); border:1px solid rgba(198,40,40,0.3); color:#ef9a9a; padding:7px 16px; border-radius:8px; cursor:pointer; font-size:13px; font-family:'DM Sans',sans-serif; transition:all 0.2s; }
+        .btn-logout:hover { background:rgba(198,40,40,0.35); }
 
-        .hero { background: linear-gradient(135deg, #0d1b2a 0%, #1a237e 100%); color: white; padding: 40px 30px; }
-        .hero h2 { font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 6px; }
-        .hero p { color: rgba(255,255,255,0.55); font-size: 14px; font-weight: 300; }
+        /* HERO */
+        .hero {
+            color:white; padding:36px 30px;
+            background: linear-gradient(135deg, #0d1b2a 0%, #1a237e 100%);
+        }
+        .hero.biblio-hero { background: linear-gradient(135deg, #0d1b2a 0%, #8d4a0d 100%); }
+        .hero h2 { font-family:'Cormorant Garamond',serif; font-size:28px; margin-bottom:6px; }
+        .hero p  { color:rgba(255,255,255,0.55); font-size:14px; font-weight:300; }
 
-        .stats { display: flex; gap: 16px; padding: 24px 30px; flex-wrap: wrap; }
-        .stat-card { background: white; border-radius: 12px; padding: 20px 24px; flex: 1; min-width: 130px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border-left: 4px solid #1a237e; transition: transform 0.2s; cursor: default; }
-        .stat-card:hover { transform: translateY(-2px); }
-        .stat-card h3 { font-family: 'Playfair Display', serif; font-size: 32px; color: #1a237e; }
-        .stat-card p { color: #888; font-size: 12px; margin-top: 4px; font-weight: 500; letter-spacing: 0.5px; }
-        .stat-card.danger { border-left-color: #c62828; }
-        .stat-card.danger h3 { color: #c62828; }
-        .stat-card.success { border-left-color: #2e7d32; }
-        .stat-card.success h3 { color: #2e7d32; }
+        /* STATS */
+        .stats { display:flex; gap:16px; padding:24px 30px; flex-wrap:wrap; }
+        .stat-card { background:white; border-radius:12px; padding:20px 24px; flex:1; min-width:130px;
+                     box-shadow:0 2px 12px rgba(0,0,0,0.06); border-left:4px solid #1a237e; transition:transform 0.2s; }
+        .stat-card:hover { transform:translateY(-2px); }
+        .stat-card h3 { font-family:'Cormorant Garamond',serif; font-size:32px; color:#1a237e; }
+        .stat-card p  { color:#888; font-size:12px; margin-top:4px; font-weight:500; letter-spacing:0.5px; }
+        .stat-card.danger  { border-left-color:#c62828; } .stat-card.danger h3  { color:#c62828; }
+        .stat-card.success { border-left-color:#2e7d32; } .stat-card.success h3 { color:#2e7d32; }
+        .stat-card.warning { border-left-color:#e65100; } .stat-card.warning h3 { color:#e65100; }
 
-        .charts-row { display: flex; gap: 20px; padding: 0 30px 24px; flex-wrap: wrap; }
-        .chart-card { background: white; border-radius: 12px; padding: 20px; flex: 1; min-width: 280px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-        .chart-card h4 { font-size: 14px; font-weight: 600; color: #0d1b2a; margin-bottom: 16px; }
+        /* CHARTS */
+        .charts-row { display:flex; gap:20px; padding:0 30px 24px; flex-wrap:wrap; }
+        .chart-card { background:white; border-radius:12px; padding:20px; flex:1; min-width:280px;
+                      box-shadow:0 2px 12px rgba(0,0,0,0.06); }
+        .chart-card h4 { font-size:14px; font-weight:600; color:#0d1b2a; margin-bottom:16px; }
 
-        .section { background: white; margin: 0 30px 24px; border-radius: 12px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid #f0f2f5; flex-wrap: wrap; gap: 10px; }
-        .section-header h3 { font-size: 16px; font-weight: 600; color: #0d1b2a; }
+        /* SECTION */
+        .section { background:white; margin:0 30px 24px; border-radius:12px; padding:24px;
+                   box-shadow:0 2px 12px rgba(0,0,0,0.06); }
+        .section-header { display:flex; justify-content:space-between; align-items:center;
+                          margin-bottom:20px; padding-bottom:14px; border-bottom:2px solid #f0f2f5; flex-wrap:wrap; gap:10px; }
+        .section-header h3 { font-size:16px; font-weight:600; color:#0d1b2a; }
 
-        .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        /* TOOLBAR */
+        .toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
         .toolbar input, .toolbar select {
-            padding: 9px 14px; border: 1px solid #e0e0e0; border-radius: 8px;
-            font-size: 14px; font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.2s;
+            padding:9px 14px; border:1px solid #e0e0e0; border-radius:8px;
+            font-size:14px; font-family:'DM Sans',sans-serif; outline:none; transition:border-color 0.2s;
         }
-        .toolbar input:focus, .toolbar select:focus { border-color: #1a237e; }
+        .toolbar input:focus, .toolbar select:focus { border-color:#1a237e; }
 
-        .btn { padding: 9px 18px; background: #1a237e; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 500; transition: all 0.2s; white-space: nowrap; }
-        .btn:hover { background: #283593; transform: translateY(-1px); }
-        .btn-danger { background: #c62828; } .btn-danger:hover { background: #b71c1c; }
-        .btn-success { background: #2e7d32; } .btn-success:hover { background: #1b5e20; }
-        .btn-warning { background: #e65100; } .btn-warning:hover { background: #bf360c; }
-        .btn-info { background: #0277bd; } .btn-info:hover { background: #01579b; }
-        .btn-sm { padding: 5px 12px; font-size: 12px; }
+        /* BUTTONS */
+        .btn { padding:9px 18px; background:#1a237e; color:white; border:none; border-radius:8px; cursor:pointer;
+               font-size:13px; font-family:'DM Sans',sans-serif; font-weight:500; transition:all 0.2s; white-space:nowrap; }
+        .btn:hover { background:#283593; transform:translateY(-1px); }
+        .btn-danger  { background:#c62828; } .btn-danger:hover  { background:#b71c1c; }
+        .btn-success { background:#2e7d32; } .btn-success:hover { background:#1b5e20; }
+        .btn-warning { background:#e65100; } .btn-warning:hover { background:#bf360c; }
+        .btn-info    { background:#0277bd; } .btn-info:hover    { background:#01579b; }
+        .btn-sm { padding:5px 12px; font-size:12px; }
 
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #0d1b2a; color: white; padding: 11px 14px; text-align: left; font-size: 12px; font-weight: 500; letter-spacing: 0.5px; }
-        th:first-child { border-radius: 6px 0 0 6px; } th:last-child { border-radius: 0 6px 6px 0; }
-        td { padding: 11px 14px; border-bottom: 1px solid #f0f2f5; font-size: 14px; }
-        tr:hover td { background: #fafafa; } tr:last-child td { border-bottom: none; }
+        /* TABLE */
+        table { width:100%; border-collapse:collapse; }
+        th { background:#0d1b2a; color:white; padding:11px 14px; text-align:left; font-size:12px;
+             font-weight:500; letter-spacing:0.5px; }
+        th:first-child { border-radius:6px 0 0 6px; } th:last-child { border-radius:0 6px 6px 0; }
+        td { padding:11px 14px; border-bottom:1px solid #f0f2f5; font-size:14px; }
+        tr:hover td { background:#fafafa; } tr:last-child td { border-bottom:none; }
 
-        .badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-        .badge-success { background: #e8f5e9; color: #2e7d32; }
-        .badge-warning { background: #fff3e0; color: #e65100; }
-        .badge-danger { background: #ffebee; color: #c62828; }
-        .badge-info { background: #e3f2fd; color: #0277bd; }
+        /* BADGES */
+        .badge { padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; }
+        .badge-success { background:#e8f5e9; color:#2e7d32; }
+        .badge-warning { background:#fff3e0; color:#e65100; }
+        .badge-danger  { background:#ffebee; color:#c62828; }
+        .badge-info    { background:#e3f2fd; color:#0277bd; }
+        .badge-gold    { background:rgba(201,168,76,0.12); color:#a07c2a; border:1px solid rgba(201,168,76,0.3); }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
-        .modal.active { display: flex; }
-        .modal-content { background: white; padding: 32px; border-radius: 16px; width: 460px; max-width: 90%; animation: slideUp 0.25s ease; max-height: 90vh; overflow-y: auto; }
+        /* TAB NAV */
+        .tab-nav { display:flex; gap:4px; background:#f0f2f5; padding:4px; border-radius:10px;
+                   margin-bottom:20px; flex-wrap:wrap; }
+        .tab-btn { flex:1; padding:8px 14px; border:none; background:transparent; border-radius:7px;
+                   cursor:pointer; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500;
+                   color:#666; transition:all 0.2s; white-space:nowrap; }
+        .tab-btn.active { background:white; color:#1a237e; box-shadow:0 1px 6px rgba(0,0,0,0.1); }
+        .tab-content { display:none; }
+        .tab-content.active { display:block; }
+
+        /* MODAL */
+        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+                 background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;
+                 backdrop-filter:blur(4px); }
+        .modal.active { display:flex; }
+        .modal-content { background:white; padding:32px; border-radius:16px; width:460px; max-width:90%;
+                         animation:slideUp 0.25s ease; max-height:90vh; overflow-y:auto; }
         @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-        .modal-content h3 { font-size: 18px; margin-bottom: 22px; color: #0d1b2a; }
-        .form-group { margin-bottom: 14px; }
-        .form-group label { display: block; font-size: 12px; color: #666; margin-bottom: 5px; font-weight: 500; }
-        .form-group input, .form-group select { width: 100%; padding: 10px 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px; font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.2s; }
-        .form-group input:focus, .form-group select:focus { border-color: #1a237e; }
-        .form-row { display: flex; gap: 12px; }
-        .form-row .form-group { flex: 1; }
-        .modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
+        .modal-content h3 { font-size:18px; margin-bottom:22px; color:#0d1b2a; }
+        .form-group { margin-bottom:14px; }
+        .form-group label { display:block; font-size:12px; color:#666; margin-bottom:5px; font-weight:500; }
+        .form-group input, .form-group select { width:100%; padding:10px 12px; border:1px solid #e0e0e0;
+            border-radius:8px; font-size:14px; font-family:'DM Sans',sans-serif; outline:none; transition:border-color 0.2s; }
+        .form-group input:focus, .form-group select:focus { border-color:#1a237e; }
+        .form-row { display:flex; gap:12px; }
+        .form-row .form-group { flex:1; }
+        .modal-buttons { display:flex; gap:10px; margin-top:20px; }
 
-        .alert { position: fixed; top: 80px; right: 20px; z-index: 2000; padding: 12px 20px; border-radius: 10px; font-size: 14px; display: none; min-width: 220px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.15); animation: slideIn 0.3s ease; }
+        /* ALERT */
+        .alert { position:fixed; top:80px; right:20px; z-index:2000; padding:12px 20px; border-radius:10px;
+                 font-size:14px; display:none; min-width:220px; text-align:center;
+                 box-shadow:0 4px 20px rgba(0,0,0,0.15); animation:slideIn 0.3s ease; }
         @keyframes slideIn { from{transform:translateX(50px);opacity:0} to{transform:translateX(0);opacity:1} }
-        .alert.success { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; display: block; }
-        .alert.error { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; display: block; }
+        .alert.success { background:#e8f5e9; color:#2e7d32; border:1px solid #a5d6a7; display:block; }
+        .alert.error   { background:#ffebee; color:#c62828; border:1px solid #ef9a9a; display:block; }
 
-        .tab-nav { display: flex; gap: 4px; background: #f0f2f5; padding: 4px; border-radius: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tab-btn { flex: 1; padding: 8px 14px; border: none; background: transparent; border-radius: 7px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; color: #666; transition: all 0.2s; white-space: nowrap; }
-        .tab-btn.active { background: white; color: #1a237e; box-shadow: 0 1px 6px rgba(0,0,0,0.1); }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        /* TAUX RETARD */
+        .taux-retard { background:linear-gradient(135deg,#fff3e0,#ffe0b2); border:1px solid #ffcc02;
+                       border-radius:10px; padding:12px 18px; margin-bottom:20px; font-size:14px; color:#e65100; }
 
-        .taux-retard { background: linear-gradient(135deg, #fff3e0, #ffe0b2); border: 1px solid #ffcc02; border-radius: 10px; padding: 12px 18px; margin-bottom: 20px; font-size: 14px; color: #e65100; }
-
-        footer { text-align: center; padding: 20px; color: #999; font-size: 13px; margin-top: 10px; }
+        footer { text-align:center; padding:20px; color:#999; font-size:12px; margin-top:10px; }
     </style>
 </head>
 <body>
 
 <nav>
-    <div class="nav-brand"><span>📚</span> Bibliothèque UNZ — Administration</div>
+    <div class="nav-brand"><span>📚</span> <span id="nav-title">Bibliothèque UNZ</span></div>
     <div class="nav-right">
-        <div class="nav-user">👤 <span id="user-name">Administrateur</span></div>
+        <span class="role-pill" id="role-pill">Admin</span>
+        <div class="nav-user">👤 <span id="user-name">Utilisateur</span></div>
         <button class="btn-logout" onclick="seDeconnecter()">Déconnexion</button>
     </div>
 </nav>
 
-<div class="hero">
-    <h2>Tableau de Bord</h2>
-    <p>Gestion complète de la bibliothèque universitaire</p>
+<div class="hero" id="hero-section">
+    <h2 id="hero-title">Tableau de Bord</h2>
+    <p id="hero-sub">Gestion complète de la bibliothèque universitaire</p>
 </div>
 
 <div id="alert" class="alert"></div>
 
-<!-- STATISTIQUES -->
-<div class="stats">
+<!-- STATISTIQUES (Admin uniquement) -->
+<div class="stats" id="stats-section">
     <div class="stat-card"><h3 id="stat-ouvrages">0</h3><p>OUVRAGES</p></div>
     <div class="stat-card"><h3 id="stat-emprunts">0</h3><p>EMPRUNTS TOTAL</p></div>
-    <div class="stat-card"><h3 id="stat-reservations">0</h3><p>RÉSERVATIONS</p></div>
+    <div class="stat-card warning"><h3 id="stat-reservations">0</h3><p>RÉSERVATIONS</p></div>
     <div class="stat-card"><h3 id="stat-utilisateurs">0</h3><p>UTILISATEURS</p></div>
     <div class="stat-card success"><h3 id="stat-en-cours">0</h3><p>EN COURS</p></div>
     <div class="stat-card danger"><h3 id="stat-retard">0</h3><p>EN RETARD</p></div>
-    <div class="stat-card"><h3 id="stat-disponibles">0</h3><p>DISPONIBLES</p></div>
-    <div class="stat-card"><h3 id="stat-attente">0</h3><p>EN ATTENTE</p></div>
+    <div class="stat-card success"><h3 id="stat-disponibles">0</h3><p>DISPONIBLES</p></div>
+    <div class="stat-card warning"><h3 id="stat-attente">0</h3><p>EN ATTENTE</p></div>
 </div>
 
-<!-- GRAPHIQUES -->
-<div class="charts-row">
+<!-- GRAPHIQUES (Admin uniquement) -->
+<div class="charts-row" id="charts-section">
     <div class="chart-card" style="flex:2">
         <h4>📈 Emprunts par mois (12 derniers mois)</h4>
         <canvas id="chart-emprunts" height="100"></canvas>
@@ -144,10 +185,10 @@
 
 <!-- ONGLETS PRINCIPAUX -->
 <div class="section">
-    <div class="tab-nav">
+    <div class="tab-nav" id="tab-nav">
         <button class="tab-btn active" onclick="changerOnglet('ouvrages', this)">📖 Catalogue</button>
         <button class="tab-btn" onclick="changerOnglet('categories', this)">🗂️ Catégories</button>
-        <button class="tab-btn" onclick="changerOnglet('utilisateurs', this)">👥 Utilisateurs</button>
+        <button class="tab-btn admin-only" onclick="changerOnglet('utilisateurs', this)">👥 Utilisateurs</button>
         <button class="tab-btn" onclick="changerOnglet('emprunts', this)">📋 Emprunts</button>
         <button class="tab-btn" onclick="changerOnglet('reservations', this)">🔖 Réservations</button>
         <button class="tab-btn" onclick="changerOnglet('retards', this)">⚠️ Retards</button>
@@ -158,7 +199,8 @@
         <div class="section-header">
             <h3>Catalogue des Ouvrages</h3>
             <div class="toolbar">
-                <input type="text" id="search-input" placeholder="Recherche..." style="width:160px" onkeydown="if(event.key==='Enter') rechercherOuvrage()">
+                <input type="text" id="search-input" placeholder="Recherche..." style="width:160px"
+                       onkeydown="if(event.key==='Enter') rechercherOuvrage()">
                 <select id="search-type" style="width:130px">
                     <option value="titre">Par titre</option>
                     <option value="auteur">Par auteur</option>
@@ -188,18 +230,18 @@
         </table>
     </div>
 
-    <!-- UTILISATEURS -->
+    <!-- UTILISATEURS (Admin uniquement) -->
     <div id="tab-utilisateurs" class="tab-content">
         <div class="section-header">
             <h3>Gestion des Utilisateurs</h3>
             <div class="toolbar">
                 <button class="btn btn-success" onclick="ouvrirModal('modal-etudiant')">+ Étudiant</button>
-                <button class="btn btn-info" onclick="ouvrirModal('modal-bibliothecaire')">+ Bibliothécaire</button>
+                <button class="btn btn-info"    onclick="ouvrirModal('modal-bibliothecaire')">+ Bibliothécaire</button>
                 <button class="btn btn-warning" onclick="ouvrirModal('modal-admin')">+ Administrateur</button>
             </div>
         </div>
         <table>
-            <thead><tr><th>ID</th><th>Nom</th><th>Prénom</th><th>Email</th><th>Rôle</th><th>INE/Matricule</th><th>Actions</th></tr></thead>
+            <thead><tr><th>ID</th><th>Nom</th><th>Prénom</th><th>Email</th><th>Rôle</th><th>INE / Matricule</th><th>Actions</th></tr></thead>
             <tbody id="utilisateurs-table"><tr><td colspan="7" style="text-align:center;padding:30px;color:#999">Chargement...</td></tr></tbody>
         </table>
     </div>
@@ -209,8 +251,8 @@
         <div class="section-header">
             <h3>Gestion des Emprunts</h3>
             <div class="toolbar">
-                <input type="number" id="etudiant-id-emprunt" placeholder="ID Étudiant" style="width:120px">
-                <input type="number" id="ouvrage-id-emprunt" placeholder="ID Ouvrage" style="width:120px">
+                <input type="number" id="etudiant-id-emprunt" placeholder="ID Étudiant" style="width:130px">
+                <input type="number" id="ouvrage-id-emprunt"  placeholder="ID Ouvrage"  style="width:130px">
                 <button class="btn btn-success" onclick="creerEmprunt()">+ Emprunter</button>
             </div>
         </div>
@@ -225,8 +267,8 @@
         <div class="section-header">
             <h3>Réservations</h3>
             <div class="toolbar">
-                <input type="number" id="etudiant-id-reservation" placeholder="ID Étudiant" style="width:120px">
-                <input type="number" id="ouvrage-id-reservation" placeholder="ID Ouvrage" style="width:120px">
+                <input type="number" id="etudiant-id-reservation" placeholder="ID Étudiant" style="width:130px">
+                <input type="number" id="ouvrage-id-reservation"  placeholder="ID Ouvrage"  style="width:130px">
                 <button class="btn btn-success" onclick="creerReservation()">+ Réserver</button>
             </div>
         </div>
@@ -240,7 +282,7 @@
     <div id="tab-retards" class="tab-content">
         <div class="section-header">
             <h3>⚠️ Rapport des Retards</h3>
-            <div id="taux-retard" class="taux-retard" style="font-size:13px"></div>
+            <div id="taux-retard" class="taux-retard" style="font-size:13px;display:none"></div>
         </div>
         <table>
             <thead><tr><th>ID</th><th>Étudiant</th><th>Email</th><th>Ouvrage</th><th>Date Limite</th><th>Jours Retard</th><th>Pénalité (FCFA)</th></tr></thead>
@@ -249,7 +291,9 @@
     </div>
 </div>
 
-<!-- MODAL OUVRAGE -->
+<!-- ────────────── MODALS ────────────── -->
+
+<!-- Modal Ouvrage (Ajouter) -->
 <div id="modal-ouvrage" class="modal">
     <div class="modal-content">
         <h3>Ajouter un Ouvrage</h3>
@@ -267,12 +311,35 @@
         </div>
         <div class="modal-buttons">
             <button class="btn btn-success" onclick="ajouterOuvrage()">Ajouter</button>
-            <button class="btn btn-danger" onclick="fermerModal('modal-ouvrage')">Annuler</button>
+            <button class="btn btn-danger"  onclick="fermerModal('modal-ouvrage')">Annuler</button>
         </div>
     </div>
 </div>
 
-<!-- MODAL CATÉGORIE -->
+<!-- Modal Ouvrage (Modifier) -->
+<div id="modal-modifier" class="modal">
+    <div class="modal-content">
+        <h3>Modifier l'Ouvrage</h3>
+        <input type="hidden" id="modifier-id">
+        <div class="form-group"><label>Titre *</label><input type="text" id="modifier-titre"></div>
+        <div class="form-group"><label>Auteur *</label><input type="text" id="modifier-auteur"></div>
+        <div class="form-group"><label>ISBN</label><input type="text" id="modifier-isbn"></div>
+        <div class="form-row">
+            <div class="form-group"><label>Année</label><input type="number" id="modifier-annee"></div>
+            <div class="form-group"><label>Exemplaires</label><input type="number" id="modifier-exemplaires"></div>
+        </div>
+        <div class="form-group">
+            <label>Catégorie</label>
+            <select id="modifier-categorie"><option value="">-- Choisir --</option></select>
+        </div>
+        <div class="modal-buttons">
+            <button class="btn btn-warning" onclick="sauvegarderModification()">Enregistrer</button>
+            <button class="btn btn-danger"  onclick="fermerModal('modal-modifier')">Annuler</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Catégorie -->
 <div id="modal-categorie" class="modal">
     <div class="modal-content">
         <h3>Ajouter une Catégorie</h3>
@@ -281,12 +348,12 @@
         <div class="form-group"><label>Rayon *</label><input type="text" id="cat-rayon" placeholder="Ex: A1, B2..."></div>
         <div class="modal-buttons">
             <button class="btn btn-success" onclick="ajouterCategorie()">Ajouter</button>
-            <button class="btn btn-danger" onclick="fermerModal('modal-categorie')">Annuler</button>
+            <button class="btn btn-danger"  onclick="fermerModal('modal-categorie')">Annuler</button>
         </div>
     </div>
 </div>
 
-<!-- MODAL ÉTUDIANT -->
+<!-- Modal Étudiant -->
 <div id="modal-etudiant" class="modal">
     <div class="modal-content">
         <h3>Inscrire un Étudiant</h3>
@@ -300,12 +367,12 @@
         <div class="form-group"><label>Filière</label><input type="text" id="etudiant-filiere" placeholder="Informatique"></div>
         <div class="modal-buttons">
             <button class="btn btn-success" onclick="inscrireEtudiant()">Inscrire</button>
-            <button class="btn btn-danger" onclick="fermerModal('modal-etudiant')">Annuler</button>
+            <button class="btn btn-danger"  onclick="fermerModal('modal-etudiant')">Annuler</button>
         </div>
     </div>
 </div>
 
-<!-- MODAL BIBLIOTHÉCAIRE -->
+<!-- Modal Bibliothécaire -->
 <div id="modal-bibliothecaire" class="modal">
     <div class="modal-content">
         <h3>Créer un Bibliothécaire</h3>
@@ -318,13 +385,13 @@
         <div class="form-group"><label>Matricule</label><input type="text" id="biblio-matricule" placeholder="BIB001"></div>
         <div class="form-group"><label>Service</label><input type="text" id="biblio-service" placeholder="Prêt et retour"></div>
         <div class="modal-buttons">
-            <button class="btn btn-info" onclick="creerBibliothecaire()">Créer</button>
+            <button class="btn btn-info"   onclick="creerBibliothecaire()">Créer</button>
             <button class="btn btn-danger" onclick="fermerModal('modal-bibliothecaire')">Annuler</button>
         </div>
     </div>
 </div>
 
-<!-- MODAL ADMINISTRATEUR -->
+<!-- Modal Administrateur -->
 <div id="modal-admin" class="modal">
     <div class="modal-content">
         <h3>Créer un Administrateur</h3>
@@ -336,43 +403,67 @@
         <div class="form-group"><label>Mot de passe *</label><input type="password" id="admin-password" placeholder="Mot de passe"></div>
         <div class="modal-buttons">
             <button class="btn btn-warning" onclick="creerAdmin()">Créer</button>
-            <button class="btn btn-danger" onclick="fermerModal('modal-admin')">Annuler</button>
+            <button class="btn btn-danger"  onclick="fermerModal('modal-admin')">Annuler</button>
         </div>
     </div>
 </div>
 
-<footer>© 2026 Bibliothèque Universitaire Norbert Zongo — Développé avec Spring Boot & JWT</footer>
+<footer>© 2025-2026 Bibliothèque Universitaire Norbert Zongo — Spring Boot · JWT · MySQL</footer>
 
 <script>
-const API = 'http://localhost:8081';
-let chartEmprunts = null;
-let chartCategories = null;
+const API = '';
+let chartEmprunts = null, chartCategories = null;
+let currentRole = '';
 
+/* ─── Init ─────────────────────────────────────────────── */
 window.onload = () => {
     const token = localStorage.getItem('token');
-    const role = localStorage.getItem('role');
-    if (!token) { window.location.href = 'login.html'; return; }
+    const role  = localStorage.getItem('role');
+    if (!token)              { window.location.href = 'login.html'; return; }
     if (role === 'ETUDIANT') { window.location.href = 'etudiant.html'; return; }
+
+    currentRole = role;
     document.getElementById('user-name').textContent =
-        `${localStorage.getItem('prenom') || ''} ${localStorage.getItem('nom') || ''}`;
-    if (role === 'BIBLIOTHECAIRE') {
-        document.querySelector("button[onclick*='utilisateurs']").style.display = 'none';
-        document.querySelector('.stats').style.display = 'none';
-        document.querySelector('.charts-row').style.display = 'none';
-        document.querySelector('h2').textContent = 'Espace Bibliothécaire';
-        document.querySelector('h2 + p').textContent = 'Gestion du catalogue, emprunts et retours';
-        // Masquer stat-utilisateurs même si stats visibles
-        const statUtil = document.getElementById('stat-utilisateurs');
-        if (statUtil) statUtil.closest('.stat-card').style.display = 'none';
-    }
+        `${localStorage.getItem('prenom') || ''} ${localStorage.getItem('nom') || ''}`.trim();
+
+    appliquerRole(role);
     chargerTout();
 };
+
+function appliquerRole(role) {
+    const isBiblio = (role === 'BIBLIOTHECAIRE');
+    const pill     = document.getElementById('role-pill');
+
+    if (isBiblio) {
+        // UI Bibliothécaire
+        document.getElementById('page-title').textContent = 'Espace Bibliothécaire — Bibliothèque UNZ';
+        document.getElementById('nav-title').textContent  = 'Bibliothèque UNZ — Bibliothécaire';
+        document.getElementById('hero-section').classList.add('biblio-hero');
+        document.getElementById('hero-title').textContent = 'Espace Bibliothécaire';
+        document.getElementById('hero-sub').textContent   = 'Gestion du catalogue, des emprunts et des retours';
+        pill.textContent = 'Bibliothécaire';
+        pill.classList.add('biblio');
+
+        // Masquer sections Admin
+        document.getElementById('stats-section').style.display  = 'none';
+        document.getElementById('charts-section').style.display = 'none';
+
+        // Masquer onglet Utilisateurs
+        document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+
+    } else {
+        // UI Administrateur
+        document.getElementById('page-title').textContent = 'Administration — Bibliothèque UNZ';
+        document.getElementById('nav-title').textContent  = 'Bibliothèque UNZ — Administration';
+        pill.textContent = 'Administrateur';
+        pill.classList.add('admin');
+    }
+}
 
 function getHeaders() {
     return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` };
 }
-
-function seDeconnecter() { localStorage.clear(); window.location.href = 'login.html'; }
+function seDeconnecter() { localStorage.clear(); window.location.href = 'index.html'; }
 
 function changerOnglet(nom, btn) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -383,66 +474,63 @@ function changerOnglet(nom, btn) {
 }
 
 function chargerTout() {
-    chargerStats(); chargerGraphiques(); chargerOuvrages();
-    chargerCategories(); chargerUtilisateurs(); chargerEmprunts(); chargerReservations();
+    if (currentRole !== 'BIBLIOTHECAIRE') { chargerStats(); chargerGraphiques(); chargerUtilisateurs(); }
+    chargerOuvrages(); chargerCategories(); chargerEmprunts(); chargerReservations();
 }
 
+/* ─── Stats ─────────────────────────────────────────────── */
 async function chargerStats() {
     try {
         const res = await fetch(`${API}/api/statistiques`, { headers: getHeaders() });
-        const d = await res.json();
-        document.getElementById('stat-ouvrages').textContent = d.totalOuvrages || 0;
-        document.getElementById('stat-emprunts').textContent = d.totalEmprunts || 0;
+        const d   = await res.json();
+        document.getElementById('stat-ouvrages').textContent     = d.totalOuvrages      || 0;
+        document.getElementById('stat-emprunts').textContent     = d.totalEmprunts       || 0;
         document.getElementById('stat-reservations').textContent = d.reservationsEnAttente || 0;
-        document.getElementById('stat-utilisateurs').textContent = d.totalUtilisateurs || 0;
-        document.getElementById('stat-en-cours').textContent = d.empruntsEnCours || 0;
-        document.getElementById('stat-retard').textContent = d.empruntsEnRetard || 0;
-        document.getElementById('stat-disponibles').textContent = d.ouvragesDisponibles || 0;
-        document.getElementById('stat-attente').textContent = d.reservationsEnAttente || 0;
+        document.getElementById('stat-utilisateurs').textContent = d.totalUtilisateurs   || 0;
+        document.getElementById('stat-en-cours').textContent     = d.empruntsEnCours     || 0;
+        document.getElementById('stat-retard').textContent       = d.empruntsEnRetard    || 0;
+        document.getElementById('stat-disponibles').textContent  = d.ouvragesDisponibles || 0;
+        document.getElementById('stat-attente').textContent      = d.reservationsEnAttente || 0;
     } catch(e) { console.error('Stats:', e); }
 }
 
+/* ─── Graphiques ─────────────────────────────────────────── */
 async function chargerGraphiques() {
     try {
-        // Graphique emprunts par mois
         const resMois = await fetch(`${API}/api/statistiques/emprunts-par-mois`, { headers: getHeaders() });
         const dataMois = await resMois.json();
-        const ctxEmprunts = document.getElementById('chart-emprunts').getContext('2d');
+        const ctxE = document.getElementById('chart-emprunts').getContext('2d');
         if (chartEmprunts) chartEmprunts.destroy();
-        chartEmprunts = new Chart(ctxEmprunts, {
+        chartEmprunts = new Chart(ctxE, {
             type: 'line',
             data: {
                 labels: dataMois.map(d => d.mois),
-                datasets: [{
-                    label: 'Emprunts', data: dataMois.map(d => d.nombreEmprunts),
-                    borderColor: '#1a237e', backgroundColor: 'rgba(26,35,126,0.1)',
-                    tension: 0.4, fill: true, pointBackgroundColor: '#1a237e'
-                }]
+                datasets: [{ label:'Emprunts', data: dataMois.map(d => d.nombreEmprunts),
+                    borderColor:'#1a237e', backgroundColor:'rgba(26,35,126,0.1)',
+                    tension:0.4, fill:true, pointBackgroundColor:'#1a237e' }]
             },
-            options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+            options: { responsive:true, plugins:{ legend:{ display:false }}, scales:{ y:{ beginAtZero:true }}}
         });
 
-        // Graphique catégories
-        const resCat = await fetch(`${API}/api/statistiques/par-categorie`, { headers: getHeaders() });
+        const resCat  = await fetch(`${API}/api/statistiques/par-categorie`, { headers: getHeaders() });
         const dataCat = await resCat.json();
         if (dataCat.length > 0) {
-            const ctxCat = document.getElementById('chart-categories').getContext('2d');
+            const ctxC = document.getElementById('chart-categories').getContext('2d');
             if (chartCategories) chartCategories.destroy();
-            chartCategories = new Chart(ctxCat, {
+            chartCategories = new Chart(ctxC, {
                 type: 'doughnut',
                 data: {
                     labels: dataCat.map(d => d.categorie),
-                    datasets: [{
-                        data: dataCat.map(d => d.nombreEmprunts),
-                        backgroundColor: ['#1a237e','#2e7d32','#e65100','#c62828','#0277bd','#6a1b9a']
-                    }]
+                    datasets: [{ data: dataCat.map(d => d.nombreEmprunts),
+                        backgroundColor:['#1a237e','#2e7d32','#e65100','#c62828','#0277bd','#6a1b9a'] }]
                 },
-                options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
+                options: { responsive:true, plugins:{ legend:{ position:'bottom', labels:{ font:{ size:11 }}}}}
             });
         }
     } catch(e) { console.error('Graphiques:', e); }
 }
 
+/* ─── Ouvrages ───────────────────────────────────────────── */
 async function chargerOuvrages() {
     try {
         const res = await fetch(`${API}/api/ouvrages`, { headers: getHeaders() });
@@ -457,126 +545,25 @@ async function chargerOuvrages() {
                 <td>${o.isbn || '-'}</td>
                 <td>${o.categorie ? `<span class="badge badge-info">${o.categorie.nom}</span>` : '-'}</td>
                 <td><span class="badge ${o.exemplairesDisponibles > 0 ? 'badge-success' : 'badge-danger'}">${o.exemplairesDisponibles}/${o.nombreExemplaires}</span></td>
-                <td><button class="btn btn-warning btn-sm" onclick="ouvrirModalModifier(${o.id},'${o.titre}','${o.auteur}','${o.isbn || ""}',${o.anneePublication},${o.nombreExemplaires},${o.categorie ? o.categorie.id : 0})">Modifier</button> <button class="btn btn-danger btn-sm" onclick="supprimerOuvrage(${o.id})">Supprimer</button></td>
+                <td>
+                    <button class="btn btn-warning btn-sm" onclick="ouvrirModalModifier(${o.id},'${(o.titre||'').replace(/'/g,"\\'")}','${(o.auteur||'').replace(/'/g,"\\'")}','${o.isbn||''}',${o.anneePublication||0},${o.nombreExemplaires},${o.categorie ? o.categorie.id : 0})">Modifier</button>
+                    <button class="btn btn-danger btn-sm" onclick="supprimerOuvrage(${o.id})">Supprimer</button>
+                </td>
             </tr>`).join('');
     } catch(e) { console.error('Ouvrages:', e); }
 }
 
-async function chargerCategories() {
-    try {
-        const res = await fetch(`${API}/api/categories`, { headers: getHeaders() });
-        const cats = await res.json();
-        const tbody = document.getElementById('categories-table');
-        if (!cats.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:#999">Aucune catégorie</td></tr>'; return; }
-        tbody.innerHTML = cats.map(c => `
-            <tr>
-                <td>${c.id}</td>
-                <td><strong>${c.nom}</strong></td>
-                <td>${c.description || '-'}</td>
-                <td><span class="badge badge-info">${c.rayon || '-'}</span></td>
-                <td><button class="btn btn-danger btn-sm" onclick="supprimerCategorie(${c.id})">Supprimer</button></td>
-            </tr>`).join('');
-
-        // Remplir select catégorie dans modal ouvrage
-        const select = document.getElementById('ouvrage-categorie');
-        select.innerHTML = '<option value="">-- Aucune catégorie --</option>' +
-            cats.map(c => `<option value="${c.id}">${c.nom} (${c.rayon || ''})</option>`).join('');
-    } catch(e) { console.error('Catégories:', e); }
-}
-
-async function chargerUtilisateurs() {
-    try {
-        const res = await fetch(`${API}/api/utilisateurs`, { headers: getHeaders() });
-        const users = await res.json();
-        const tbody = document.getElementById('utilisateurs-table');
-        if (!users.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:#999">Aucun utilisateur</td></tr>'; return; }
-        tbody.innerHTML = users.map(u => `
-            <tr>
-                <td>${u.id}</td>
-                <td><strong>${u.nom}</strong></td>
-                <td>${u.prenom}</td>
-                <td>${u.email}</td>
-                <td><span class="badge ${u.role === 'ADMINISTRATEUR' ? 'badge-danger' : u.role === 'BIBLIOTHECAIRE' ? 'badge-info' : 'badge-success'}">${u.role}</span></td>
-                <td>${u.numeroEtudiant || u.matricule || '-'}</td>
-                <td><button class="btn btn-danger btn-sm" onclick="supprimerUtilisateur(${u.id})">Supprimer</button></td>
-            </tr>`).join('');
-    } catch(e) { console.error('Utilisateurs:', e); }
-}
-
-async function chargerEmprunts() {
-    try {
-        const res = await fetch(`${API}/api/emprunts`, { headers: getHeaders() });
-        const emprunts = await res.json();
-        const tbody = document.getElementById('emprunts-table');
-        if (!emprunts.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:#999">Aucun emprunt</td></tr>'; return; }
-        tbody.innerHTML = emprunts.map(e => `
-            <tr>
-                <td>${e.id}</td>
-                <td>${e.etudiant ? e.etudiant.nom + ' ' + e.etudiant.prenom : '-'}</td>
-                <td>${e.ouvrage ? e.ouvrage.titre : '-'}</td>
-                <td>${e.dateEmprunt || '-'}</td>
-                <td>${e.dateRetourPrevue || '-'}</td>
-                <td><span class="badge ${e.statut === 'EN_COURS' ? 'badge-warning' : e.statut === 'RETOURNE' ? 'badge-success' : 'badge-danger'}">${e.statut}</span></td>
-                <td>${e.statut === 'EN_COURS' || e.statut === 'EN_RETARD' ?
-                    `<button class="btn btn-warning btn-sm" onclick="retournerEmprunt(${e.id})">Retourner</button>` : '-'}</td>
-            </tr>`).join('');
-    } catch(e) { console.error('Emprunts:', e); }
-}
-
-async function chargerReservations() {
-    try {
-        const res = await fetch(`${API}/api/reservations`, { headers: getHeaders() });
-        const reservations = await res.json();
-        const tbody = document.getElementById('reservations-table');
-        if (!reservations.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:#999">Aucune réservation</td></tr>'; return; }
-        tbody.innerHTML = reservations.map(r => `
-            <tr>
-                <td>${r.id}</td>
-                <td>${r.etudiant ? r.etudiant.nom + ' ' + r.etudiant.prenom : '-'}</td>
-                <td>${r.ouvrage ? r.ouvrage.titre : '-'}</td>
-                <td>${r.dateReservation || '-'}</td>
-                <td><span class="badge ${r.statut === 'EN_ATTENTE' ? 'badge-warning' : r.statut === 'CONFIRMEE' ? 'badge-success' : 'badge-danger'}">${r.statut}</span></td>
-                <td>${r.statut === 'EN_ATTENTE' ?
-                    `<button class="btn btn-danger btn-sm" onclick="annulerReservation(${r.id})">Annuler</button>` : '-'}</td>
-            </tr>`).join('');
-    } catch(e) { console.error('Réservations:', e); }
-}
-
-async function chargerRetards() {
-    try {
-        const res = await fetch(`${API}/api/statistiques/retards`, { headers: getHeaders() });
-        const retards = await res.json();
-        const tbody = document.getElementById('retards-table');
-        const resStat = await fetch(`${API}/api/statistiques`, { headers: getHeaders() });
-        const stat = await resStat.json();
-        document.getElementById('taux-retard').textContent =
-            `Taux de retard global : ${stat.tauxRetard || 0}% — ${retards.length} emprunt(s) en retard`;
-        if (!retards.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:#999">Aucun retard ✅</td></tr>'; return; }
-        tbody.innerHTML = retards.map(r => `
-            <tr>
-                <td>${r.empruntId}</td>
-                <td><strong>${r.etudiant}</strong></td>
-                <td>${r.email}</td>
-                <td>${r.ouvrage}</td>
-                <td>${r.dateRetourPrevue}</td>
-                <td><span class="badge badge-danger">${r.joursRetard} jour(s)</span></td>
-                <td><strong>${r.penalite} FCFA</strong></td>
-            </tr>`).join('');
-    } catch(e) { console.error('Retards:', e); }
-}
-
 async function rechercherOuvrage() {
-    const val = document.getElementById('search-input').value.trim();
+    const val  = document.getElementById('search-input').value.trim();
     const type = document.getElementById('search-type').value;
     if (!val) { chargerOuvrages(); return; }
     try {
         let url;
-        if (type === 'titre') url = `${API}/api/ouvrages/recherche/titre?titre=${val}`;
-        else if (type === 'auteur') url = `${API}/api/ouvrages/recherche/auteur?auteur=${val}`;
-        else if (type === 'isbn') url = `${API}/api/ouvrages/recherche/isbn?isbn=${val}`;
-        else if (type === 'categorie') url = `${API}/api/ouvrages/recherche/categorie?nom=${val}`;
-        else url = `${API}/api/ouvrages/recherche?motCle=${val}`;
-
+        if      (type === 'titre')    url = `${API}/api/ouvrages/recherche/titre?titre=${encodeURIComponent(val)}`;
+        else if (type === 'auteur')   url = `${API}/api/ouvrages/recherche/auteur?auteur=${encodeURIComponent(val)}`;
+        else if (type === 'isbn')     url = `${API}/api/ouvrages/recherche/isbn?isbn=${encodeURIComponent(val)}`;
+        else if (type === 'categorie')url = `${API}/api/ouvrages/recherche/categorie?nom=${encodeURIComponent(val)}`;
+        else                          url = `${API}/api/ouvrages/recherche?motCle=${encodeURIComponent(val)}`;
         const res = await fetch(url, { headers: getHeaders() });
         let ouvrages = await res.json();
         if (!Array.isArray(ouvrages)) ouvrages = ouvrages ? [ouvrages] : [];
@@ -587,15 +574,18 @@ async function rechercherOuvrage() {
                 <td>${o.id}</td><td><strong>${o.titre}</strong></td><td>${o.auteur}</td>
                 <td>${o.isbn || '-'}</td>
                 <td>${o.categorie ? `<span class="badge badge-info">${o.categorie.nom}</span>` : '-'}</td>
-                <td><span class="badge ${o.exemplairesDisponibles > 0 ? 'badge-success' : 'badge-danger'}">${o.exemplairesDisponibles}/${o.nombreExemplaires}</span></td>
-                <td><button class="btn btn-warning btn-sm" onclick="ouvrirModalModifier(${o.id},'${o.titre}','${o.auteur}','${o.isbn || ""}',${o.anneePublication},${o.nombreExemplaires},${o.categorie ? o.categorie.id : 0})">Modifier</button> <button class="btn btn-danger btn-sm" onclick="supprimerOuvrage(${o.id})">Supprimer</button></td>
+                <td><span class="badge ${o.exemplairesDisponibles > 0 ? 'badge-success':'badge-danger'}">${o.exemplairesDisponibles}/${o.nombreExemplaires}</span></td>
+                <td>
+                    <button class="btn btn-warning btn-sm" onclick="ouvrirModalModifier(${o.id},'${(o.titre||'').replace(/'/g,"\\'")}','${(o.auteur||'').replace(/'/g,"\\'")}','${o.isbn||''}',${o.anneePublication||0},${o.nombreExemplaires},${o.categorie ? o.categorie.id : 0})">Modifier</button>
+                    <button class="btn btn-danger btn-sm" onclick="supprimerOuvrage(${o.id})">Supprimer</button>
+                </td>
             </tr>`).join('');
     } catch(e) { console.error(e); }
 }
 
 async function ajouterOuvrage() {
     const catId = document.getElementById('ouvrage-categorie').value;
-    const ouvrage = {
+    const o = {
         titre: document.getElementById('titre').value,
         auteur: document.getElementById('auteur').value,
         isbn: document.getElementById('isbn').value,
@@ -604,20 +594,70 @@ async function ajouterOuvrage() {
         nombreExemplaires: parseInt(document.getElementById('exemplaires').value),
         categorie: catId ? { id: parseInt(catId) } : null
     };
-    if (!ouvrage.titre || !ouvrage.auteur) { afficherAlert('Titre et auteur obligatoires', 'error'); return; }
+    if (!o.titre || !o.auteur) { afficherAlert('Titre et auteur obligatoires', 'error'); return; }
     try {
-        const res = await fetch(`${API}/api/ouvrages`, { method: 'POST', headers: getHeaders(), body: JSON.stringify(ouvrage) });
+        const res = await fetch(`${API}/api/ouvrages`, { method:'POST', headers:getHeaders(), body:JSON.stringify(o) });
         if (res.ok) { afficherAlert('Ouvrage ajouté !', 'success'); fermerModal('modal-ouvrage'); chargerOuvrages(); chargerStats(); chargerGraphiques(); }
         else { afficherAlert('Erreur ajout', 'error'); }
     } catch(e) { afficherAlert('Erreur serveur', 'error'); }
 }
 
+async function ouvrirModalModifier(id, titre, auteur, isbn, annee, exemplaires, catId) {
+    document.getElementById('modifier-id').value          = id;
+    document.getElementById('modifier-titre').value       = titre;
+    document.getElementById('modifier-auteur').value      = auteur;
+    document.getElementById('modifier-isbn').value        = isbn;
+    document.getElementById('modifier-annee').value       = annee;
+    document.getElementById('modifier-exemplaires').value = exemplaires;
+    const res  = await fetch(`${API}/api/categories`, { headers: getHeaders() });
+    const cats = await res.json();
+    const sel  = document.getElementById('modifier-categorie');
+    sel.innerHTML = '<option value="">-- Choisir --</option>' +
+        cats.map(c => `<option value="${c.id}" ${c.id == catId ? 'selected':''}>${c.nom}</option>`).join('');
+    ouvrirModal('modal-modifier');
+}
+
+async function sauvegarderModification() {
+    const id   = document.getElementById('modifier-id').value;
+    const data = {
+        titre: document.getElementById('modifier-titre').value,
+        auteur: document.getElementById('modifier-auteur').value,
+        isbn: document.getElementById('modifier-isbn').value,
+        anneePublication: parseInt(document.getElementById('modifier-annee').value),
+        nombreExemplaires: parseInt(document.getElementById('modifier-exemplaires').value),
+        categorieId: parseInt(document.getElementById('modifier-categorie').value) || null
+    };
+    const res = await fetch(`${API}/api/ouvrages/${id}`, { method:'PUT', headers:getHeaders(), body:JSON.stringify(data) });
+    if (res.ok) { afficherAlert('Ouvrage modifié !', 'success'); fermerModal('modal-modifier'); chargerOuvrages(); chargerStats(); }
+    else        { afficherAlert('Erreur modification', 'error'); }
+}
+
 async function supprimerOuvrage(id) {
     if (!confirm('Confirmer la suppression ?')) return;
     try {
-        await fetch(`${API}/api/ouvrages/${id}`, { method: 'DELETE', headers: getHeaders() });
+        await fetch(`${API}/api/ouvrages/${id}`, { method:'DELETE', headers:getHeaders() });
         afficherAlert('Ouvrage supprimé !', 'success'); chargerOuvrages(); chargerStats();
     } catch(e) { afficherAlert('Erreur suppression', 'error'); }
+}
+
+/* ─── Catégories ─────────────────────────────────────────── */
+async function chargerCategories() {
+    try {
+        const res  = await fetch(`${API}/api/categories`, { headers: getHeaders() });
+        const cats = await res.json();
+        const tbody = document.getElementById('categories-table');
+        if (!cats.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:#999">Aucune catégorie</td></tr>'; return; }
+        tbody.innerHTML = cats.map(c => `
+            <tr>
+                <td>${c.id}</td><td><strong>${c.nom}</strong></td>
+                <td>${c.description || '-'}</td>
+                <td><span class="badge badge-info">${c.rayon || '-'}</span></td>
+                <td><button class="btn btn-danger btn-sm" onclick="supprimerCategorie(${c.id})">Supprimer</button></td>
+            </tr>`).join('');
+        const sel = document.getElementById('ouvrage-categorie');
+        sel.innerHTML = '<option value="">-- Aucune catégorie --</option>' +
+            cats.map(c => `<option value="${c.id}">${c.nom} (${c.rayon || ''})</option>`).join('');
+    } catch(e) { console.error('Catégories:', e); }
 }
 
 async function ajouterCategorie() {
@@ -628,7 +668,7 @@ async function ajouterCategorie() {
     };
     if (!cat.nom || !cat.rayon) { afficherAlert('Nom et rayon obligatoires', 'error'); return; }
     try {
-        const res = await fetch(`${API}/api/categories`, { method: 'POST', headers: getHeaders(), body: JSON.stringify(cat) });
+        const res = await fetch(`${API}/api/categories`, { method:'POST', headers:getHeaders(), body:JSON.stringify(cat) });
         if (res.ok) { afficherAlert('Catégorie ajoutée !', 'success'); fermerModal('modal-categorie'); chargerCategories(); }
         else { const err = await res.text(); afficherAlert(err, 'error'); }
     } catch(e) { afficherAlert('Erreur serveur', 'error'); }
@@ -637,24 +677,42 @@ async function ajouterCategorie() {
 async function supprimerCategorie(id) {
     if (!confirm('Confirmer la suppression ?')) return;
     try {
-        await fetch(`${API}/api/categories/${id}`, { method: 'DELETE', headers: getHeaders() });
+        await fetch(`${API}/api/categories/${id}`, { method:'DELETE', headers:getHeaders() });
         afficherAlert('Catégorie supprimée !', 'success'); chargerCategories();
     } catch(e) { afficherAlert('Erreur suppression', 'error'); }
+}
+
+/* ─── Utilisateurs ──────────────────────────────────────── */
+async function chargerUtilisateurs() {
+    try {
+        const res   = await fetch(`${API}/api/utilisateurs`, { headers: getHeaders() });
+        const users = await res.json();
+        const tbody = document.getElementById('utilisateurs-table');
+        if (!users.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:#999">Aucun utilisateur</td></tr>'; return; }
+        tbody.innerHTML = users.map(u => `
+            <tr>
+                <td>${u.id}</td><td><strong>${u.nom}</strong></td><td>${u.prenom}</td>
+                <td>${u.email}</td>
+                <td><span class="badge ${u.role==='ADMINISTRATEUR'?'badge-gold':u.role==='BIBLIOTHECAIRE'?'badge-info':'badge-success'}">${u.role}</span></td>
+                <td>${u.numeroEtudiant || u.matricule || '-'}</td>
+                <td><button class="btn btn-danger btn-sm" onclick="supprimerUtilisateur(${u.id})">Supprimer</button></td>
+            </tr>`).join('');
+    } catch(e) { console.error('Utilisateurs:', e); }
 }
 
 async function inscrireEtudiant() {
     const ine = document.getElementById('etudiant-numero').value.trim().toUpperCase();
     if (ine && !/^[NE]\d{11}$/.test(ine)) { afficherAlert('INE invalide : N ou E + 11 chiffres', 'error'); return; }
-    const etudiant = {
+    const e = {
         nom: document.getElementById('etudiant-nom').value,
         prenom: document.getElementById('etudiant-prenom').value,
         email: document.getElementById('etudiant-email').value,
         motDePasse: document.getElementById('etudiant-password').value,
         numeroEtudiant: ine
     };
-    if (!etudiant.nom || !etudiant.email || !etudiant.motDePasse) { afficherAlert('Champs obligatoires manquants', 'error'); return; }
+    if (!e.nom || !e.email || !e.motDePasse) { afficherAlert('Champs obligatoires manquants', 'error'); return; }
     try {
-        const res = await fetch(`${API}/api/utilisateurs/etudiant`, { method: 'POST', headers: getHeaders(), body: JSON.stringify(etudiant) });
+        const res = await fetch(`${API}/api/utilisateurs/etudiant`, { method:'POST', headers:getHeaders(), body:JSON.stringify(e) });
         if (res.ok) { afficherAlert('Étudiant inscrit !', 'success'); fermerModal('modal-etudiant'); chargerUtilisateurs(); chargerStats(); }
         else { const err = await res.text(); afficherAlert(err, 'error'); }
     } catch(e) { afficherAlert('Erreur inscription', 'error'); }
@@ -671,7 +729,7 @@ async function creerBibliothecaire() {
     };
     if (!b.nom || !b.email || !b.motDePasse) { afficherAlert('Champs obligatoires manquants', 'error'); return; }
     try {
-        const res = await fetch(`${API}/api/utilisateurs/bibliothecaire`, { method: 'POST', headers: getHeaders(), body: JSON.stringify(b) });
+        const res = await fetch(`${API}/api/utilisateurs/bibliothecaire`, { method:'POST', headers:getHeaders(), body:JSON.stringify(b) });
         if (res.ok) { afficherAlert('Bibliothécaire créé !', 'success'); fermerModal('modal-bibliothecaire'); chargerUtilisateurs(); chargerStats(); }
         else { const err = await res.text(); afficherAlert(err, 'error'); }
     } catch(e) { afficherAlert('Erreur création', 'error'); }
@@ -686,7 +744,7 @@ async function creerAdmin() {
     };
     if (!a.nom || !a.email || !a.motDePasse) { afficherAlert('Champs obligatoires manquants', 'error'); return; }
     try {
-        const res = await fetch(`${API}/api/utilisateurs/admin`, { method: 'POST', headers: getHeaders(), body: JSON.stringify(a) });
+        const res = await fetch(`${API}/api/utilisateurs/admin`, { method:'POST', headers:getHeaders(), body:JSON.stringify(a) });
         if (res.ok) { afficherAlert('Administrateur créé !', 'success'); fermerModal('modal-admin'); chargerUtilisateurs(); }
         else { const err = await res.text(); afficherAlert(err, 'error'); }
     } catch(e) { afficherAlert('Erreur création', 'error'); }
@@ -695,20 +753,39 @@ async function creerAdmin() {
 async function supprimerUtilisateur(id) {
     if (!confirm('Confirmer la suppression ?')) return;
     try {
-        await fetch(`${API}/api/utilisateurs/${id}`, { method: 'DELETE', headers: getHeaders() });
+        await fetch(`${API}/api/utilisateurs/${id}`, { method:'DELETE', headers:getHeaders() });
         afficherAlert('Utilisateur supprimé !', 'success'); chargerUtilisateurs(); chargerStats();
     } catch(e) { afficherAlert('Erreur suppression', 'error'); }
 }
 
+/* ─── Emprunts ───────────────────────────────────────────── */
+async function chargerEmprunts() {
+    try {
+        const res = await fetch(`${API}/api/emprunts`, { headers: getHeaders() });
+        const emprunts = await res.json();
+        const tbody = document.getElementById('emprunts-table');
+        if (!emprunts.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:#999">Aucun emprunt</td></tr>'; return; }
+        tbody.innerHTML = emprunts.map(e => `
+            <tr>
+                <td>${e.id}</td>
+                <td>${e.etudiant ? e.etudiant.nom+' '+e.etudiant.prenom : '-'}</td>
+                <td>${e.ouvrage  ? e.ouvrage.titre : '-'}</td>
+                <td>${e.dateEmprunt      || '-'}</td>
+                <td>${e.dateRetourPrevue || '-'}</td>
+                <td><span class="badge ${e.statut==='EN_COURS'?'badge-warning':e.statut==='RETOURNE'?'badge-success':'badge-danger'}">${e.statut}</span></td>
+                <td>${(e.statut==='EN_COURS'||e.statut==='EN_RETARD') ?
+                    `<button class="btn btn-warning btn-sm" onclick="retournerEmprunt(${e.id})">Retourner</button>` : '-'}</td>
+            </tr>`).join('');
+    } catch(e) { console.error('Emprunts:', e); }
+}
+
 async function creerEmprunt() {
     const etudiantId = document.getElementById('etudiant-id-emprunt').value;
-    const ouvrageId = document.getElementById('ouvrage-id-emprunt').value;
+    const ouvrageId  = document.getElementById('ouvrage-id-emprunt').value;
     if (!etudiantId || !ouvrageId) { afficherAlert('Entrez ID étudiant et ID ouvrage', 'error'); return; }
     try {
-        const res = await fetch(`${API}/api/emprunts`, {
-            method: 'POST', headers: getHeaders(),
-            body: JSON.stringify({ etudiantId: parseInt(etudiantId), ouvrageId: parseInt(ouvrageId) })
-        });
+        const res = await fetch(`${API}/api/emprunts`, { method:'POST', headers:getHeaders(),
+            body: JSON.stringify({ etudiantId: parseInt(etudiantId), ouvrageId: parseInt(ouvrageId) }) });
         if (res.ok) { afficherAlert('Emprunt créé !', 'success'); chargerEmprunts(); chargerOuvrages(); chargerStats(); chargerGraphiques(); }
         else { const err = await res.text(); afficherAlert(err, 'error'); }
     } catch(e) { afficherAlert('Erreur emprunt', 'error'); }
@@ -717,20 +794,38 @@ async function creerEmprunt() {
 async function retournerEmprunt(id) {
     if (!confirm('Confirmer le retour ?')) return;
     try {
-        const res = await fetch(`${API}/api/emprunts/${id}/retour`, { method: 'PUT', headers: getHeaders() });
+        const res = await fetch(`${API}/api/emprunts/${id}/retour`, { method:'PUT', headers:getHeaders() });
         if (res.ok) { afficherAlert('Retour enregistré !', 'success'); chargerEmprunts(); chargerOuvrages(); chargerStats(); }
     } catch(e) { afficherAlert('Erreur retour', 'error'); }
 }
 
+/* ─── Réservations ───────────────────────────────────────── */
+async function chargerReservations() {
+    try {
+        const res = await fetch(`${API}/api/reservations`, { headers: getHeaders() });
+        const reservations = await res.json();
+        const tbody = document.getElementById('reservations-table');
+        if (!reservations.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:#999">Aucune réservation</td></tr>'; return; }
+        tbody.innerHTML = reservations.map(r => `
+            <tr>
+                <td>${r.id}</td>
+                <td>${r.etudiant ? r.etudiant.nom+' '+r.etudiant.prenom : '-'}</td>
+                <td>${r.ouvrage  ? r.ouvrage.titre : '-'}</td>
+                <td>${r.dateReservation || '-'}</td>
+                <td><span class="badge ${r.statut==='EN_ATTENTE'?'badge-warning':r.statut==='CONFIRMEE'?'badge-success':'badge-danger'}">${r.statut}</span></td>
+                <td>${r.statut==='EN_ATTENTE' ?
+                    `<button class="btn btn-danger btn-sm" onclick="annulerReservation(${r.id})">Annuler</button>` : '-'}</td>
+            </tr>`).join('');
+    } catch(e) { console.error('Réservations:', e); }
+}
+
 async function creerReservation() {
     const etudiantId = document.getElementById('etudiant-id-reservation').value;
-    const ouvrageId = document.getElementById('ouvrage-id-reservation').value;
+    const ouvrageId  = document.getElementById('ouvrage-id-reservation').value;
     if (!etudiantId || !ouvrageId) { afficherAlert('Entrez ID étudiant et ID ouvrage', 'error'); return; }
     try {
-        const res = await fetch(`${API}/api/reservations`, {
-            method: 'POST', headers: getHeaders(),
-            body: JSON.stringify({ etudiantId: parseInt(etudiantId), ouvrageId: parseInt(ouvrageId) })
-        });
+        const res = await fetch(`${API}/api/reservations`, { method:'POST', headers:getHeaders(),
+            body: JSON.stringify({ etudiantId: parseInt(etudiantId), ouvrageId: parseInt(ouvrageId) }) });
         if (res.ok) { afficherAlert('Réservation créée !', 'success'); chargerReservations(); chargerStats(); }
         else { const err = await res.text(); afficherAlert(err, 'error'); }
     } catch(e) { afficherAlert('Erreur réservation', 'error'); }
@@ -739,11 +834,32 @@ async function creerReservation() {
 async function annulerReservation(id) {
     if (!confirm('Annuler cette réservation ?')) return;
     try {
-        const res = await fetch(`${API}/api/reservations/${id}/annuler`, { method: 'PUT', headers: getHeaders() });
+        const res = await fetch(`${API}/api/reservations/${id}/annuler`, { method:'PUT', headers:getHeaders() });
         if (res.ok) { afficherAlert('Réservation annulée !', 'success'); chargerReservations(); chargerStats(); }
     } catch(e) { afficherAlert('Erreur annulation', 'error'); }
 }
 
+/* ─── Retards ────────────────────────────────────────────── */
+async function chargerRetards() {
+    try {
+        const res    = await fetch(`${API}/api/statistiques/retards`, { headers: getHeaders() });
+        const retards = await res.json();
+        const tbody   = document.getElementById('retards-table');
+        const taux    = document.getElementById('taux-retard');
+        taux.style.display = 'block';
+        taux.textContent = `${retards.length} emprunt(s) en retard détecté(s)`;
+        if (!retards.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:#999">Aucun retard ✅</td></tr>'; return; }
+        tbody.innerHTML = retards.map(r => `
+            <tr>
+                <td>${r.empruntId}</td><td><strong>${r.etudiant}</strong></td><td>${r.email}</td>
+                <td>${r.ouvrage}</td><td>${r.dateRetourPrevue}</td>
+                <td><span class="badge badge-danger">${r.joursRetard} jour(s)</span></td>
+                <td><strong>${r.penalite} FCFA</strong></td>
+            </tr>`).join('');
+    } catch(e) { console.error('Retards:', e); }
+}
+
+/* ─── Utilitaires ────────────────────────────────────────── */
 function ouvrirModal(id) { document.getElementById(id).classList.add('active'); }
 function fermerModal(id) { document.getElementById(id).classList.remove('active'); }
 
@@ -753,112 +869,6 @@ function afficherAlert(msg, type) {
     alert.className = `alert ${type}`;
     clearTimeout(window._alertTimer);
     window._alertTimer = setTimeout(() => { alert.className = 'alert'; }, 3500);
-}
-</script>
-
-<!-- Modal Modifier Ouvrage -->
-<div id="modal-modifier" class="modal">
-  <div class="modal-content">
-    <h3>Modifier l'Ouvrage</h3>
-    <input type="hidden" id="modifier-id">
-    <div class="form-group"><label>Titre *</label><input type="text" id="modifier-titre"></div>
-    <div class="form-group"><label>Auteur *</label><input type="text" id="modifier-auteur"></div>
-    <div class="form-group"><label>ISBN</label><input type="text" id="modifier-isbn"></div>
-    <div class="form-group"><label>Année</label><input type="number" id="modifier-annee"></div>
-    <div class="form-group"><label>Exemplaires</label><input type="number" id="modifier-exemplaires"></div>
-    <div class="form-group"><label>Catégorie</label>
-      <select id="modifier-categorie">
-        <option value="">-- Choisir --</option>
-      </select>
-    </div>
-    <div style="display:flex;gap:10px;margin-top:15px">
-      <button class="btn btn-primary" onclick="sauvegarderModification()">Enregistrer</button>
-      <button class="btn btn-secondary" onclick="fermerModal('modal-modifier')">Annuler</button>
-    </div>
-  </div>
-</div>
-
-<script>
-async function ouvrirModalModifier(id, titre, auteur, isbn, annee, exemplaires, catId) {
-    document.getElementById("modifier-id").value = id;
-    document.getElementById("modifier-titre").value = titre;
-    document.getElementById("modifier-auteur").value = auteur;
-    document.getElementById("modifier-isbn").value = isbn;
-    document.getElementById("modifier-annee").value = annee;
-    document.getElementById("modifier-exemplaires").value = exemplaires;
-    // Charger les catégories
-    const res = await fetch(`${API}/api/categories`, { headers: getHeaders() });
-    const cats = await res.json();
-    const sel = document.getElementById("modifier-categorie");
-    sel.innerHTML = '<option value="">-- Choisir --</option>' + cats.map(c => `<option value="${c.id}" ${c.id == catId ? "selected" : ""}>${c.nom}</option>`).join("");
-    ouvrirModal("modal-modifier");
-}
-async function sauvegarderModification() {
-    const id = document.getElementById("modifier-id").value;
-    const data = {
-        titre: document.getElementById("modifier-titre").value,
-        auteur: document.getElementById("modifier-auteur").value,
-        isbn: document.getElementById("modifier-isbn").value,
-        anneePublication: parseInt(document.getElementById("modifier-annee").value),
-        nombreExemplaires: parseInt(document.getElementById("modifier-exemplaires").value),
-        categorieId: parseInt(document.getElementById("modifier-categorie").value) || null
-    };
-    const res = await fetch(`${API}/api/ouvrages/${id}`, { method: "PUT", headers: getHeaders(), body: JSON.stringify(data) });
-    if (res.ok) { afficherAlert("Ouvrage modifié !", "success"); fermerModal("modal-modifier"); chargerOuvrages(); chargerStats(); }
-    else { afficherAlert("Erreur modification", "error"); }
-}
-</script>
-
-<!-- Modal Modifier Ouvrage -->
-<div id="modal-modifier" class="modal">
-  <div class="modal-content">
-    <h3>Modifier l'Ouvrage</h3>
-    <input type="hidden" id="modifier-id">
-    <div class="form-group"><label>Titre *</label><input type="text" id="modifier-titre"></div>
-    <div class="form-group"><label>Auteur *</label><input type="text" id="modifier-auteur"></div>
-    <div class="form-group"><label>ISBN</label><input type="text" id="modifier-isbn"></div>
-    <div class="form-group"><label>Année</label><input type="number" id="modifier-annee"></div>
-    <div class="form-group"><label>Exemplaires</label><input type="number" id="modifier-exemplaires"></div>
-    <div class="form-group"><label>Catégorie</label>
-      <select id="modifier-categorie">
-        <option value="">-- Choisir --</option>
-      </select>
-    </div>
-    <div style="display:flex;gap:10px;margin-top:15px">
-      <button class="btn btn-primary" onclick="sauvegarderModification()">Enregistrer</button>
-      <button class="btn btn-secondary" onclick="fermerModal('modal-modifier')">Annuler</button>
-    </div>
-  </div>
-</div>
-
-<script>
-async function ouvrirModalModifier(id, titre, auteur, isbn, annee, exemplaires, catId) {
-    document.getElementById("modifier-id").value = id;
-    document.getElementById("modifier-titre").value = titre;
-    document.getElementById("modifier-auteur").value = auteur;
-    document.getElementById("modifier-isbn").value = isbn;
-    document.getElementById("modifier-annee").value = annee;
-    document.getElementById("modifier-exemplaires").value = exemplaires;
-    // Charger les catégories
-    const res = await fetch(`${API}/api/categories`, { headers: getHeaders() });
-    const cats = await res.json();
-    const sel = document.getElementById("modifier-categorie");
-    sel.innerHTML = '<option value="">-- Choisir --</option>' + cats.map(c => `<option value="${c.id}" ${c.id == catId ? "selected" : ""}>${c.nom}</option>`).join("");
-    ouvrirModal("modal-modifier");
-}
-async function sauvegarderModification() {
-    const id = document.getElementById("modifier-id").value;
-    const data = {
-        titre: document.getElementById("modifier-titre").value,
-        auteur: document.getElementById("modifier-auteur").value,
-        isbn: document.getElementById("modifier-isbn").value,
-        anneePublication: parseInt(document.getElementById("modifier-annee").value),
-        nombreExemplaires: parseInt(document.getElementById("modifier-exemplaires").value),
-        categorieId: parseInt(document.getElementById("modifier-categorie").value) || null
-    };
-    const res = await fetch(`${API}/api/ouvrages/${id}`, { method: "PUT", headers: getHeaders(), body: JSON.stringify(data) });
-    if (res.ok) { afficherAlert("Ouvrage modifié !", "success"); fermerModal("modal-modifier"); chargerOuvrages(); chargerStats(); }
-    else { afficherAlert("Erreur modification", "error"); }
 }
 </script>
 </body>
