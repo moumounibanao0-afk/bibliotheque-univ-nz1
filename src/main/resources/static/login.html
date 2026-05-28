@@ -423,6 +423,7 @@ async function seConnecter() {
         localStorage.setItem('nom',    data.nom);
         localStorage.setItem('prenom', data.prenom);
         localStorage.setItem('userId', data.id);
+        localStorage.setItem('utilisateur', JSON.stringify({id: data.id, nom: data.nom, prenom: data.prenom, role: data.role, token: data.token, email: email}));
 
         afficherMsg('msg-login', '✅ Connexion réussie, redirection…', 'success');
         setTimeout(() => {

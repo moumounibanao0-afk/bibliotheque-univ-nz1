@@ -417,14 +417,14 @@ let currentRole = '';
 
 /* ─── Init ─────────────────────────────────────────────── */
 window.onload = () => {
-    const token = localStorage.getItem('token');
-    const role  = localStorage.getItem('role');
+    const u = JSON.parse(localStorage.getItem('utilisateur') || 'null'); const token = u?.token || localStorage.getItem('token');
+    const role  = u?.role || localStorage.getItem('role');
     if (!token)              { window.location.href = 'login.html'; return; }
     if (role === 'ETUDIANT') { window.location.href = 'etudiant.html'; return; }
 
     currentRole = role;
     document.getElementById('user-name').textContent =
-        `${localStorage.getItem('prenom') || ''} ${localStorage.getItem('nom') || ''}`.trim();
+        `${u?.prenom || localStorage.getItem('prenom') || ''} ${u?.nom || localStorage.getItem('nom') || ''}`.trim();
 
     appliquerRole(role);
     chargerTout();

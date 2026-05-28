@@ -289,10 +289,10 @@
 <script>
 // Si déjà connecté, afficher la bannière de session
 window.onload = () => {
-    const token = localStorage.getItem('token');
-    const role  = localStorage.getItem('role');
-    const nom   = localStorage.getItem('nom');
-    const prenom= localStorage.getItem('prenom');
+    const token = localStorage.getItem('token'); const u = JSON.parse(localStorage.getItem('utilisateur') || 'null');
+    const role  = u?.role || localStorage.getItem('role');
+    const nom   = u?.nom || localStorage.getItem('nom');
+    const prenom= u?.prenom || localStorage.getItem('prenom');
     if (token && role) {
         const dest = (role === 'ETUDIANT') ? 'etudiant.html' : 'admin.html';
         const label = role === 'ADMINISTRATEUR' ? 'Administrateur'
