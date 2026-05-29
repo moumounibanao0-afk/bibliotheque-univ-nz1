@@ -1030,10 +1030,11 @@ function getHeaders() {
 }
 
 function seDeconnecter() {
-  if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
-    localStorage.clear();
-    location.href = 'index.html';
-  }
+  openModal('modalDeconnexion');
+}
+function confirmerDeconnexion() {
+  localStorage.clear();
+  location.href = 'index.html';
 }
 
 /* ─── Charger tout ─── */
@@ -1486,5 +1487,16 @@ document.querySelectorAll('.modal-overlay').forEach(el => {
   el.addEventListener('click', e => { if(e.target === el) el.classList.remove('open'); });
 });
 </script>
+
+<div class="modal-overlay" id="modalDeconnexion">
+  <div class="modal" style="max-width:380px;text-align:center;">
+    <h3 style="margin-bottom:12px;"><i class="fa-solid fa-right-from-bracket" style="color:#c62828;"></i> Déconnexion</h3>
+    <p style="margin-bottom:24px;color:var(--muted);">Voulez-vous vraiment vous déconnecter ?</p>
+    <div style="display:flex;gap:12px;justify-content:center;">
+      <button class="btn btn-outline" onclick="closeModal('modalDeconnexion')">Non</button>
+      <button class="btn btn-danger" onclick="confirmerDeconnexion()">Oui</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

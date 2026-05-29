@@ -1311,10 +1311,11 @@ async function sauvegarderProfil() {
 //  DÉCONNEXION
 // *******************
 function deconnexion() {
-  if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
-    localStorage.removeItem('utilisateur');
-    window.location.href = 'index.html';
-  }
+  document.getElementById('modalDeconnexion').classList.add('open');
+}
+function confirmerDeconnexion() {
+  localStorage.removeItem('utilisateur');
+  window.location.href = 'index.html';
 }
 
 // ═*******************
@@ -1364,5 +1365,16 @@ document.querySelectorAll('.modal-overlay').forEach(el => {
   });
 });
 </script>
+
+<div class="modal-overlay" id="modalDeconnexion">
+  <div class="modal" style="max-width:380px;text-align:center;">
+    <h3 style="margin-bottom:12px;"><i class="fa-solid fa-right-from-bracket" style="color:#c62828;"></i> Déconnexion</h3>
+    <p style="margin-bottom:24px;color:var(--muted);">Voulez-vous vraiment vous déconnecter ?</p>
+    <div style="display:flex;gap:12px;justify-content:center;">
+      <button class="btn btn-outline" onclick="fermerModal('modalDeconnexion')">Non</button>
+      <button class="btn btn-danger" onclick="confirmerDeconnexion()">Oui</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
