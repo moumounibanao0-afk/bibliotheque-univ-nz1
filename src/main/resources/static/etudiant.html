@@ -1311,8 +1311,10 @@ async function sauvegarderProfil() {
 //  DÉCONNEXION
 // *******************
 function deconnexion() {
-  localStorage.removeItem('utilisateur');
-  window.location.href = 'index.html';
+  if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
+    localStorage.removeItem('utilisateur');
+    window.location.href = 'index.html';
+  }
 }
 
 // ═*******************
