@@ -345,6 +345,128 @@ Le formulaire d'ajout permet de saisir le titre, l'auteur, l'ISBN
 et le nombre d'exemplaires d'un nouvel ouvrage. La soumission du
 formulaire appelle l'API REST et met à jour le catalogue automatiquement.
 
+## 5.9 Hébergement et Déploiement
+
+### 5.9.1 Environnement local
+
+L'application fonctionne parfaitement en local avec la configuration suivante :
+
+- **URL** : http://localhost:8081
+- **Base de données** : MySQL 8.4 sur localhost:3306
+- **Java** : OpenJDK 21
+- **Maven** : 3.9.9
+
+### 5.9.2 Dockerisation
+
+Un Dockerfile a été fourni pour faciliter le déploiement :
+
+- Image de build : maven:3.9.5-eclipse-temurin-21
+- Image de production : eclipse-temurin:21-jre
+- Port exposé : 8081
+
+### 5.9.3 Tentative de déploiement sur Railway
+
+Une tentative de déploiement sur Railway (railway.app) a été réalisée :
+
+- Le code source est connecté au dépôt GitHub
+- La base de données PostgreSQL a été configurée
+- Le Dockerfile a été optimisé pour Railway
+- Des problèmes de configuration de port ont été rencontrés
+
+### 5.9.4 Conclusion sur l'hébergement
+
+L'application est pleinement fonctionnelle en environnement local.
+Le Dockerfile fourni permet un déploiement futur sur n'importe quelle
+plateforme supportant Docker (Railway, Render, AWS, Heroku, etc.).
+---
+
+
+## 5.10 Analyse de la qualité du code
+
+### 5.10.1 Respect des principes SOLID
+
+### Single Responsibility Principle (SRP)
+Chaque classe du projet a une seule responsabilité bien définie.
+La classe OuvrageService gère uniquement la logique métier des ouvrages.
+La classe EmpruntService gère uniquement la logique des emprunts.
+La classe NotificationService gère uniquement l'envoi des notifications.
+Les Controllers se chargent uniquement de recevoir et retourner les
+requêtes HTTP sans contenir de logique métier.
+
+### Open/Closed Principle (OCP)
+Les classes sont ouvertes à l'extension mais fermées à la modification.
+Le Pattern Strategy illustre parfaitement ce principe : pour ajouter
+un nouveau mode de calcul de pénalité, il suffit de créer une nouvelle
+classe implémentant l'interface CalculPenalite sans modifier le code
+existant.
+
+### Liskov Substitution Principle (LSP)
+Les sous-classes Etudiant, Bibliothecaire et Administrateur peuvent
+remplacer leur classe mère Utilisateur sans altérer le comportement
+du programme. Chaque sous-classe respecte le contrat défini par
+la classe mère.
+
+### Interface Segregation Principle (ISP)
+Les interfaces sont petites et spécifiques. L'interface Observable
+définit uniquement les méthodes liées à la gestion des observateurs.
+L'interface Observateur définit uniquement la méthode de réception
+des notifications. L'interface CalculPenalite définit uniquement
+la méthode de calcul.
+
+### Dependency Inversion Principle (DIP)
+Les classes de haut niveau ne dépendent pas des classes de bas niveau.
+Spring Boot gère l'injection de dépendances via l'annotation @Autowired.
+Les Controllers dépendent des interfaces de Service, pas des
+implémentations concrètes.
+
+### 5.10.2 Bonnes pratiques de développement
+
+### Conventions de nommage
+Les noms de classes, méthodes et variables suivent les conventions
+Java standard. Les classes utilisent le PascalCase, les méthodes
+et variables utilisent le camelCase, les constantes utilisent
+le UPPER_SNAKE_CASE.
+
+### Commentaires et documentation
+Chaque Design Pattern est documenté avec un commentaire expliquant
+son rôle et son utilisation. Les méthodes importantes sont commentées
+pour faciliter la maintenance et la compréhension du code.
+
+### Gestion des exceptions
+Les Controllers utilisent des blocs try/catch pour gérer les exceptions
+et retourner des messages d'erreur appropriés avec les codes HTTP
+correspondants (400, 404, 500).
+
+### Versionnement Git
+Le code est versionné avec Git en suivant les bonnes pratiques :
+messages de commit descriptifs, utilisation de branches séparées
+(main pour la production, develop pour le développement), et
+merge régulier entre les branches.
+
+### 5.10.3 Métriques de qualité
+
+| Métrique | Valeur |
+|---|---|
+| Nombre de classes Java | 33 |
+| Nombre de méthodes | 85+ |
+| Lignes de code | 1500+ |
+| Couverture de tests | 93% |
+| Nombre de tests | 61 |
+| Nombre d'endpoints API | 12 |
+| Design Patterns | 4 |
+| Commits GitHub | 20+ |
+
+### 5.10.4 Outils de qualité utilisés
+
+- **JUnit 5** : Framework de tests unitaires
+- **Mockito** : Framework de simulation pour les tests
+- **JaCoCo** : Outil de mesure de couverture de code
+- **Maven** : Outil de build et gestion des dépendances
+- **Git** : Système de contrôle de version
+- **GitHub** : Plateforme de collaboration et versionnement
+- **PlantUML** : Outil de génération de diagrammes UML
+- **GitHub Projects** : Outil de gestion de projet Scrum
+
 # 6. Gestion Agile (Scrum)
 
 ## 6.1 Organisation de l'équipe
@@ -437,123 +559,3 @@ La méthodologie Scrum a été appliquée avec succès à travers 3 sprints de 2
 - Déployer l'application sur un serveur cloud avec une base de données persistante
 ---
 
-# 9. Hébergement et Déploiement
-
-## 9.1 Environnement local
-
-L'application fonctionne parfaitement en local avec la configuration suivante :
-
-- **URL** : http://localhost:8081
-- **Base de données** : MySQL 8.4 sur localhost:3306
-- **Java** : OpenJDK 21
-- **Maven** : 3.9.9
-
-## 9.2 Dockerisation
-
-Un Dockerfile a été fourni pour faciliter le déploiement :
-
-- Image de build : maven:3.9.5-eclipse-temurin-21
-- Image de production : eclipse-temurin:21-jre
-- Port exposé : 8081
-
-## 9.3 Tentative de déploiement sur Railway
-
-Une tentative de déploiement sur Railway (railway.app) a été réalisée :
-
-- Le code source est connecté au dépôt GitHub
-- La base de données PostgreSQL a été configurée
-- Le Dockerfile a été optimisé pour Railway
-- Des problèmes de configuration de port ont été rencontrés
-
-## 9.4 Conclusion sur l'hébergement
-
-L'application est pleinement fonctionnelle en environnement local.
-Le Dockerfile fourni permet un déploiement futur sur n'importe quelle
-plateforme supportant Docker (Railway, Render, AWS, Heroku, etc.).
----
-
-# 10. Analyse de la qualité du code
-
-## 10.1 Respect des principes SOLID
-
-### Single Responsibility Principle (SRP)
-Chaque classe du projet a une seule responsabilité bien définie.
-La classe OuvrageService gère uniquement la logique métier des ouvrages.
-La classe EmpruntService gère uniquement la logique des emprunts.
-La classe NotificationService gère uniquement l'envoi des notifications.
-Les Controllers se chargent uniquement de recevoir et retourner les
-requêtes HTTP sans contenir de logique métier.
-
-### Open/Closed Principle (OCP)
-Les classes sont ouvertes à l'extension mais fermées à la modification.
-Le Pattern Strategy illustre parfaitement ce principe : pour ajouter
-un nouveau mode de calcul de pénalité, il suffit de créer une nouvelle
-classe implémentant l'interface CalculPenalite sans modifier le code
-existant.
-
-### Liskov Substitution Principle (LSP)
-Les sous-classes Etudiant, Bibliothecaire et Administrateur peuvent
-remplacer leur classe mère Utilisateur sans altérer le comportement
-du programme. Chaque sous-classe respecte le contrat défini par
-la classe mère.
-
-### Interface Segregation Principle (ISP)
-Les interfaces sont petites et spécifiques. L'interface Observable
-définit uniquement les méthodes liées à la gestion des observateurs.
-L'interface Observateur définit uniquement la méthode de réception
-des notifications. L'interface CalculPenalite définit uniquement
-la méthode de calcul.
-
-### Dependency Inversion Principle (DIP)
-Les classes de haut niveau ne dépendent pas des classes de bas niveau.
-Spring Boot gère l'injection de dépendances via l'annotation @Autowired.
-Les Controllers dépendent des interfaces de Service, pas des
-implémentations concrètes.
-
-## 10.2 Bonnes pratiques de développement
-
-### Conventions de nommage
-Les noms de classes, méthodes et variables suivent les conventions
-Java standard. Les classes utilisent le PascalCase, les méthodes
-et variables utilisent le camelCase, les constantes utilisent
-le UPPER_SNAKE_CASE.
-
-### Commentaires et documentation
-Chaque Design Pattern est documenté avec un commentaire expliquant
-son rôle et son utilisation. Les méthodes importantes sont commentées
-pour faciliter la maintenance et la compréhension du code.
-
-### Gestion des exceptions
-Les Controllers utilisent des blocs try/catch pour gérer les exceptions
-et retourner des messages d'erreur appropriés avec les codes HTTP
-correspondants (400, 404, 500).
-
-### Versionnement Git
-Le code est versionné avec Git en suivant les bonnes pratiques :
-messages de commit descriptifs, utilisation de branches séparées
-(main pour la production, develop pour le développement), et
-merge régulier entre les branches.
-
-## 10.3 Métriques de qualité
-
-| Métrique | Valeur |
-|---|---|
-| Nombre de classes Java | 33 |
-| Nombre de méthodes | 85+ |
-| Lignes de code | 1500+ |
-| Couverture de tests | 93% |
-| Nombre de tests | 61 |
-| Nombre d'endpoints API | 12 |
-| Design Patterns | 4 |
-| Commits GitHub | 20+ |
-
-## 10.4 Outils de qualité utilisés
-
-- **JUnit 5** : Framework de tests unitaires
-- **Mockito** : Framework de simulation pour les tests
-- **JaCoCo** : Outil de mesure de couverture de code
-- **Maven** : Outil de build et gestion des dépendances
-- **Git** : Système de contrôle de version
-- **GitHub** : Plateforme de collaboration et versionnement
-- **PlantUML** : Outil de génération de diagrammes UML
-- **GitHub Projects** : Outil de gestion de projet Scrum
