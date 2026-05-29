@@ -85,8 +85,8 @@ public class StatistiqueController {
         List<Map<String, Object>> result = new ArrayList<>();
         LocalDate today = LocalDate.now();
 
-        for (int i = 11; i >= 0; i--) {
-            LocalDate mois = today.minusMonths(i);
+        for (int i = 0; i <= 11; i++) {
+            LocalDate mois = today.plusMonths(i);
             int annee = mois.getYear();
             int numMois = mois.getMonthValue();
 

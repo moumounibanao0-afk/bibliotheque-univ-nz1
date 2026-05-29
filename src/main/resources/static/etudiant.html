@@ -31,7 +31,7 @@
       display: flex;
     }
 
-    /* ───────── SIDEBAR ───────── */
+    /***** SIDEBAR **** */
     .sidebar {
       width: var(--sidebar-w);
       background: var(--dark);
@@ -167,7 +167,7 @@
       display: flex; align-items: center; justify-content: space-between;
       position: sticky; top: 0; z-index: 50;
     }
-    .topbar-title {
+    .topbar-title { font-size:3.2rem; font-weight:800; text-align:center; width:100%; font-family:'Playfair Display',serif; letter-spacing:.03em;
       font-family: 'Instrument Serif', serif;
       font-size: 1.35rem;
       color: var(--dark);
@@ -219,11 +219,12 @@
     /* ───────── STATS CARDS ───────── */
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 18px;
       margin-bottom: 28px;
     }
-    .stat-card {
+    .stat-card { text-align:center; flex-direction:column; justify-content:center; align-items:center;
+      min-width: 0;
       background: var(--white);
       border-radius: var(--radius);
       padding: 22px 24px;
@@ -475,7 +476,7 @@
     .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
     .btn-cancel { background: #f3f4f6; color: var(--text); padding: 9px 20px; border: none; border-radius: 8px; font-family: inherit; font-size: .875rem; font-weight: 500; cursor: pointer; }
 
-    /* ───────── RESPONSIVE ───────── */
+    /* ───────── RESPONSIVE**** */
     .hamburger {
       display: none;
       background: none; border: none;
@@ -491,6 +492,14 @@
       .profil-grid { grid-template-columns: 1fr; }
       .form-row { grid-template-columns: 1fr; }
     }
+    @media (max-width: 600px) {
+      .table-responsive { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+      table { min-width:480px; }
+      .card { margin-bottom:14px; }
+      .card-head { flex-direction:column; align-items:flex-start; gap:8px; }
+      .btn { font-size:.78rem; padding:7px 12px; }
+      .stats-mini { grid-template-columns:1fr 1fr; }
+    }
 
     .overlay-mobile {
       display: none;
@@ -503,7 +512,7 @@
 </head>
 <body>
 
-<!-- ════ SIDEBAR ════ -->
+<!-- *** SIDEBAR *** -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-brand">
     <div class="logo">Biblio<span>Univ</span></div>
@@ -555,7 +564,7 @@
 
 <div class="overlay-mobile" id="overlayMobile" onclick="toggleSidebar()"></div>
 
-<!-- ════ MAIN ════ -->
+<!-- +++ MAIN +++ -->
 <div class="main">
   <!-- Topbar -->
   <header class="topbar">
@@ -609,6 +618,14 @@
             <div class="val" id="statTotal">0</div>
             <div class="lbl">Total emprunts (hist.)</div>
           </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#f0fdfa;color:#0d9488"><i class="fa-solid fa-book"></i></div>
+          <div class="stat-info"><div class="val" id="statDisponibles">0</div><div class="lbl">Livres disponibles</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#f5f3ff;color:#7c3aed"><i class="fa-solid fa-layer-group"></i></div>
+          <div class="stat-info"><div class="val" id="statTotalOuvrages">0</div><div class="lbl">Total catalogue</div></div>
         </div>
       </div>
 
@@ -825,22 +842,22 @@
 </div>
 
 <script>
-// ═══════════════════════════════════════════
+// ═*********************
 //  CONFIGURATION API
-// ═══════════════════════════════════════════
-const API = '';  // Même domaine, pas de préfixe nécessaire
+// **********************
+const API = '/api';  // Préfixe API
 
-// ═══════════════════════════════════════════
+// *******************************
 //  ÉTAT GLOBAL
-// ═══════════════════════════════════════════
+// *******************************
 let utilisateur = null;
 let tousLesLivres = [];
 let reservationAnnulerIndex = null;
 let livrePendantEmprunt = null;
 
-// ═══════════════════════════════════════════
+// *****************************
 //  INITIALISATION
-// ═══════════════════════════════════════════
+// *****************************
 document.addEventListener('DOMContentLoaded', async () => {
   const session = localStorage.getItem('utilisateur');
   if (!session) { window.location.href = 'index.html'; return; }
@@ -862,6 +879,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     chargerHistorique()
   ]);
   remplirProfil();
+
+  // Rafraîchissement automatique toutes les 30 secondes
+  setInterval(async () => {
+    await chargerDashboard();
+  }, 30000);
 });
 
 function afficherInfosUtilisateur() {
@@ -884,9 +906,9 @@ function afficherDate() {
     new Date().toLocaleDateString('fr-FR', opts);
 }
 
-// ═══════════════════════════════════════════
+// ***************************
 //  NAVIGATION
-// ═══════════════════════════════════════════
+// ***************************
 function showSection(id, el) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -904,9 +926,9 @@ function toggleSidebar(force) {
   ov.classList.toggle('open', open);
 }
 
-// ═══════════════════════════════════════════
+// --------------------
 //  DASHBOARD
-// ═══════════════════════════════════════════
+// --------------------
 async function chargerDashboard() {
   try {
     const [emprunts, reservations] = await Promise.all([
@@ -920,9 +942,17 @@ async function chargerDashboard() {
     const total    = (emprunts || []).length;
 
     document.getElementById('statEmpruntsEnCours').textContent = enCours.length;
+    // Mise à jour badges sidebar immédiate
+    const be = document.getElementById('badgeEmprunts');
+    const br = document.getElementById('badgeReservations');
+    if (enCours.length > 0) { be.textContent = enCours.length; be.style.display = ''; }
+    else { be.style.display = 'none'; }
+    if (resvAct.length > 0) { br.textContent = resvAct.length; br.style.display = ''; }
+    else { br.style.display = 'none'; }
     document.getElementById('statReservations').textContent    = resvAct.length;
     document.getElementById('statRetards').textContent         = retards.length;
-    document.getElementById('statTotal').textContent           = total;
+    document.getElementById('statTotal').textContent = total;
+    try { const stats = await apiFetch('/statistiques'); document.getElementById('statDisponibles').textContent = stats.ouvragesDisponibles || 0; document.getElementById('statTotalOuvrages').textContent = stats.totalOuvrages || 0; } catch(e){}
 
     // Badges sidebar
     if (enCours.length > 0) {
@@ -951,7 +981,7 @@ async function chargerDashboard() {
       tbody.innerHTML = enCours.slice(0,5).map(e => {
         const retard = new Date(e.dateRetourPrevue) < new Date();
         return `<tr>
-          <td><strong>${e.livre?.titre || e.titreLivre || '—'}</strong></td>
+          <td><strong>${e.ouvrage?.titre || e.ouvrage?.titre || '—'}</strong></td>
           <td>${formaterDate(e.dateRetourPrevue)}</td>
           <td><span class="badge-status ${retard ? 'retard' : 'actif'}">${retard ? '⚠ Retard' : '✓ En cours'}</span></td>
         </tr>`;
@@ -964,7 +994,7 @@ async function chargerDashboard() {
       tbody2.innerHTML = `<tr><td colspan="3"><div class="empty-state"><i class="fa-solid fa-clock"></i><p>Aucune réservation active</p></div></td></tr>`;
     } else {
       tbody2.innerHTML = resvAct.slice(0,4).map(r => `<tr>
-        <td><strong>${r.livre?.titre || r.titreLivre || '—'}</strong></td>
+        <td><strong>${r.ouvrage?.titre || r.ouvrage?.titre || '—'}</strong></td>
         <td>${formaterDate(r.dateReservation)}</td>
         <td><span class="badge-status reserve">⏳ En attente</span></td>
       </tr>`).join('');
@@ -988,13 +1018,13 @@ function remplirDashboardVide() {
     `<tr><td colspan="3" style="text-align:center;padding:24px;color:var(--muted);">Aucune réservation</td></tr>`;
 }
 
-// ═══════════════════════════════════════════
+// ++++++++++++++++++++++++++++
 //  CATALOGUE
-// ═══════════════════════════════════════════
+// ++++++++++++++++++++++++++++
 async function chargerCatalogue() {
   try {
     const [livres, categories] = await Promise.all([
-      apiFetch('/livres'),
+      apiFetch('/ouvrages'),
       apiFetch('/categories')
     ]);
     tousLesLivres = livres || [];
@@ -1030,7 +1060,7 @@ function afficherLivres(livres) {
   }
   const emojis = ['📚','📖','📕','📗','📘','📙','🔬','⚗️','🧮','🌍','🏛️','🎓'];
   grid.innerHTML = livres.map((l, i) => {
-    const dispo = l.disponible !== false && (l.quantiteDisponible === undefined || l.quantiteDisponible > 0);
+    const dispo = (l.exemplairesDisponibles !== undefined) ? l.exemplairesDisponibles > 0 : (l.disponible !== false);
     const emoji = emojis[i % emojis.length];
     return `<div class="book-card">
       <div class="book-cover" style="background:${couleursLivres(i)}">
@@ -1046,7 +1076,7 @@ function afficherLivres(livres) {
             <i class="fa-solid fa-book-bookmark"></i> Emprunter
           </button>
           <button class="btn btn-outline" onclick="reserverLivre(${l.id}, '${escapeStr(l.titre)}')" title="Réserver">
-            <i class="fa-solid fa-clock"></i>
+            <i class="fa-solid fa-clock"></i> Réserver
           </button>
         </div>
       </div>
@@ -1081,9 +1111,9 @@ function couleursLivres(i) {
   return g[i % g.length];
 }
 
-// ═══════════════════════════════════════════
+// ***********************
 //  EMPRUNTS
-// ═══════════════════════════════════════════
+// *************************
 async function chargerEmprunts() {
   try {
     const emprunts = await apiFetch('/emprunts/etudiant/' + utilisateur.id);
@@ -1099,8 +1129,8 @@ async function chargerEmprunts() {
     tbody.innerHTML = enCours.map(e => {
       const retard = new Date(e.dateRetourPrevue) < new Date();
       return `<tr>
-        <td><strong>${e.livre?.titre || e.titreLivre || '—'}</strong></td>
-        <td>${e.livre?.auteur || e.auteurLivre || '—'}</td>
+        <td><strong>${e.ouvrage?.titre || e.ouvrage?.titre || '—'}</strong></td>
+        <td>${e.ouvrage?.auteur || e.ouvrage?.auteur || '—'}</td>
         <td>${formaterDate(e.dateEmprunt)}</td>
         <td>${formaterDate(e.dateRetourPrevue)}</td>
         <td><span class="badge-status ${retard ? 'retard' : 'actif'}">${retard ? '⚠ Retard' : '✓ En cours'}</span></td>
@@ -1113,9 +1143,9 @@ async function chargerEmprunts() {
   }
 }
 
-// ═══════════════════════════════════════════
+// ************************
 //  RESERVATIONS
-// ═══════════════════════════════════════════
+// ************************
 async function chargerReservations() {
   try {
     const reservations = await apiFetch('/reservations/etudiant/' + utilisateur.id);
@@ -1129,13 +1159,13 @@ async function chargerReservations() {
       return;
     }
     tbody.innerHTML = actives.map((r, i) => `<tr>
-      <td><strong>${r.livre?.titre || r.titreLivre || '—'}</strong></td>
-      <td>${r.livre?.auteur || r.auteurLivre || '—'}</td>
+      <td><strong>${r.ouvrage?.titre || r.ouvrage?.titre || '—'}</strong></td>
+      <td>${r.ouvrage?.auteur || r.ouvrage?.auteur || '—'}</td>
       <td>${formaterDate(r.dateReservation)}</td>
       <td><span class="badge-status reserve">⏳ En attente</span></td>
       <td>
         <button class="btn btn-outline" style="font-size:.78rem;padding:6px 12px;" 
-          onclick="demanderAnnulationReservation(${r.id}, '${escapeStr(r.livre?.titre || r.titreLivre || '')}')">
+          onclick="demanderAnnulationReservation(${r.id}, '${escapeStr(r.ouvrage?.titre || r.ouvrage?.titre || '')}')">
           <i class="fa-solid fa-xmark"></i> Annuler
         </button>
       </td>
@@ -1157,7 +1187,7 @@ function demanderAnnulationReservation(id, titre) {
 async function confirmerAnnulationReservation() {
   fermerModal('modalReservation');
   try {
-    await apiFetch('/reservations/' + reservationAnnulerIndex, { method: 'DELETE' });
+    await apiFetch('/reservations/' + reservationAnnulerIndex + '/annuler', { method: 'PUT' });
     toast('Réservation annulée', 'success');
     await Promise.all([chargerReservations(), chargerDashboard()]);
   } catch (e) {
@@ -1165,9 +1195,9 @@ async function confirmerAnnulationReservation() {
   }
 }
 
-// ═══════════════════════════════════════════
+// ------------------------------
 //  HISTORIQUE
-// ═══════════════════════════════════════════
+// ------------------------------
 async function chargerHistorique() {
   try {
     const emprunts = await apiFetch('/emprunts/etudiant/' + utilisateur.id);
@@ -1181,8 +1211,8 @@ async function chargerHistorique() {
       return;
     }
     tbody.innerHTML = hist.map(e => `<tr>
-      <td><strong>${e.livre?.titre || e.titreLivre || '—'}</strong></td>
-      <td>${e.livre?.auteur || e.auteurLivre || '—'}</td>
+      <td><strong>${e.ouvrage?.titre || e.ouvrage?.titre || '—'}</strong></td>
+      <td>${e.ouvrage?.auteur || e.ouvrage?.auteur || '—'}</td>
       <td>${formaterDate(e.dateEmprunt)}</td>
       <td>${formaterDate(e.dateRetourEffectif || e.dateRetour)}</td>
       <td><span class="badge-status retourne">✓ Retourné</span></td>
@@ -1194,9 +1224,9 @@ async function chargerHistorique() {
   }
 }
 
-// ═══════════════════════════════════════════
+// ++++++++++++++++++++++++
 //  EMPRUNTER UN LIVRE
-// ═══════════════════════════════════════════
+// ++++++++++++++++++++++++
 function ouvrirModalEmprunt(livreId, titre) {
   livrePendantEmprunt = livreId;
   document.getElementById('modalEmpruntTitre').textContent = `Emprunter « ${titre} »`;
@@ -1208,31 +1238,43 @@ async function confirmerEmprunt() {
   try {
     await apiFetch('/emprunts', {
       method: 'POST',
-      body: JSON.stringify({ livreId: livrePendantEmprunt, etudiantId: utilisateur.id })
+      body: JSON.stringify({ ouvrageId: livrePendantEmprunt, etudiantId: utilisateur.id })
     });
     toast('Emprunt enregistré avec succès !', 'success');
-    await Promise.all([chargerDashboard(), chargerEmprunts(), chargerCatalogue()]);
+    await Promise.all([chargerDashboard(), chargerEmprunts()]); chargerCatalogue();
   } catch (e) {
     toast(e.message || 'Erreur lors de l\'emprunt', 'error');
   }
 }
 
+async function retournerEmprunt(id) {
+  if (!confirm("Confirmer le retour de ce livre ?")) return;
+  try {
+    await apiFetch('/emprunts/' + id + '/retour', { method: 'PUT' });
+    toast('Retour enregistre avec succes !', 'success');
+    await Promise.all([chargerDashboard(), chargerEmprunts(), chargerCatalogue()]);
+  } catch (e) {
+    toast(e.message || 'Erreur lors du retour', 'error');
+  }
+}
+
 async function reserverLivre(livreId, titre) {
+  if (!confirm("Voulez-vous reserver ce livre : " + titre + " ?")) return;
   try {
     await apiFetch('/reservations', {
       method: 'POST',
-      body: JSON.stringify({ livreId, etudiantId: utilisateur.id })
+      body: JSON.stringify({ ouvrageId: livreId, etudiantId: utilisateur.id })
     });
     toast(`« ${titre} » réservé !`, 'success');
-    await Promise.all([chargerDashboard(), chargerReservations()]);
+    chargerDashboard(); chargerReservations();
   } catch (e) {
     toast(e.message || 'Erreur lors de la réservation', 'error');
   }
 }
 
-// ═══════════════════════════════════════════
-//  PROFIL
-// ═══════════════════════════════════════════
+// ********************
+//    PROFIL
+// ********************
 function remplirProfil() {
   document.getElementById('pfPrenom').value   = utilisateur.prenom   || '';
   document.getElementById('pfNom').value      = utilisateur.nom      || '';
@@ -1265,17 +1307,17 @@ async function sauvegarderProfil() {
   }
 }
 
-// ═══════════════════════════════════════════
+// *******************
 //  DÉCONNEXION
-// ═══════════════════════════════════════════
+// *******************
 function deconnexion() {
   localStorage.removeItem('utilisateur');
   window.location.href = 'index.html';
 }
 
-// ═══════════════════════════════════════════
+// ═*******************
 //  UTILITAIRES
-// ═══════════════════════════════════════════
+// *********************
 async function apiFetch(endpoint, options = {}) {
   const headers = { 'Content-Type': 'application/json', ...options.headers };
   const token = utilisateur?.token || localStorage.getItem('token');

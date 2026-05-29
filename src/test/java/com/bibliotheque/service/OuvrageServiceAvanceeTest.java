@@ -93,4 +93,52 @@ public class OuvrageServiceAvanceeTest {
         assertEquals(1L, result.getId());
         verify(ouvrageRepository, times(1)).save(ouvrage);
     }
+
+    @Test
+    void testGetTousLesOuvrages() {
+        when(ouvrageRepository.findAll()).thenReturn(Arrays.asList(ouvrage));
+        List<Ouvrage> result = ouvrageService.getTousLesOuvrages();
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    void testGetOuvrageParId() {
+        when(ouvrageRepository.findById(1L)).thenReturn(Optional.of(ouvrage));
+        Optional<Ouvrage> result = ouvrageService.getOuvrageParId(1L);
+        assertTrue(result.isPresent());
+        assertEquals("Java Spring Boot", result.get().getTitre());
+    }
+
+    @Test
+    void testGetOuvrageParIdNonTrouve() {
+        when(ouvrageRepository.findById(99L)).thenReturn(Optional.empty());
+        Optional<Ouvrage> result = ouvrageService.getOuvrageParId(99L);
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    void testAjouterOuvrage() {
+        when(ouvrageRepository.save(any(Ouvrage.class))).thenReturn(ouvrage);
+        Ouvrage result = ouvrageService.ajouterOuvrage(ouvrage);
+        assertNotNull(result);
+        assertEquals(5, result.getNombreExemplaires());
+        verify(ouvrageRepository, times(1)).save(ouvrage);
+    }
+
+    @Test
+    void testSupprimerOuvrage() {
+        doNothing().when(ouvrageRepository).deleteById(1L);
+        ouvrageService.supprimerOuvrage(1L);
+        verify(ouvrageRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void testGetOuvragesDisponibles() {
+        when(ouvrageRepository.findByExemplairesDisponiblesGreaterThan(0))
+                .thenReturn(Arrays.asList(ouvrage));
+        List<Ouvrage> result = ouvrageService.getOuvragesDisponibles();
+        assertEquals(1, result.size());
+        assertTrue(result.get(0).getExemplairesDisponibles() > 0);
+    }
+
 }

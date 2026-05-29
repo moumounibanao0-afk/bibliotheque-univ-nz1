@@ -12,6 +12,7 @@
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/repository/CategorieRepository.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/controller/CategorieController.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/controller/StatistiqueController.java
+/home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/facade/BibliothecaireFacade.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/controller/OuvrageController.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/repository/EmpruntRepository.java
 /home/kaiju/bibliotheque-univ-nz1/src/main/java/com/bibliotheque/model/Categorie.java

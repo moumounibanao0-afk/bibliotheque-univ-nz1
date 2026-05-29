@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@SuppressWarnings({"null", "NullAway"})
 public class ReservationServiceTest {
 
     @Mock
@@ -56,14 +57,14 @@ public class ReservationServiceTest {
     void testCreerReservation() {
         when(reservationRepository.existsByEtudiantIdAndOuvrageIdAndStatut(
                 1L, 1L, StatutReservation.EN_ATTENTE)).thenReturn(false);
-        when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
-        doNothing().when(notificationService).envoyerConfirmationReservation(any());
+        when(reservationRepository.save(org.mockito.ArgumentMatchers.<Reservation>any())).thenReturn(reservation);
+        doNothing().when(notificationService).envoyerConfirmationReservation(org.mockito.ArgumentMatchers.<Reservation>any());
 
         Reservation result = reservationService.creerReservation(etudiant, ouvrage);
 
         assertNotNull(result);
         assertEquals(StatutReservation.EN_ATTENTE, result.getStatut());
-        verify(reservationRepository, times(1)).save(any(Reservation.class));
+        verify(reservationRepository, times(1)).save(org.mockito.ArgumentMatchers.<Reservation>any());
     }
 
     @Test
@@ -79,8 +80,8 @@ public class ReservationServiceTest {
     @Test
     void testAnnulerReservation() {
         when(reservationRepository.findById(1L)).thenReturn(Optional.of(reservation));
-        when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
-        doNothing().when(notificationService).envoyerAnnulationReservation(any());
+        when(reservationRepository.save(org.mockito.ArgumentMatchers.<Reservation>any())).thenReturn(reservation);
+        doNothing().when(notificationService).envoyerAnnulationReservation(org.mockito.ArgumentMatchers.<Reservation>any());
 
         Reservation result = reservationService.annulerReservation(1L);
 

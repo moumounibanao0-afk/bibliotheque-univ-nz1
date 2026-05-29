@@ -1,496 +1,233 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion — Bibliothèque UNZ</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg:     #0b1628;
-            --card:   rgba(255,255,255,0.04);
-            --border: rgba(255,255,255,0.10);
-            --text:   rgba(255,255,255,0.88);
-            --muted:  rgba(255,255,255,0.40);
-
-            /* couleurs par rôle — injectées par JS */
-            --role-color:  #c9a84c;
-            --role-bg:     rgba(201,168,76,0.10);
-            --role-border: rgba(201,168,76,0.25);
-        }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body {
-            font-family: 'DM Sans', sans-serif;
-            min-height: 100vh;
-            background: var(--bg);
-            display: flex; align-items: center; justify-content: center;
-            overflow: hidden;
-        }
-        body::before {
-            content:''; position:fixed;
-            width:600px; height:600px;
-            background: radial-gradient(circle, rgba(26,35,126,0.35) 0%, transparent 70%);
-            top:-150px; left:-150px;
-            animation: float1 10s ease-in-out infinite;
-        }
-        body::after {
-            content:''; position:fixed;
-            width:400px; height:400px;
-            background: radial-gradient(circle, rgba(201,168,76,0.15) 0%, transparent 70%);
-            bottom:-80px; right:-80px;
-            animation: float2 14s ease-in-out infinite;
-        }
-        @keyframes float1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,30px)} }
-        @keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-25px,-20px)} }
-
-        /* ── Carte ───────────────────────────────────── */
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            backdrop-filter: blur(24px);
-            border-radius: 22px;
-            padding: 40px 44px 36px;
-            width: 480px; max-width: 95vw;
-            position: relative; z-index: 10;
-            animation: slideUp 0.55s cubic-bezier(.22,1,.36,1);
-        }
-        @keyframes slideUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
-
-        /* ── Logo ────────────────────────────────────── */
-        .logo { text-align:center; margin-bottom: 10px; }
-        .logo-icon { font-size: 38px; display:block; margin-bottom:8px; }
-        .logo h1 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 22px; color: #fff;
-        }
-        .logo p { color: var(--muted); font-size:12px; margin-top:3px; font-weight:300; }
-
-        /* ── Badge de rôle ───────────────────────────── */
-        .role-badge {
-            display: flex; align-items: center; gap: 10px;
-            background: var(--role-bg);
-            border: 1px solid var(--role-border);
-            border-radius: 12px; padding: 10px 16px;
-            margin: 16px 0 20px;
-        }
-        .role-badge-icon { font-size: 20px; }
-        .role-badge-info { flex:1; }
-        .role-badge-label { font-size: 10px; letter-spacing:1.5px; text-transform:uppercase; color: var(--muted); }
-        .role-badge-name  { font-size: 15px; font-weight: 600; color: var(--role-color); margin-top: 1px; }
-        .role-badge-change {
-            font-size: 11px; color: var(--muted);
-            text-decoration: underline; cursor: pointer;
-            background: none; border: none; font-family: 'DM Sans', sans-serif;
-        }
-        .role-badge-change:hover { color: var(--text); }
-
-        /* ── Onglets ─────────────────────────────────── */
-        .tabs {
-            display: flex; gap: 4px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px; padding: 4px;
-            margin-bottom: 22px;
-        }
-        .tab {
-            flex:1; padding:9px;
-            background:transparent; border:none;
-            color: var(--muted);
-            border-radius: 7px; cursor: pointer;
-            font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
-            transition: all 0.2s;
-        }
-        .tab.active { background: rgba(255,255,255,0.10); color: #fff; }
-
-        /* ── Formulaire ──────────────────────────────── */
-        .form-section { display:none; }
-        .form-section.active { display:block; }
-
-        .form-group { margin-bottom: 14px; }
-        .form-group label {
-            display:block; color: var(--muted);
-            font-size:11px; font-weight:500;
-            letter-spacing:1px; text-transform:uppercase; margin-bottom:6px;
-        }
-        .form-group input {
-            width:100%; padding:11px 13px;
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 9px; color: #fff;
-            font-family: 'DM Sans', sans-serif; font-size:14px;
-            transition: all 0.3s; outline:none;
-        }
-        .form-group input:focus {
-            border-color: var(--role-color);
-            background: rgba(255,255,255,0.09);
-            box-shadow: 0 0 0 3px rgba(201,168,76,0.08);
-        }
-        .form-group input.valid   { border-color: rgba(76,175,80,0.6); }
-        .form-group input.invalid { border-color: rgba(198,40,40,0.6); }
-        .form-group input::placeholder { color: rgba(255,255,255,0.2); }
-
-        .hint { font-size:11px; margin-top:5px; color: var(--muted); }
-        .hint.ok    { color: #a5d6a7; }
-        .hint.error { color: #ef9a9a; }
-
-        .form-row { display:flex; gap:12px; }
-        .form-row .form-group { flex:1; }
-
-        .btn-submit {
-            width:100%; padding:13px;
-            background: linear-gradient(135deg, var(--role-color), var(--role-color));
-            color: var(--bg); border:none; border-radius:9px;
-            font-family: 'DM Sans', sans-serif; font-size:14px; font-weight:600;
-            cursor:pointer; margin-top:6px; transition: all 0.3s;
-        }
-        .btn-submit:hover {
-            filter: brightness(1.1);
-            transform: translateY(-1px);
-            box-shadow: 0 8px 25px rgba(201,168,76,0.3);
-        }
-        .btn-submit:disabled { opacity:0.55; cursor:not-allowed; transform:none; }
-
-        .msg {
-            padding:11px 14px; border-radius:8px;
-            font-size:13px; margin-top:12px;
-            text-align:center; display:none;
-        }
-        .msg.error   { background:rgba(198,40,40,0.15); border:1px solid rgba(198,40,40,0.3); color:#ef9a9a; display:block; }
-        .msg.success { background:rgba(46,125,50,0.15);  border:1px solid rgba(46,125,50,0.3);  color:#a5d6a7; display:block; }
-
-        .spinner {
-            width:15px; height:15px;
-            border:2px solid rgba(255,255,255,0.3); border-top-color:#fff;
-            border-radius:50%; animation:spin 0.8s linear infinite;
-            display:inline-block; vertical-align:middle; margin-right:6px;
-        }
-        @keyframes spin { to{transform:rotate(360deg)} }
-
-        /* Lien retour accueil */
-        .back-home {
-            display:block; text-align:center;
-            margin-top: 18px; font-size: 12px;
-            color: var(--muted); text-decoration: none;
-        }
-        .back-home:hover { color: var(--text); }
-    </style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connexion — Bibliothèque UNZ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#0b1628;--card:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.10);--text:rgba(255,255,255,0.88);--muted:rgba(255,255,255,0.40);--role-color:#c9a84c;--role-bg:rgba(201,168,76,0.10);--role-border:rgba(201,168,76,0.25);}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Sora',sans-serif;min-height:100vh;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+    body::before{content:'';position:fixed;width:600px;height:600px;background:radial-gradient(circle,rgba(26,35,126,0.35) 0%,transparent 70%);top:-150px;left:-150px;animation:float1 10s ease-in-out infinite;}
+    body::after{content:'';position:fixed;width:400px;height:400px;background:radial-gradient(circle,rgba(201,168,76,0.15) 0%,transparent 70%);bottom:-80px;right:-80px;animation:float2 14s ease-in-out infinite;}
+    @keyframes float1{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,30px)}}
+    @keyframes float2{0%,100%{transform:translate(0,0)}50%{transform:translate(-25px,-20px)}}
+    .card{background:var(--card);border:1px solid var(--border);backdrop-filter:blur(24px);border-radius:22px;padding:40px 44px 36px;width:480px;max-width:95vw;position:relative;z-index:10;animation:slideUp .55s cubic-bezier(.22,1,.36,1);}
+    @keyframes slideUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+    .logo{text-align:center;margin-bottom:10px;}
+    .logo-icon{font-size:38px;display:block;margin-bottom:8px;}
+    .logo h1{font-family:'Playfair Display',serif;font-size:22px;color:#fff;}
+    .logo p{color:var(--muted);font-size:12px;margin-top:3px;font-weight:300;}
+    .role-badge{display:flex;align-items:center;gap:10px;background:var(--role-bg);border:1px solid var(--role-border);border-radius:12px;padding:10px 16px;margin:16px 0 20px;}
+    .role-badge-icon{font-size:20px;}
+    .role-badge-info{flex:1;}
+    .role-badge-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+    .role-badge-name{font-size:15px;font-weight:600;color:var(--role-color);margin-top:1px;}
+    .role-badge-change{font-size:11px;color:var(--muted);text-decoration:underline;cursor:pointer;background:none;border:none;font-family:'Sora',sans-serif;}
+    .role-badge-change:hover{color:var(--text);}
+    .tabs{display:flex;gap:4px;background:rgba(255,255,255,.05);border-radius:10px;padding:4px;margin-bottom:22px;}
+    .tab{flex:1;padding:9px;background:transparent;border:none;color:var(--muted);border-radius:7px;cursor:pointer;font-family:'Sora',sans-serif;font-size:13px;font-weight:500;transition:all .2s;}
+    .tab.active{background:rgba(255,255,255,.10);color:#fff;}
+    .form-section{display:none;}
+    .form-section.active{display:block;}
+    .form-group{margin-bottom:14px;}
+    .form-group label{display:block;color:var(--muted);font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+    .form-group input{width:100%;padding:11px 13px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:9px;color:#fff;font-family:'Sora',sans-serif;font-size:14px;transition:all .3s;outline:none;}
+    .form-group input:focus{border-color:var(--role-color);background:rgba(255,255,255,.09);box-shadow:0 0 0 3px rgba(201,168,76,.08);}
+    .form-group input.valid{border-color:rgba(76,175,80,.6);}
+    .form-group input.invalid{border-color:rgba(198,40,40,.6);}
+    .form-group input::placeholder{color:rgba(255,255,255,.2);}
+    .hint{font-size:11px;margin-top:5px;color:var(--muted);}
+    .hint.ok{color:#a5d6a7;}.hint.error{color:#ef9a9a;}
+    .form-row{display:flex;gap:12px;}
+    .form-row .form-group{flex:1;}
+    .btn-submit{width:100%;padding:13px;background:linear-gradient(135deg,var(--role-color),var(--role-color));color:var(--bg);border:none;border-radius:9px;font-family:'Sora',sans-serif;font-size:14px;font-weight:600;cursor:pointer;margin-top:6px;transition:all .3s;}
+    .btn-submit:hover{filter:brightness(1.1);transform:translateY(-1px);box-shadow:0 8px 25px rgba(201,168,76,.3);}
+    .btn-submit:disabled{opacity:.55;cursor:not-allowed;transform:none;}
+    .msg{padding:11px 14px;border-radius:8px;font-size:13px;margin-top:12px;text-align:center;display:none;}
+    .msg.error{background:rgba(198,40,40,.15);border:1px solid rgba(198,40,40,.3);color:#ef9a9a;display:block;}
+    .msg.success{background:rgba(46,125,50,.15);border:1px solid rgba(46,125,50,.3);color:#a5d6a7;display:block;}
+    .spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .back-home{display:block;text-align:center;margin-top:18px;font-size:12px;color:var(--muted);text-decoration:none;}
+    .back-home:hover{color:var(--text);}
+  </style>
 </head>
 <body>
 <div class="card">
-    <div class="logo">
-        <span class="logo-icon">📚</span>
-        <h1>Bibliothèque UNZ</h1>
-        <p>Université Norbert Zongo</p>
+  <div class="logo">
+    <span class="logo-icon">📚</span>
+    <h1>Bibliothèque UNZ</h1>
+    <p>Université Norbert Zongo</p>
+  </div>
+  <div class="role-badge">
+    <span class="role-badge-icon" id="badge-icon">🔑</span>
+    <div class="role-badge-info">
+      <div class="role-badge-label">Connexion en tant que</div>
+      <div class="role-badge-name" id="badge-name">Utilisateur</div>
     </div>
-
-    <!-- Badge rôle sélectionné -->
-    <div class="role-badge" id="role-badge">
-        <span class="role-badge-icon" id="badge-icon">🔑</span>
-        <div class="role-badge-info">
-            <div class="role-badge-label">Connexion en tant que</div>
-            <div class="role-badge-name" id="badge-name">Utilisateur</div>
-        </div>
-        <button class="role-badge-change" onclick="window.location.href='index.html'">← Changer</button>
+    <button class="role-badge-change" onclick="location.href='index.html'">← Changer</button>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="changerTab('login',this)">Se connecter</button>
+    <button class="tab" id="tab-register" onclick="changerTab('register',this)">Créer un compte</button>
+  </div>
+  <div id="form-login" class="form-section active">
+    <div class="form-group">
+      <label>Adresse e-mail</label>
+      <input type="email" id="login-email" placeholder="votre@gmail.com"/>
     </div>
-
-    <!-- Onglets (inscription masquée pour Admin/Biblio) -->
-    <div class="tabs" id="tabs-container">
-        <button class="tab active" onclick="changerTab('login', this)">Se connecter</button>
-        <button class="tab" id="tab-register" onclick="changerTab('register', this)">Créer un compte</button>
+    <div class="form-group">
+      <label>Mot de passe</label>
+      <input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')seConnecter()"/>
     </div>
-
-    <!-- CONNEXION -->
-    <div id="form-login" class="form-section active">
-        <div class="form-group">
-            <label>Adresse e-mail</label>
-            <input type="email" id="login-email" placeholder="votre@gmail.com">
-        </div>
-        <div class="form-group">
-            <label>Mot de passe</label>
-            <input type="password" id="login-password" placeholder="••••••••"
-                   onkeydown="if(event.key==='Enter') seConnecter()">
-        </div>
-        <button class="btn-submit" onclick="seConnecter()" id="btn-login">Se connecter</button>
-        <div class="msg" id="msg-login"></div>
+    <button class="btn-submit" onclick="seConnecter()" id="btn-login">Se connecter</button>
+    <div class="msg" id="msg-login"></div>
+  </div>
+  <div id="form-register" class="form-section">
+    <div class="form-row">
+      <div class="form-group"><label>Nom *</label><input type="text" id="reg-nom" placeholder="Dupont"/></div>
+      <div class="form-group"><label>Prénom *</label><input type="text" id="reg-prenom" placeholder="Jean"/></div>
     </div>
-
-    <!-- INSCRIPTION (étudiants uniquement) -->
-    <div id="form-register" class="form-section">
-        <div class="form-row">
-            <div class="form-group">
-                <label>Nom *</label>
-                <input type="text" id="reg-nom" placeholder="Dupont">
-            </div>
-            <div class="form-group">
-                <label>Prénom *</label>
-                <input type="text" id="reg-prenom" placeholder="Jean">
-            </div>
-        </div>
-        <div class="form-group">
-            <label>Adresse e-mail *</label>
-            <input type="email" id="reg-email" placeholder="votre@gmail.com" oninput="validerEmail(this)">
-            <div class="hint" id="hint-email">Adresses @gmail.com ou @unz.bf acceptées</div>
-        </div>
-        <div class="form-group">
-            <label>INE *</label>
-            <input type="text" id="reg-ine" placeholder="N12345678901 ou E12345678901"
-                   oninput="validerINE(this)" maxlength="12">
-            <div class="hint" id="hint-ine">Commence par N ou E suivi de 11 chiffres</div>
-        </div>
-        <div class="form-group">
-            <label>Mot de passe *</label>
-            <input type="password" id="reg-password" placeholder="Minimum 6 caractères"
-                   oninput="validerPassword(this)">
-            <div class="hint" id="hint-password">Au moins 6 caractères</div>
-        </div>
-        <div class="form-group">
-            <label>Confirmer le mot de passe *</label>
-            <input type="password" id="reg-confirm" placeholder="Répétez le mot de passe"
-                   oninput="validerConfirm(this)"
-                   onkeydown="if(event.key==='Enter') sInscrire()">
-            <div class="hint" id="hint-confirm"></div>
-        </div>
-        <button class="btn-submit" onclick="sInscrire()" id="btn-register">Créer mon compte</button>
-        <div class="msg" id="msg-register"></div>
+    <div class="form-group">
+      <label>Adresse e-mail *</label>
+      <input type="email" id="reg-email" placeholder="votre@gmail.com ou @unz.bf" oninput="validerEmail(this)"/>
+      <div class="hint" id="hint-email">Adresses @gmail.com ou @unz.bf acceptées</div>
     </div>
-
-    <a href="index.html" class="back-home">← Retour à l'accueil</a>
+    <div class="form-group">
+      <label>INE *</label>
+      <input type="text" id="reg-ine" placeholder="N12345678901" oninput="validerINE(this)" maxlength="13"/>
+      <div class="hint" id="hint-ine">Commence par N ou E suivi de 11 ou 12 chiffres</div>
+    </div>
+    <div class="form-group">
+      <label>Mot de passe *</label>
+      <input type="password" id="reg-password" placeholder="Minimum 6 caractères" oninput="validerPassword(this)"/>
+      <div class="hint" id="hint-password">Au moins 6 caractères</div>
+    </div>
+    <div class="form-group">
+      <label>Confirmer le mot de passe *</label>
+      <input type="password" id="reg-confirm" placeholder="Répétez le mot de passe" oninput="validerConfirm(this)" onkeydown="if(event.key==='Enter')sInscrire()"/>
+      <div class="hint" id="hint-confirm"></div>
+    </div>
+    <button class="btn-submit" onclick="sInscrire()" id="btn-register">Créer mon compte</button>
+    <div class="msg" id="msg-register"></div>
+  </div>
+  <a href="index.html" class="back-home">← Retour à l'accueil</a>
 </div>
-
 <script>
-const API = '';
-
-/* ── Configuration des rôles ─────────────────────────── */
-const ROLE_CONFIG = {
-    ADMINISTRATEUR: {
-        label: 'Administrateur',
-        icon:  '🔐',
-        color: '#c9a84c',
-        bg:    'rgba(201,168,76,0.10)',
-        border:'rgba(201,168,76,0.25)',
-        btnGrad: 'linear-gradient(135deg, #c9a84c, #e8c96d)',
-        btnColor: '#0b1628',
-        canRegister: false
-    },
-    BIBLIOTHECAIRE: {
-        label: 'Bibliothécaire',
-        icon:  '📚',
-        color: '#e8924c',
-        bg:    'rgba(212,118,42,0.10)',
-        border:'rgba(212,118,42,0.25)',
-        btnGrad: 'linear-gradient(135deg, #d4762a, #e8924c)',
-        btnColor: '#fff',
-        canRegister: false
-    },
-    ETUDIANT: {
-        label: 'Étudiant',
-        icon:  '🎓',
-        color: '#4caf7d',
-        bg:    'rgba(30,107,66,0.12)',
-        border:'rgba(30,107,66,0.3)',
-        btnGrad: 'linear-gradient(135deg, #1e6b42, #2e8b57)',
-        btnColor: '#fff',
-        canRegister: true
-    }
+const API='';
+const RC={
+  ADMINISTRATEUR:{label:'Administrateur',icon:'🔐',color:'#c9a84c',bg:'rgba(201,168,76,0.10)',border:'rgba(201,168,76,0.25)',btnGrad:'linear-gradient(135deg,#c9a84c,#e8c96d)',btnColor:'#0b1628',reg:false},
+  BIBLIOTHECAIRE:{label:'Bibliothécaire',icon:'📚',color:'#e8924c',bg:'rgba(212,118,42,0.10)',border:'rgba(212,118,42,0.25)',btnGrad:'linear-gradient(135deg,#d4762a,#e8924c)',btnColor:'#fff',reg:false},
+  ETUDIANT:{label:'Étudiant',icon:'🎓',color:'#4caf7d',bg:'rgba(30,107,66,0.12)',border:'rgba(30,107,66,0.3)',btnGrad:'linear-gradient(135deg,#1e6b42,#2e8b57)',btnColor:'#fff',reg:true}
 };
-
-/* ── Initialisation selon param URL ──────────────────── */
-window.onload = () => {
-    // Si déjà connecté → rediriger
-    const token = localStorage.getItem('token');
-    const role  = localStorage.getItem('role');
-    if (token && role) {
-        window.location.href = (role === 'ETUDIANT') ? 'etudiant.html' : 'admin.html';
-        return;
-    }
-
-    const params = new URLSearchParams(window.location.search);
-    const profil = params.get('profil') || 'ETUDIANT';
-    appliquerProfil(profil.toUpperCase());
+window.onload=()=>{
+  const u=JSON.parse(localStorage.getItem('utilisateur')||'null');
+  if(u?.token){location.href=(u.role==='ETUDIANT')?'etudiant.html':'admin.html';return;}
+  const p=new URLSearchParams(location.search);
+  init((p.get('profil')||'ETUDIANT').toUpperCase());
 };
-
-function appliquerProfil(profil) {
-    const cfg = ROLE_CONFIG[profil] || ROLE_CONFIG['ETUDIANT'];
-    const root = document.documentElement;
-
-    // Couleurs CSS
-    root.style.setProperty('--role-color',  cfg.color);
-    root.style.setProperty('--role-bg',     cfg.bg);
-    root.style.setProperty('--role-border', cfg.border);
-
-    // Badge
-    document.getElementById('badge-icon').textContent = cfg.icon;
-    document.getElementById('badge-name').textContent = cfg.label;
-
-    // Bouton submit
-    document.querySelectorAll('.btn-submit').forEach(btn => {
-        btn.style.background = cfg.btnGrad;
-        btn.style.color      = cfg.btnColor;
-    });
-
-    // Focus input
-    document.getElementById('login-email').focus();
-
-    // Onglet inscription : masquer pour Admin / Biblio
-    const tabReg = document.getElementById('tab-register');
-    if (!cfg.canRegister) {
-        tabReg.style.display = 'none';
-        // S'assurer qu'on est sur l'onglet login
-        changerTab('login', document.querySelector('.tab'));
-    } else {
-        tabReg.style.display = '';
-    }
+function init(profil){
+  const c=RC[profil]||RC.ETUDIANT;
+  const r=document.documentElement;
+  r.style.setProperty('--role-color',c.color);
+  r.style.setProperty('--role-bg',c.bg);
+  r.style.setProperty('--role-border',c.border);
+  document.getElementById('badge-icon').textContent=c.icon;
+  document.getElementById('badge-name').textContent=c.label;
+  document.querySelectorAll('.btn-submit').forEach(b=>{b.style.background=c.btnGrad;b.style.color=c.btnColor;});
+  const tr=document.getElementById('tab-register');
+  tr.style.display=c.reg?'':'none';
+  if(!c.reg)changerTab('login',document.querySelector('.tab'));
+  document.getElementById('login-email').focus();
 }
-
-/* ── Onglets ──────────────────────────────────────────── */
-function changerTab(tab, btn) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.form-section').forEach(f => f.classList.remove('active'));
-    document.getElementById(`form-${tab}`).classList.add('active');
-    btn.classList.add('active');
-    document.getElementById('msg-login').className = 'msg';
-    document.getElementById('msg-register').className = 'msg';
+function changerTab(t,btn){
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.form-section').forEach(x=>x.classList.remove('active'));
+  document.getElementById('form-'+t).classList.add('active');
+  btn.classList.add('active');
+  ['msg-login','msg-register'].forEach(id=>document.getElementById(id).className='msg');
 }
-
-/* ── Validations en temps réel ───────────────────────── */
-function validerEmail(input) {
-    const hint = document.getElementById('hint-email');
-    if (input.value.endsWith('@gmail.com') || input.value.endsWith('@unz.bf')) {
-        input.className = 'valid'; hint.textContent = '✓ Email valide'; hint.className = 'hint ok';
-    } else if (input.value.length > 0) {
-        input.className = 'invalid'; hint.textContent = '✗ Doit se terminer par @gmail.com ou @unz.bf'; hint.className = 'hint error';
-    } else {
-        input.className = ''; hint.textContent = 'Adresses @gmail.com ou @unz.bf acceptées'; hint.className = 'hint';
-    }
+function validerEmail(i){
+  const h=document.getElementById('hint-email');
+  const ok=i.value.endsWith('@gmail.com')||i.value.endsWith('@unz.bf');
+  if(!i.value){i.className='';h.textContent='Adresses @gmail.com ou @unz.bf acceptées';h.className='hint';return;}
+  if(ok){i.className='valid';h.textContent='✓ Email valide';h.className='hint ok';}
+  else{i.className='invalid';h.textContent='✗ @gmail.com ou @unz.bf requis';h.className='hint error';}
 }
-function validerINE(input) {
-    const hint = document.getElementById('hint-ine');
-    const val  = input.value.toUpperCase();
-    input.value = val;
-    const regex = /^[NE]\d{11}$/;
-    if (regex.test(val)) {
-        input.className = 'valid'; hint.textContent = '✓ INE valide'; hint.className = 'hint ok';
-    } else if (val.length > 0) {
-        input.className = 'invalid'; hint.textContent = '✗ Format : N ou E suivi de 11 chiffres exactement'; hint.className = 'hint error';
-    } else {
-        input.className = ''; hint.textContent = 'Commence par N ou E suivi de 11 chiffres'; hint.className = 'hint';
-    }
+function validerINE(i){
+  const h=document.getElementById('hint-ine');
+  i.value=i.value.toUpperCase();
+  if(!i.value){i.className='';h.textContent='N ou E suivi de 11 ou 12 chiffres';h.className='hint';return;}
+  if(/^[NE]\d{11,12}$/.test(i.value)){i.className='valid';h.textContent='✓ INE valide';h.className='hint ok';}
+  else{i.className='invalid';h.textContent='✗ Format invalide';h.className='hint error';}
 }
-function validerPassword(input) {
-    const hint = document.getElementById('hint-password');
-    if (input.value.length >= 6) {
-        input.className = 'valid'; hint.textContent = '✓ Mot de passe valide'; hint.className = 'hint ok';
-    } else if (input.value.length > 0) {
-        input.className = 'invalid'; hint.textContent = '✗ Au moins 6 caractères requis'; hint.className = 'hint error';
-    } else {
-        input.className = ''; hint.textContent = 'Au moins 6 caractères'; hint.className = 'hint';
-    }
-    validerConfirm(document.getElementById('reg-confirm'));
+function validerPassword(i){
+  const h=document.getElementById('hint-password');
+  if(!i.value){i.className='';h.textContent='Au moins 6 caractères';h.className='hint';return;}
+  if(i.value.length>=6){i.className='valid';h.textContent='✓ Valide';h.className='hint ok';}
+  else{i.className='invalid';h.textContent='✗ Minimum 6 caractères';h.className='hint error';}
+  validerConfirm(document.getElementById('reg-confirm'));
 }
-function validerConfirm(input) {
-    const hint = document.getElementById('hint-confirm');
-    const pwd  = document.getElementById('reg-password').value;
-    if (!input.value) { input.className = ''; hint.textContent = ''; return; }
-    if (input.value === pwd) {
-        input.className = 'valid'; hint.textContent = '✓ Mots de passe identiques'; hint.className = 'hint ok';
-    } else {
-        input.className = 'invalid'; hint.textContent = '✗ Les mots de passe ne correspondent pas'; hint.className = 'hint error';
-    }
+function validerConfirm(i){
+  const h=document.getElementById('hint-confirm');
+  const p=document.getElementById('reg-password').value;
+  if(!i.value){i.className='';h.textContent='';return;}
+  if(i.value===p){i.className='valid';h.textContent='✓ Identiques';h.className='hint ok';}
+  else{i.className='invalid';h.textContent='✗ Ne correspondent pas';h.className='hint error';}
 }
-
-/* ── Connexion ───────────────────────────────────────── */
-async function seConnecter() {
-    const email    = document.getElementById('login-email').value.trim();
-    const password = document.getElementById('login-password').value;
-    const btn      = document.getElementById('btn-login');
-    if (!email || !password) { afficherMsg('msg-login', 'Remplissez tous les champs', 'error'); return; }
-
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Connexion...';
-    document.getElementById('msg-login').className = 'msg';
-
-    try {
-        const res  = await fetch(`${API}/api/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, motDePasse: password })
-        });
-        const data = await res.json();
-        if (!res.ok) { afficherMsg('msg-login', data.message || 'Identifiants incorrects', 'error'); return; }
-
-        localStorage.setItem('token',  data.token);
-        localStorage.setItem('role',   data.role);
-        localStorage.setItem('nom',    data.nom);
-        localStorage.setItem('prenom', data.prenom);
-        localStorage.setItem('userId', data.id);
-        localStorage.setItem('utilisateur', JSON.stringify({id: data.id, nom: data.nom, prenom: data.prenom, role: data.role, token: data.token, email: email}));
-
-        afficherMsg('msg-login', '✅ Connexion réussie, redirection…', 'success');
-        setTimeout(() => {
-            window.location.href = (data.role === 'ETUDIANT') ? 'etudiant.html' : 'admin.html';
-        }, 600);
-    } catch(e) {
-        afficherMsg('msg-login', 'Impossible de contacter le serveur', 'error');
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = 'Se connecter';
-    }
+function msg(id,txt,type){const e=document.getElementById(id);e.textContent=txt;e.className=type?'msg '+type:'msg';}
+async function seConnecter(){
+  const email=document.getElementById('login-email').value.trim();
+  const mdp=document.getElementById('login-password').value;
+  const btn=document.getElementById('btn-login');
+  if(!email||!mdp){msg('msg-login','Remplissez tous les champs','error');return;}
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Connexion…';
+  try{
+    const res=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,motDePasse:mdp})});
+    const txt=await res.text();
+    let d=null;try{d=JSON.parse(txt);}catch{}
+    if(!res.ok){msg('msg-login',d?.message||txt||'Identifiants incorrects','error');return;}
+    const token=d?.token||d?.accessToken;
+    const role=d?.role;
+    if(!token){msg('msg-login','Réponse serveur invalide','error');return;}
+    const u={id:d.id,nom:d.nom||'',prenom:d.prenom||'',email:d.email||email,role,token};
+    localStorage.setItem('token',token);localStorage.setItem('role',role);
+    localStorage.setItem('nom',u.nom);localStorage.setItem('prenom',u.prenom);
+    localStorage.setItem('userId',d.id||'');localStorage.setItem('utilisateur',JSON.stringify(u));
+    msg('msg-login','✅ Connexion réussie…','success');
+    setTimeout(()=>{location.href=(role==='ETUDIANT')?'etudiant.html':'admin.html';},600);
+  }catch(e){msg('msg-login','Serveur inaccessible. Spring Boot est-il démarré ?','error');}
+  finally{btn.disabled=false;btn.innerHTML='Se connecter';}
 }
-
-/* ── Inscription (étudiants) ─────────────────────────── */
-async function sInscrire() {
-    const nom     = document.getElementById('reg-nom').value.trim();
-    const prenom  = document.getElementById('reg-prenom').value.trim();
-    const email   = document.getElementById('reg-email').value.trim();
-    const ine     = document.getElementById('reg-ine').value.trim().toUpperCase();
-    const password= document.getElementById('reg-password').value;
-    const confirm = document.getElementById('reg-confirm').value;
-    const btn     = document.getElementById('btn-register');
-
-    if (!nom || !prenom || !email || !ine || !password || !confirm) {
-        afficherMsg('msg-register', 'Veuillez remplir tous les champs obligatoires', 'error'); return;
+async function sInscrire(){
+  const nom=document.getElementById('reg-nom').value.trim();
+  const prenom=document.getElementById('reg-prenom').value.trim();
+  const email=document.getElementById('reg-email').value.trim();
+  const ine=document.getElementById('reg-ine').value.trim().toUpperCase();
+  const mdp=document.getElementById('reg-password').value;
+  const conf=document.getElementById('reg-confirm').value;
+  const btn=document.getElementById('btn-register');
+  if(!nom||!prenom||!email||!ine||!mdp||!conf){msg('msg-register','Remplissez tous les champs','error');return;}
+  if(!email.endsWith('@gmail.com')&&!email.endsWith('@unz.bf')){msg('msg-register','Email @gmail.com ou @unz.bf requis','error');return;}
+  if(!/^[NE]\d{11,12}$/.test(ine)){msg('msg-register','INE invalide','error');return;}
+  if(mdp.length<6){msg('msg-register','Minimum 6 caractères','error');return;}
+  if(mdp!==conf){msg('msg-register','Mots de passe différents','error');return;}
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Création…';
+  try{
+    const res=await fetch('/api/utilisateurs/etudiant',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nom,prenom,email,motDePasse:mdp,numeroEtudiant:ine})});
+    const txt=await res.text();
+    let d=null;try{d=JSON.parse(txt);}catch{}
+    if(res.ok){
+      msg('msg-register','✅ Compte créé ! Connectez-vous maintenant.','success');
+      setTimeout(()=>{changerTab('login',document.querySelectorAll('.tab')[0]);document.getElementById('login-email').value=email;},2000);
+    }else{
+      msg('msg-register',d?.message||txt||'Erreur création','error');
     }
-    if (!email.endsWith('@gmail.com') && !email.endsWith('@unz.bf')) {
-        afficherMsg('msg-register', 'Adresse @gmail.com ou @unz.bf requise', 'error'); return;
-    }
-    if (!/^[NE]\d{11}$/.test(ine)) {
-        afficherMsg('msg-register', 'INE invalide : N ou E suivi de 11 chiffres exactement', 'error'); return;
-    }
-    if (password.length < 6) {
-        afficherMsg('msg-register', 'Mot de passe : minimum 6 caractères', 'error'); return;
-    }
-    if (password !== confirm) {
-        afficherMsg('msg-register', 'Les mots de passe ne correspondent pas', 'error'); return;
-    }
-
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Création du compte...';
-
-    try {
-        const res  = await fetch(`${API}/api/utilisateurs/etudiant`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nom, prenom, email, motDePasse: password, numeroEtudiant: ine })
-        });
-        const data = await res.text();
-        if (!res.ok) { afficherMsg('msg-register', data, 'error'); return; }
-        afficherMsg('msg-register', '✅ Compte créé ! Vous pouvez vous connecter.', 'success');
-        setTimeout(() => {
-            document.querySelectorAll('.tab')[0].click();
-            document.getElementById('login-email').value = email;
-        }, 2000);
-    } catch(e) {
-        afficherMsg('msg-register', 'Erreur serveur, réessayez', 'error');
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = 'Créer mon compte';
-    }
-}
-
-function afficherMsg(id, texte, type) {
-    const el = document.getElementById(id);
-    el.textContent = texte;
-    el.className   = `msg ${type}`;
+  }catch(e){msg('msg-register','Serveur inaccessible','error');}
+  finally{btn.disabled=false;btn.innerHTML='Créer mon compte';}
 }
 </script>
 </body>

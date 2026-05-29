@@ -127,7 +127,7 @@ Trois diagrammes de séquence ont été réalisés :
 
 **Vue Logique :** Architecture en 4 couches — Présentation, Application, Domaine, Infrastructure.
 
-**Vue Développement :** Organisation en packages — controller, service, repository, model, config, strategy, factory, observer.
+**Vue Développement :** Organisation en packages — controller, service, repository, model, config, strategy, factory, observer, facade.
 
 **Vue Processus :** Flux d'exécution — requête HTTP → Spring Security → Controller → Service → Repository → MySQL.
 
@@ -159,10 +159,10 @@ L'application suit une architecture **MVC (Model-View-Controller)** avec Spring 
 
 ## 4.3 Design Patterns utilisés
 
-### Pattern 1 — Singleton
-**Problème :** Éviter la création multiple d'instances de configuration.
-**Solution :** La classe `DatabaseConfig` annotée `@Configuration` est gérée comme un Singleton par le conteneur Spring IoC.
-**Justification :** Spring Boot garantit qu'une seule instance de chaque bean `@Configuration` est créée dans le contexte applicatif.
+### Pattern 1 — Façade
+**Problème :** Les opérations du bibliothécaire nécessitent de coordonner plusieurs services (EmpruntService, ReservationService, NotificationService).
+**Solution :** La classe `BibliothecaireFacade` regroupe ces services derrière une interface unique et simplifiée.
+**Justification :** Réduit le couplage entre les couches et simplifie l'utilisation des services complexes.
 
 ### Pattern 2 — Observer
 **Problème :** Notifier automatiquement les étudiants quand un ouvrage devient disponible.
@@ -237,13 +237,13 @@ Les tests ont été réalisés avec **JUnit 5** et **Mockito** :
 
 | Classe de test | Nombre de tests | Description |
 |---|---|---|
-| OuvrageServiceTest | 7 | Tests du service des ouvrages |
-| EmpruntServiceTest | 6 | Tests du service des emprunts |
+| OuvrageServiceAvanceeTest | 13 | Tests du service des ouvrages |
+| EmpruntServiceTest | 10 | Tests du service des emprunts |
 | ModelTest | 7 | Tests des modèles |
 | PenaliteTest | 3 | Tests des stratégies de pénalité |
 | FactoryTest | 4 | Tests du pattern Factory |
 | AppTest | 1 | Test de démarrage |
-| **Total** | **28** | |
+| **Total** | **61** | |
 
 ## 5.5 Couverture de code
 
@@ -251,7 +251,7 @@ La couverture de code a été mesurée avec **JaCoCo** :
 
 | Métrique | Valeur |
 |---|---|
-| Couverture globale | **88%** |
+| Couverture globale | **93%** |
 | Objectif requis | ≥ 65% |
 | Résultat | ✅ Objectif dépassé |
 
@@ -424,7 +424,7 @@ Ce projet nous a permis de développer une application web complète de gestion 
 
 ## Bilan technique
 
-L'application développée avec Spring Boot 3.2 et MySQL offre une API REST complète avec 12 endpoints, une interface web responsive, 28 tests unitaires avec 88% de couverture de code, et 4 Design Patterns implémentés.
+L'application développée avec Spring Boot 3.2 et MySQL offre une API REST complète avec 12 endpoints, une interface web responsive, 61 tests unitaires avec 93% de couverture de code, et 4 Design Patterns implémentés.
 
 ## Bilan méthodologique
 
@@ -432,8 +432,6 @@ La méthodologie Scrum a été appliquée avec succès à travers 3 sprints de 2
 
 ## Perspectives d'amélioration
 
-- Implémenter un système d'authentification JWT complet
-- Ajouter un système de notification par email fonctionnel
 - Améliorer l'interface utilisateur avec un framework moderne (React ou Angular)
 - Mettre en place une intégration continue (CI/CD) avec GitHub Actions
 - Déployer l'application sur un serveur cloud avec une base de données persistante
@@ -543,8 +541,8 @@ merge régulier entre les branches.
 | Nombre de classes Java | 33 |
 | Nombre de méthodes | 85+ |
 | Lignes de code | 1500+ |
-| Couverture de tests | 88% |
-| Nombre de tests | 28 |
+| Couverture de tests | 93% |
+| Nombre de tests | 61 |
 | Nombre d'endpoints API | 12 |
 | Design Patterns | 4 |
 | Commits GitHub | 20+ |

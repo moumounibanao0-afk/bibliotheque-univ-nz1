@@ -57,6 +57,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/reservations/**").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
 
                 // 🔒 ADMIN
+                .requestMatchers(HttpMethod.PUT, "/api/utilisateurs/**").authenticated()
                 .requestMatchers("/api/utilisateurs/**").hasRole("ADMINISTRATEUR")
                 .requestMatchers("/api/statistiques/**").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
 
