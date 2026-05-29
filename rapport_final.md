@@ -66,25 +66,26 @@ L'application couvre la gestion des ouvrages, des emprunts, des réservations, d
 
 ## 2.4 User Stories
 
-| ID | User Story | Acteur | Priorité |
-|---|---|---|---|
-| US01 | En tant qu'étudiant, je veux m'inscrire avec mon email et mot de passe | Étudiant | Haute |
-| US02 | En tant qu'utilisateur, je veux me connecter | Tous | Haute |
-| US03 | En tant que bibliothécaire, je veux ajouter un ouvrage | Bibliothécaire | Haute |
-| US04 | En tant qu'étudiant, je veux consulter le catalogue | Étudiant | Haute |
-| US05 | En tant qu'étudiant, je veux rechercher un ouvrage | Étudiant | Haute |
-| US06 | En tant qu'étudiant, je veux emprunter un ouvrage | Étudiant | Moyenne |
-| US07 | En tant que bibliothécaire, je veux enregistrer un retour | Bibliothécaire | Moyenne |
-| US08 | En tant qu'étudiant, je veux réserver un ouvrage | Étudiant | Moyenne |
-| US09 | En tant que bibliothécaire, je veux appliquer une pénalité | Bibliothécaire | Moyenne |
-| US10 | En tant qu'étudiant, je veux consulter mon historique | Étudiant | Moyenne |
-| US11 | En tant qu'étudiant, je veux recevoir des notifications | Étudiant | Basse |
-| US12 | En tant qu'administrateur, je veux gérer les utilisateurs | Administrateur | Basse |
-| US13 | En tant qu'administrateur, je veux voir les statistiques | Administrateur | Basse |
-| US14 | En tant que bibliothécaire, je veux gérer les catégories | Bibliothécaire | Basse |
-| US15 | En tant qu'administrateur, je veux générer des rapports | Administrateur | Basse |
+Le Product Backlog a été défini par élicitation fictive auprès des différents acteurs du système.
 
----
+| ID | En tant que... | Je veux... | Afin de... | Acteur | Priorité | Critères d'acceptation |
+|---|---|---|---|---|---|---|
+| US01 | étudiant | m'inscrire avec mon email universitaire et un mot de passe | accéder à la bibliothèque en ligne | Étudiant | Haute | Compte créé, email unique, mot de passe chiffré (BCrypt) |
+| US02 | utilisateur | me connecter avec mon email et mot de passe | accéder à mon espace personnel | Tous | Haute | Token JWT retourné, redirection selon le rôle |
+| US03 | bibliothécaire | ajouter un ouvrage avec titre, auteur, ISBN et catégorie | enrichir le catalogue | Bibliothécaire | Haute | Ouvrage enregistré en base, visible dans le catalogue immédiatement |
+| US04 | étudiant | consulter la liste de tous les ouvrages disponibles | voir ce que je peux emprunter | Étudiant | Haute | Liste affichée avec titre, auteur, ISBN, catégorie, disponibilité |
+| US05 | étudiant | rechercher un ouvrage par titre, auteur ou ISBN | trouver rapidement un livre | Étudiant | Haute | Résultats filtrés dynamiquement, recherche insensible à la casse |
+| US06 | étudiant | emprunter un ouvrage disponible | lire un livre de la bibliothèque | Étudiant | Moyenne | Emprunt créé, exemplaires décrémentés, date retour = J+14 |
+| US07 | bibliothécaire | enregistrer le retour d'un ouvrage | mettre à jour le stock disponible | Bibliothécaire | Moyenne | Statut emprunt = RETOURNÉ, exemplaires incrémentés, pénalité calculée si retard |
+| US08 | étudiant | réserver un ouvrage indisponible | être prioritaire à sa disponibilité | Étudiant | Moyenne | Réservation créée, notification envoyée à disponibilité, expiration 7 jours |
+| US09 | bibliothécaire | calculer automatiquement les pénalités de retard | facturer les étudiants en retard | Bibliothécaire | Moyenne | Pénalité = jours × tarif (250 FCFA standard, 125 FCFA boursier) |
+| US10 | étudiant | consulter mon historique d'emprunts | suivre mes lectures passées | Étudiant | Moyenne | Liste de tous mes emprunts avec statuts, dates et pénalités éventuelles |
+| US11 | étudiant | recevoir une notification email de rappel | ne pas oublier de rendre un ouvrage | Étudiant | Basse | Email automatique envoyé 3 jours avant la date de retour |
+| US12 | administrateur | gérer les comptes utilisateurs | contrôler les accès à la bibliothèque | Administrateur | Basse | CRUD complet sur les utilisateurs (étudiant, bibliothécaire, admin) |
+| US13 | administrateur | consulter les statistiques en temps réel | piloter la bibliothèque efficacement | Administrateur | Basse | Dashboard : ouvrages disponibles, emprunts en cours, retards, utilisateurs |
+| US14 | bibliothécaire | gérer les catégories et rayons | organiser le catalogue par domaine | Bibliothécaire | Basse | Catégories créées, modifiées et supprimées avec impact sur le catalogue |
+| US15 | administrateur | générer des rapports d'activité | analyser l'utilisation de la bibliothèque | Administrateur | Basse | Rapport avec ouvrages populaires, taux de retard, statistiques mensuelles |
+
 
 # 3. Modélisation et Conception
 
