@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/emprunts/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/reservations/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/statistiques/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/utilisateurs/**").permitAll()
+                // GET utilisateurs necessite authentification
                 .requestMatchers(HttpMethod.POST, "/api/reservations").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/reservations/*/annuler").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/emprunts").authenticated()
