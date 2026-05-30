@@ -145,8 +145,8 @@ public class NotificationService {
         }
     }
 
-    public void envoyerNotification(String string, String string2, String string3) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'envoyerNotification'");
+    public void envoyerNotification(String destinataire, String sujet, String message) {
+    public void envoyerNotification(String destinataire, String sujet, String message) {
+        envoyerEmail(destinataire, sujet, message);
     }
 }
