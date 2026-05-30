@@ -146,7 +146,6 @@ public class NotificationService {
     }
 
     public void envoyerNotification(String destinataire, String sujet, String message) {
-    public void envoyerNotification(String destinataire, String sujet, String message) {
         envoyerEmail(destinataire, sujet, message);
     }
 }
