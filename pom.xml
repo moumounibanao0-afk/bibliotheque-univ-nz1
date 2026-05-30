@@ -74,7 +74,12 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
         <artifactId>spring-boot-starter-test</artifactId>
         <scope>test</scope>
     </dependency>
-</dependencies>
+<dependency>
+			<groupId>com.sendgrid</groupId>
+			<artifactId>sendgrid-java</artifactId>
+			<version>4.10.1</version>
+		</dependency>
+	</dependencies>
 <build>
     <plugins>
         <plugin>
