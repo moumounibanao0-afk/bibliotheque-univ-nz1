@@ -249,15 +249,15 @@ Les scénarios principaux couverts par l'application :
 
 # 6. Justification des Design Patterns
 
-## 6.1 Pattern Singleton
+## 6.1 Pattern Façade
 
-**Classe** : DatabaseConfig
+**Classe** : BibliothecaireFacade
 
-**Problème résolu** : Eviter la création de multiples instances de configuration de la base de données.
+**Problème résolu** : Les opérations du bibliothécaire nécessitent de coordonner plusieurs services (EmpruntService, ReservationService, NotificationService), ce qui crée un couplage fort entre les couches.
 
-**Solution** : La classe DatabaseConfig annotée @Configuration est gérée comme un Singleton par le conteneur IoC de Spring Boot. Une seule instance est créée et partagée dans toute l'application.
+**Solution** : La classe BibliothecaireFacade regroupe ces services derrière une interface unique et simplifiée. Le contrôleur n'interagit qu'avec la façade au lieu d'appeler directement chaque service.
 
-**Avantage** : Garantit la cohérence de la configuration et économise les ressources.
+**Avantage** : Réduit le couplage entre les couches, simplifie l'utilisation des services complexes et améliore la maintenabilité du code.
 
 ## 6.2 Pattern Observer
 
