@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/statistiques")
 @CrossOrigin(origins = "*")
+// v2.0 optimisé
 public class StatistiqueController {
 
     @Autowired private OuvrageRepository ouvrageRepository;
