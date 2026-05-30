@@ -55,12 +55,16 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/categories/**").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
                 .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
                 .requestMatchers(HttpMethod.PUT, "/api/reservations/**").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
+                .requestMatchers(HttpMethod.POST, "/api/emprunts/**/penalite").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
+                .requestMatchers("/api/notifications/**").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
 
                 // 🔒 ADMIN
                 .requestMatchers(HttpMethod.PUT, "/api/utilisateurs/**").authenticated()
                 .requestMatchers("/api/utilisateurs/**").hasRole("ADMINISTRATEUR")
                 .requestMatchers("/api/statistiques/**").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
-
+			
+.requestMatchers(HttpMethod.POST, "/api/emprunts/**").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
+.requestMatchers("/api/notifications/**").hasAnyRole("BIBLIOTHECAIRE", "ADMINISTRATEUR")
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
