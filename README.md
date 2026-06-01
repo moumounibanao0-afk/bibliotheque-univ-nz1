@@ -51,7 +51,7 @@ L'application sera disponible sur http://localhost:8081
 |-------|-------------|------|
 | admin@unz.bf | Admin123 | Administrateur |
 | fatima.kabore@unz.bf | Admin123 | Étudiant |
-| sali.traore@unz.bf | Admin123 | Bibliothécaire |
+| sali.traore@unz.bf | Sali123 | Bibliothécaire |
 
 ## Tests
 ```bash
