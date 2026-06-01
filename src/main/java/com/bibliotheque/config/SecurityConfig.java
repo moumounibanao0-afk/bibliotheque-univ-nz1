@@ -22,7 +22,7 @@ public class SecurityConfig {
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/index.html", "/*.html", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
-                .requestMatchers("/api/auth/login").permitAll()
+                .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
                 .requestMatchers("/api/utilisateurs/etudiant").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/ouvrages/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
