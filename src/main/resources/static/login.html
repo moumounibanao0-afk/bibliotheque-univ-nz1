@@ -9,7 +9,7 @@
   <style>
     :root{--bg:#0b1628;--card:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.10);--text:rgba(255,255,255,0.88);--muted:rgba(255,255,255,0.40);--role-color:#c9a84c;--role-bg:rgba(201,168,76,0.10);--role-border:rgba(201,168,76,0.25);}
     *{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:'Sora',sans-serif;min-height:100vh;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+    body{font-family:'Sora',sans-serif;min-height:100vh;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow-y:auto;padding:20px 0;}
     body::before{content:'';position:fixed;width:600px;height:600px;background:radial-gradient(circle,rgba(26,35,126,0.35) 0%,transparent 70%);top:-150px;left:-150px;animation:float1 10s ease-in-out infinite;}
     body::after{content:'';position:fixed;width:400px;height:400px;background:radial-gradient(circle,rgba(201,168,76,0.15) 0%,transparent 70%);bottom:-80px;right:-80px;animation:float2 14s ease-in-out infinite;}
     @keyframes float1{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,30px)}}
