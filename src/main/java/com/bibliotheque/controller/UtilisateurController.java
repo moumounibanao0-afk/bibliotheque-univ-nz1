@@ -15,6 +15,8 @@ public class UtilisateurController {
     @Autowired private UtilisateurRepository utilisateurRepository;
     @Autowired private PasswordEncoder passwordEncoder;
     @Autowired private NotificationService notificationService;
+    @Autowired private com.bibliotheque.repository.EmpruntRepository empruntRepository;
+    @Autowired private com.bibliotheque.repository.ReservationRepository reservationRepository;
 
     @GetMapping
     public List<Utilisateur> getTousLesUtilisateurs() {
@@ -89,7 +91,16 @@ public class UtilisateurController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> supprimerUtilisateur(@PathVariable Long id) {
-        try { utilisateurRepository.deleteById(id); return ResponseEntity.ok().build(); }
-        catch (Exception e) { return ResponseEntity.badRequest().build(); }
+        try {
+            // Supprimer d'abord les réservations liées
+            reservationRepository.deleteByEtudiantId(id);
+            // Supprimer les emprunts liés
+            empruntRepository.deleteByEtudiantId(id);
+            // Supprimer l'utilisateur
+            utilisateurRepository.deleteById(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

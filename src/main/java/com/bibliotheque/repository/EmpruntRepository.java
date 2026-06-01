@@ -8,6 +8,7 @@ import java.util.List;
 
 @Repository
 public interface EmpruntRepository extends JpaRepository<Emprunt, Long> {
+    void deleteByEtudiantId(Long etudiantId);
     List<Emprunt> findByEtudiantId(Long etudiantId);
     List<Emprunt> findByStatut(StatutEmprunt statut);
     boolean existsByEtudiantIdAndOuvrageIdAndStatut(Long etudiantId, Long ouvrageId, StatutEmprunt statut);
