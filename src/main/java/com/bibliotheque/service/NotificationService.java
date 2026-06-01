@@ -2,37 +2,30 @@ package com.bibliotheque.service;
 
 import com.bibliotheque.model.Emprunt;
 import com.bibliotheque.model.Reservation;
-import com.sendgrid.*;
-import com.sendgrid.helpers.mail.Mail;
-import com.sendgrid.helpers.mail.objects.Content;
-import com.sendgrid.helpers.mail.objects.Email;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import java.io.IOException;
 
 @Service
 public class NotificationService {
 
-    @Value("${SENDGRID_API_KEY:}")
-    private String sendGridApiKey;
+    @Autowired
+    private JavaMailSender mailSender;
 
     private static final String FROM_EMAIL = "moumounibanao0@gmail.com";
     private static final String NOM_APP = "Bibliothèque UNZ";
 
     private void envoyerEmail(String destinataire, String sujet, String message) {
         try {
-            Email from = new Email(FROM_EMAIL, NOM_APP);
-            Email to = new Email(destinataire);
-            Content content = new Content("text/plain", message);
-            Mail mail = new Mail(from, sujet, to, content);
-            SendGrid sg = new SendGrid(sendGridApiKey);
-            Request request = new Request();
-            request.setMethod(Method.POST);
-            request.setEndpoint("mail/send");
-            request.setBody(mail.build());
-            Response response = sg.api(request);
-            System.out.println("Email envoyé à " + destinataire + " - Status: " + response.getStatusCode());
-        } catch (IOException e) {
+            SimpleMailMessage email = new SimpleMailMessage();
+            email.setFrom(FROM_EMAIL);
+            email.setTo(destinataire);
+            email.setSubject(sujet);
+            email.setText(message);
+            mailSender.send(email);
+            System.out.println("Email envoyé à " + destinataire);
+        } catch (Exception e) {
             System.err.println("Erreur envoi email à " + destinataire + " : " + e.getMessage());
         }
     }
@@ -55,7 +48,7 @@ public class NotificationService {
         String titre = emprunt.getOuvrage().getTitre();
         String dateRetour = emprunt.getDateRetourPrevue().toString();
         envoyerEmail(emprunt.getEtudiant().getEmail(),
-            "[" + NOM_APP + "] ⚠️ Rappel : retour dans 2 jours",
+            "[" + NOM_APP + "] Rappel : retour dans 2 jours",
             "Bonjour " + prenom + ",\n\nRappel : retournez l'ouvrage dans 2 jours.\n\n📖 " + titre + "\n📅 " + dateRetour + "\n\nCordialement,\n" + NOM_APP);
     }
 
@@ -63,7 +56,7 @@ public class NotificationService {
         String prenom = emprunt.getEtudiant().getPrenom();
         String titre = emprunt.getOuvrage().getTitre();
         envoyerEmail(emprunt.getEtudiant().getEmail(),
-            "[" + NOM_APP + "] 🔴 Retard détecté",
+            "[" + NOM_APP + "] Retard détecté",
             "Bonjour " + prenom + ",\n\nVotre emprunt est en retard.\n\n📖 " + titre + "\n💰 Pénalité : " + penalite + " FCFA\n\nCordialement,\n" + NOM_APP);
     }
 
@@ -79,7 +72,7 @@ public class NotificationService {
         String prenom = reservation.getEtudiant().getPrenom();
         String titre = reservation.getOuvrage().getTitre();
         envoyerEmail(reservation.getEtudiant().getEmail(),
-            "[" + NOM_APP + "] ✅ Votre ouvrage est disponible !",
+            "[" + NOM_APP + "] Votre ouvrage est disponible !",
             "Bonjour " + prenom + ",\n\nL'ouvrage que vous avez réservé est disponible.\n\n📖 " + titre + "\n\nCordialement,\n" + NOM_APP);
     }
 
