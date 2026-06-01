@@ -1296,8 +1296,14 @@ async function creerAdmin() {
 
 async function supprimerUtilisateur(id) {
   if (!confirm('Supprimer cet utilisateur ?')) return;
-  await fetch(`${API}/api/utilisateurs/${id}`, {method:'DELETE',headers:getHeaders()});
-  toast('Utilisateur supprimé','success'); chargerUtilisateurs(); chargerStats();
+  const res = await fetch(`${API}/api/utilisateurs/${id}`, {method:'DELETE',headers:getHeaders()});
+  if (res.ok) {
+    toast('Utilisateur supprimé','success');
+    await chargerUtilisateurs();
+    chargerStats();
+  } else {
+    toast('Erreur lors de la suppression','error');
+  }
 }
 
 /* ─── Emprunts ─── */
