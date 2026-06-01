@@ -90,16 +90,15 @@ public class UtilisateurController {
     }
 
     @DeleteMapping("/{id}")
+    @org.springframework.transaction.annotation.Transactional
     public ResponseEntity<Void> supprimerUtilisateur(@PathVariable Long id) {
         try {
-            // Supprimer d'abord les réservations liées
             reservationRepository.deleteByEtudiantId(id);
-            // Supprimer les emprunts liés
             empruntRepository.deleteByEtudiantId(id);
-            // Supprimer l'utilisateur
             utilisateurRepository.deleteById(id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
+            System.err.println("Erreur suppression utilisateur " + id + ": " + e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
